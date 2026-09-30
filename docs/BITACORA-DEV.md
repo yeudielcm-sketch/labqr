@@ -317,3 +317,14 @@ Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **au
 - 30 sep 2026: el autor registró la devolución de ese vale en su Android (parcial, un artículo roto y "Todo regresó completo") y el vale se cerró solo. **F3 cerrada** en el celular.
 - 30 sep 2026: en su Android, el autor compartió el respaldo por WhatsApp, borró todos los datos y los restauró desde ese archivo; todo regresó, incluido el vale de la prueba de F3. **F4 cerrada** en el celular. Con esto el MVP (F0 a F4) queda validado en el dispositivo real.
 - 30 sep 2026: el autor abrió el tablero en una TV y reportó que se lee bien. **F5 cerrada.** Las 6 fases (F0 a F5) quedan validadas en dispositivos reales.
+
+---
+
+## Mantenimiento y materiales del concurso · 30 de septiembre de 2026
+
+- **Publicación:** las acciones de GitHub se actualizaron a sus versiones actuales, que corren en Node 24 (checkout v7, setup-node v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5), y el servidor se fijó en `ubuntu-24.04`. Antes de actualizar se revisaron las notas de cada versión mayor; ninguna rompe este flujo. El despliegue pasó sin los avisos de Node 20. La app no cambió.
+- **Documentos del concurso:**
+  - `ENTREVISTAS.md`: hoja para medir el tiempo de entrega "antes" y anotar respuestas textuales.
+  - `EXPOSICION.md`: guion de 5 minutos, preguntas probables de los jueces y lista para el 4 de diciembre.
+  - `CARTEL.md`: contenido y jerarquía, en espera de las medidas de la guía.
+- No se agregaron funciones nuevas a propósito: primero se valida con laboratoristas (lección de proyectos anteriores).
