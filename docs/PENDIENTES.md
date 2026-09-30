@@ -10,7 +10,7 @@
 - [x] **F2 · Cámara de la app:** pestaña Escanear → apuntar a la etiqueta. Debe vibrar y abrir la ficha.
 - [x] **F3 · Vale real:** Nuevo vale → Escanear artículos → escanear 5 etiquetas → Confirmar. Medir que tarde menos de 1 minuto.
 - [x] **F3 · Devolución:** abrir ese vale → devolver uno parcial, marcar uno como roto y "Todo regresó completo".
-- [ ] **F4 · Respaldo:** ☰ → Respaldo → Compartir respaldo → mandarlo a tu WhatsApp o Drive. Luego "Borrar todo" en Ajustes → Restaurar desde ese archivo. Todo debe regresar.
+- [x] **F4 · Respaldo:** ☰ → Respaldo → Compartir respaldo → mandarlo a tu WhatsApp o Drive. Luego "Borrar todo" en Ajustes → Restaurar desde ese archivo. Todo debe regresar.
 - [ ] **F5 · Tablero:** abrir `#/tablero` en una laptop conectada a una TV o proyector y revisar que se lea a 3 metros.
 
 Si algo no aparece: **manda primero la versión** (pie de Inicio o de Ajustes) y una captura.
