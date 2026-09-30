@@ -316,3 +316,4 @@ Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **au
 - 30 sep 2026: en el Android del autor, un vale con 5 artículos escaneando etiquetas impresas con la cámara de la app se confirmó en **40 s**. Cumple el criterio de F3 (menos de 1 minuto con 5 artículos). Falta probar la devolución en el celular.
 - 30 sep 2026: el autor registró la devolución de ese vale en su Android (parcial, un artículo roto y "Todo regresó completo") y el vale se cerró solo. **F3 cerrada** en el celular.
 - 30 sep 2026: en su Android, el autor compartió el respaldo por WhatsApp, borró todos los datos y los restauró desde ese archivo; todo regresó, incluido el vale de la prueba de F3. **F4 cerrada** en el celular. Con esto el MVP (F0 a F4) queda validado en el dispositivo real.
+- 30 sep 2026: el autor abrió el tablero en una TV y reportó que se lee bien. **F5 cerrada.** Las 6 fases (F0 a F5) quedan validadas en dispositivos reales.
