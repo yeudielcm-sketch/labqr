@@ -43,7 +43,7 @@ Si la entrevista revela que capturan varias personas desde varios dispositivos, 
 **Cantidades:** enteros en centésimas de la unidad (`qty = 250` significa 2.50). Así se evita el error de los decimales, igual que con los centavos.
 
 ```
-labs       { id, name, createdAt }
+labs       { id, name, prefix, createdAt }   // prefix: 2–5 letras, base de los códigos
 locations  { id, labId, name, createdAt }
 items      { id, code, name, kind, unit, labId, locationId,
              minStock, expiresAt?, serial?, notes?,
@@ -64,6 +64,7 @@ settings   { key, value }  // lastBackupAt, labelLayout, etc.
 - `onHand(item) = RECEIVE - LEND + RETURN - CONSUME - LOSS ± ADJUST`
 - `lentOut(item) = LEND - RETURN - LOSS con loanId`, por vale abierto
 - `total(item) = onHand + lentOut`
+- Aclaración (F1): una merma o un consumo **con** `loanId` ocurre mientras el artículo está prestado, así que resta de `lentOut` y no de `onHand`. Sin `loanId`, resta de `onHand`. Así una pieza rota en préstamo no se descuenta dos veces.
 - `lowStock(item) = onHand < minStock`
 - `expiringSoon(item) = expiresAt dentro de 30 días`
 - Estado de un vale: `open` si tiene saldo pendiente; `overdue` si está abierto y pasó `dueAt`; `closed` si todo regresó o se registró como merma o consumo.

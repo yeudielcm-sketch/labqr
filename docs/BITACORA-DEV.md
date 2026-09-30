@@ -43,4 +43,57 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
 - Publicación (30 sep 2026): repositorio público `yeudielcm-sketch/labqr` y sitio en https://yeudielcm-sketch.github.io/labqr/. El primer despliegue automático pasó pruebas, compilación y publicación. En la página en vivo se verificó que el manifest, los 3 íconos y el service worker cargan correctamente.
 - QR de la app (`docs/concurso/qr/labqr-app.png`): se decodificó con zxing-wasm y devuelve la URL correcta.
 - Avisos de GitHub Actions que no bloquean: algunas acciones todavía usan Node 20 (GitHub las corre en Node 24) y `ubuntu-latest` pasa a Ubuntu 26 desde el 19 de octubre de 2026.
-- Pendiente en esta entrada: instalar en un Android real desde la URL pública y abrir sin internet (criterio de "listo" de F0).
+- 30 sep 2026: el autor instaló la app en su Android desde la URL pública y reportó que funciona. F0 se da por cerrada.
+
+---
+
+## F1 — Catálogo y datos de demostración · 30 de septiembre de 2026
+
+### Qué se hizo
+- **Artículos:** lista con búsqueda por nombre, código, número de serie, notas y especificaciones, y filtros por laboratorio, ubicación, tipo, "bajo mínimo" y "por caducar". La búsqueda ignora mayúsculas y acentos ("etilico" encuentra "etílico"). Los filtros quedan en la dirección (`#/articulos?bajo=1`), así que Inicio enlaza directo a la lista filtrada.
+- **Ficha del artículo** como etiqueta de frasco:
+  - Código grande arriba a la derecha y franja de color por tipo (equipo cobalto, material vidrio, reactivo ámbar).
+  - Probeta con existencia en laboratorio, lo prestado con contorno punteado, el total y la línea del mínimo en rojo.
+  - En equipo, en vez de probeta, se muestra "En su lugar" o "Prestado a…".
+  - Especificaciones libres que se agregan y quitan, e historial de movimientos con responsable, vale y motivo.
+- **Alta y edición de artículos:**
+  - El formulario cambia según el tipo: el equipo no pide cantidad y sí pide número de serie; el reactivo pide caducidad.
+  - La cantidad inicial se registra como movimiento de recepción. El código se genera solo y no se puede cambiar.
+- **Archivar y eliminar:** un artículo con historial se archiva (regla 6 de CLAUDE.md); uno sin movimientos se puede eliminar, previa confirmación.
+- **Ajustes:**
+  - Laboratorios con prefijo. El prefijo se bloquea en cuanto hay artículos, porque ya hay etiquetas impresas.
+  - Ubicaciones por laboratorio. Solo se pueden eliminar si están vacías.
+  - Días de préstamo por defecto.
+  - "Cargar datos de demostración" y "Borrar todo" (hay que escribir BORRAR y después confirmar).
+- **Inicio:** selector de laboratorio, probeta general, total de artículos y tarjetas de "bajo mínimo", "por caducar" y "caducados" que llevan a la lista filtrada.
+- **Datos de demostración (inventario de prueba para enseñar a los laboratoristas):**
+  - Química (21 artículos) y Biología (12 artículos): 7 ubicaciones en total.
+  - Equipo: balanza analítica, parrilla, potenciómetro, 4 microscopios con número de serie y un estereoscópico.
+  - Vidriería y material: vasos de precipitado, matraces, probetas, pipetas, buretas, tubos de ensayo, pinzas, mecheros, portaobjetos, cajas de Petri, estuches de disección.
+  - Reactivos: NaCl, alcohol etílico, HCl, NaOH, fenolftaleína, sulfato de cobre, agua destilada, azul de metileno, lugol, glicerina.
+  - Casos especiales: 1 reactivo bajo mínimo (alcohol), 2 por caducar (HCl y azul de metileno) y 1 caducado (fenolftaleína).
+  - 5 solicitantes y 3 vales: uno cerrado (titulación), uno abierto (células de cebolla) y uno vencido con una probeta rota a cargo del Equipo 2.
+
+### Decisiones y por qué
+- **Aclaración al SPEC §4:** una merma o un consumo ligados a un vale restan de lo prestado, no de lo que hay en el laboratorio. La fórmula original descontaba dos veces una pieza rota en préstamo. Quedó escrito en `SPEC.md` y probado.
+- **`labs` lleva `prefix`:** el SPEC pedía "nombre + prefijo" en Ajustes pero el modelo no tenía el campo. Se agregó al SPEC.
+- **La demo es una función pura (`buildDemo`)** separada de la escritura en la base. Así se prueba sin navegador y sin agregar dependencias (se descartó `fake-indexeddb` para no sumar un paquete sin aprobación).
+- **La demo solo se carga con la app vacía**, para no mezclar datos de prueba con datos reales.
+- **Laboratorios y ubicaciones existentes se guardan al salir del campo**, sin botón "Guardar" en cada renglón. La primera versión tenía un botón por renglón y la pantalla se veía saturada.
+- Versión de la app: 0.2.0.
+
+### Problemas encontrados
+- Al reescribir `strings.js` se perdió el bloque de textos de Vales; se detectó al revisar y se restauró.
+- En Ajustes, los eventos se colgaban del contenedor general y se habrían duplicado en cada recarga de la pantalla. Se cambiaron al contenedor propio de la pantalla.
+- `form.name` en un formulario devuelve el nombre del formulario, no el campo; el campo se renombró a `itemName`.
+
+### Cómo se probó
+- 25 pruebas automáticas (existencia derivada, alertas, búsqueda y filtros, cantidades con decimales, códigos, router y la demo completa): todas pasan.
+- En el navegador con vista de celular (375×812):
+  - Se cargó la demo: Inicio mostró 33 artículos, 1 bajo mínimo, 2 por caducar y 1 caducado.
+  - Se abrió la ficha de la probeta (QUI-0007): 10 en lab, 1 prestada, 11 en total, con la merma y su responsable en el historial.
+  - Se abrió el microscopio 2 (BIO-0002): muestra "Prestado a Equipo 3".
+  - Se dio de alta "Ácido acético" y recibió el código QUI-0022. Se le agregó la especificación "Glacial 99.7 %" y la búsqueda "glacial" lo encontró.
+  - El filtro "Equipo" devolvió los 8 equipos.
+  - "Borrar todo" con BORRAR y confirmación dejó las 7 tablas vacías.
+- Pendiente: probarlo en el Android del autor y mostrarlo a un laboratorista.

@@ -10,6 +10,12 @@ describe('matchRoute', () => {
     expect(matchRoute(routes, '/i/QUI-0007').params).toEqual({ code: 'QUI-0007' });
   });
 
+  it('parses the query', () => {
+    const m = matchRoute(routes, '/articulos?bajo=1&q=vaso');
+    expect(m.route.path).toBe('/articulos');
+    expect(m.query).toEqual({ bajo: '1', q: 'vaso' });
+  });
+
   it('returns null for unknown paths', () => {
     expect(matchRoute(routes, '/nada')).toBe(null);
     expect(matchRoute(routes, '/i')).toBe(null);
