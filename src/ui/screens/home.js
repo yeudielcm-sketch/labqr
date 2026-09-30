@@ -1,4 +1,5 @@
-import { loadCatalog } from '../../db/catalog.js';
+import { getSetting, loadCatalog } from '../../db/catalog.js';
+import { backupIsDue } from '../../io/backup.js';
 import { loadLoans } from '../../db/movements.js';
 import { EMPTY_STOCK, isExpired, isExpiringSoon, isLowStock } from '../../domain/stock.js';
 import { t } from '../strings.js';
@@ -10,7 +11,7 @@ export const home = {
   title: t.home.title,
   tab: '/',
   async render(view, _params, query) {
-    const [cat, loanRows] = await Promise.all([loadCatalog(), loadLoans()]);
+    const [cat, loanRows, lastBackupAt] = await Promise.all([loadCatalog(), loadLoans(), getSetting('lastBackupAt', null)]);
     if (cat.items.length === 0) {
       view.innerHTML = `
         <section class="screen">
@@ -43,6 +44,12 @@ export const home = {
 
     view.innerHTML = `
       <section class="screen stack home">
+        ${backupIsDue(lastBackupAt, cat.items.length > 0) ? `
+        <div class="backup-reminder" role="status">
+          <span class="amber-dot" aria-hidden="true"></span>
+          <span>${lastBackupAt ? t.backup.reminder : t.backup.reminderNever}</span>
+          <a class="btn btn--sm" href="#/respaldo">${t.backup.reminderBtn}</a>
+        </div>` : ''}
         <select class="field lab-select" aria-label="${t.items.filterLab}">
           <option value="">${t.home.allLabs}</option>
           ${cat.labs.map((l) => `<option value="${l.id}" ${l.id === labId ? 'selected' : ''}>Laboratorio ${esc(l.name)}</option>`).join('')}

@@ -187,3 +187,48 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
   - Existencias finales: vasos 22 (23 − 1 roto), balanza 1 en lab, NaCl 379 g.
 - **Ficha del alcohol etílico:** recepción de 1,000 ml (350 → 1,350) y ajuste por conteo a 1,320 ml, que registró −30 ml con la nota "Conteo semestral". Sin nota, el formulario no se envía.
 - **Pendiente:** el escaneo continuo con cámara real, en el Android del autor.
+
+---
+
+## F4 — Respaldo · 30 de septiembre de 2026
+
+### Qué se hizo
+- **Pantalla Respaldo** (☰ → Respaldo):
+  - **Respaldo completo:** descarga un archivo `.json` con todas las tablas. En celulares que lo permiten, "Compartir respaldo" lo manda directo a WhatsApp, correo o Drive. Se muestra la fecha del último respaldo.
+  - **Restaurar desde archivo:** revisa que el archivo sea un respaldo de LabQR y que esté completo, dice qué trae (artículos, vales, movimientos) y pide confirmación antes de reemplazar todo. El reemplazo va en una sola transacción: si algo falla, no se pierde nada.
+  - **Exportar CSV** (para Excel):
+    - Inventario actual, con existencia en laboratorio, prestado, total, mínimo y especificaciones.
+    - Movimientos.
+    - Vales, con la **duración de la entrega en segundos** (SPEC §8).
+  - **Importar inventario inicial:**
+    - Plantilla CSV descargable. La importación acepta coma o punto y coma, para archivos guardados desde Excel en español.
+    - Vista previa con los renglones que tienen errores, indicados por número de renglón de la hoja.
+    - Crea los laboratorios y ubicaciones que falten y da de alta los artículos con su recepción inicial.
+- **Aviso de respaldo en Inicio:** aparece si hay datos y nunca se ha respaldado, o si el último respaldo tiene más de 7 días.
+- **`navigator.storage.persist()`:** se pide al abrir la app para que el navegador no borre los datos por falta de espacio. Respaldo muestra si quedó protegido.
+
+### Decisiones y por qué
+- **La fecha del último respaldo se guarda antes de generar el archivo**, así el archivo la incluye y restaurar deja exactamente los mismos datos. En la primera versión se guardaba después, y al restaurar la app decía que nunca se había respaldado. La prueba de ida y vuelta lo detectó.
+- **Los números del CSV van sin separador de miles** (1320, no 1,320), porque la coma rompería las columnas en Excel. Se agrega BOM para que Excel abra bien los acentos.
+- **Al importar, el laboratorio se reconoce por nombre o por prefijo**, para no duplicar "Química" si alguien escribe "quimica".
+- Versión 0.5.0.
+
+### Problemas encontrados
+- **La ventana de confirmación dependía del evento `close` del `<dialog>`**. En el navegador de pruebas quedó una ventana cerrada sin quitarse, y un segundo toque llegó a esa ventana vieja. Se cambió para que responda directamente al toque del botón y se quite de inmediato. Afecta a todas las confirmaciones de la app; se volvió a probar con el respaldo.
+
+### Cómo se probó
+- 41 pruebas automáticas; 8 nuevas:
+  - El respaldo pasa por texto JSON y regresa igual.
+  - Se rechazan archivos ajenos, de otra versión, incompletos o con IDs repetidos.
+  - La regla de los 7 días.
+  - El CSV maneja comillas, comas y saltos de línea.
+  - Se aceptan archivos separados con punto y coma.
+  - Los números del inventario salen sin separador.
+  - La duración de los vales sale en segundos (48, 42 y 72 s en la demo).
+  - La plantilla se lee bien y los renglones malos se reportan con su número.
+- **Criterio de F4 en el navegador:**
+  1. Con la demo cargada, "Descargar respaldo" (se capturó el archivo).
+  2. Se borraron todos los datos: 0 artículos y 0 movimientos.
+  3. "Restaurar desde archivo" mostró "Trae 33 artículos, 3 vales y 53 movimientos" y, tras confirmar, **las 7 tablas (106 renglones) quedaron idénticas a antes**.
+- **Importación:** la plantilla más un multímetro de Física y un renglón con tipo "herramienta". La vista previa dijo "4 artículos listos · 1 renglón con error. Renglón 6: tipo debe ser equipo, material o reactivo". Se importaron 4: se creó el laboratorio Física (FIS-0001) y los códigos siguieron la numeración existente (QUI-0023, BIO-0013).
+- **Pendiente:** probar descargar y compartir en el Android real (WhatsApp o Drive) y restaurar allí.

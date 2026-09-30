@@ -17,7 +17,9 @@ import { labels } from './ui/screens/labels.js';
 import { loans } from './ui/screens/loans.js';
 import { loanNew } from './ui/screens/loanNew.js';
 import { loanDetail } from './ui/screens/loanDetail.js';
-import { backup, notFound } from './ui/screens/simple.js';
+import { backup } from './ui/screens/backup.js';
+import { notFound } from './ui/screens/simple.js';
+import { requestPersistence } from './db/backupStore.js';
 
 const routes = [
   { path: '/', screen: home },
@@ -51,3 +53,4 @@ startRouter(routes, async (match) => {
 });
 
 registerSW({ immediate: true });
+requestPersistence().catch(() => {});

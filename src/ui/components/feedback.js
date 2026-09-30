@@ -25,18 +25,27 @@ export function confirmDialog(message, { confirmLabel = t.common.confirm, danger
     const dlg = document.createElement('dialog');
     dlg.className = 'dialog';
     dlg.innerHTML = `
-      <form method="dialog">
-        <p>${esc(message)}</p>
-        <div class="dialog__actions">
-          <button class="btn" value="cancel">${t.common.cancel}</button>
-          <button class="btn btn--primary${danger ? ' btn--danger' : ''}" value="ok">${esc(confirmLabel)}</button>
-        </div>
-      </form>`;
-    document.body.append(dlg);
-    dlg.addEventListener('close', () => {
-      resolve(dlg.returnValue === 'ok');
+      <p>${esc(message)}</p>
+      <div class="dialog__actions">
+        <button type="button" class="btn" value="cancel">${t.common.cancel}</button>
+        <button type="button" class="btn btn--primary${danger ? ' btn--danger' : ''}" value="ok">${esc(confirmLabel)}</button>
+      </div>`;
+    // Resolve straight from the tap and remove the element at once, so no closed dialog
+    // is ever left in the page waiting for a 'close' event.
+    const finish = (ok) => {
+      if (dlg.open) dlg.close();
       dlg.remove();
+      resolve(ok);
+    };
+    dlg.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (b) finish(b.value === 'ok');
     });
+    dlg.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      finish(false);
+    });
+    document.body.append(dlg);
     dlg.showModal();
   });
 }
