@@ -1,0 +1,193 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--tile);
+  color: var(--graphite);
+  font-family: var(--font-ui);
+  font-size: var(--fs-16);
+  line-height: 1.4;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 600; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+a { color: var(--cobalt); }
+
+:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+
+/* Shell */
+.app {
+  min-height: 100dvh;
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: calc(var(--space-3) + env(safe-area-inset-top));
+  border-bottom: 1px solid var(--rule);
+  background: var(--tile);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.topbar__title {
+  flex: 1;
+  font-family: var(--font-label);
+  font-size: var(--fs-28);
+  line-height: 1.1;
+}
+
+.icon-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--graphite);
+  cursor: pointer;
+}
+
+.icon-btn:active { background: var(--rule); }
+
+.screen { padding: var(--space-4); max-width: 720px; margin: 0 auto; }
+
+/* Bottom navigation */
+.tabbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+  z-index: 3;
+}
+
+.tabbar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--tap);
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: var(--fs-14);
+  font-weight: 500;
+  border-top: 3px solid transparent;
+}
+
+.tabbar a[aria-current='page'] {
+  color: var(--cobalt);
+  border-top-color: var(--cobalt);
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn {
+  min-height: var(--tap);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius);
+  border: 2px solid var(--cobalt);
+  background: var(--paper);
+  color: var(--cobalt);
+  font-weight: 600;
+  font-size: var(--fs-16);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+
+.btn--primary { background: var(--cobalt); color: var(--paper); }
+.btn--block { width: 100%; }
+.btn:active { transform: translateY(1px); }
+
+/* Empty state: invites to act */
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+}
+
+.empty p { margin: 0; font-size: var(--fs-20); max-width: 28ch; }
+
+/* Label-style block (the "etiqueta de frasco") */
+.label {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--stripe) + var(--space-4));
+}
+
+.label::before {
+  content: '';
+  position: absolute;
+  inset: -1px auto -1px -1px;
+  width: var(--stripe);
+  border-radius: var(--radius) 0 0 var(--radius);
+  background: var(--stripe-color, var(--cobalt));
+}
+
+.label--equipment { --stripe-color: var(--kind-equipment); }
+.label--material { --stripe-color: var(--kind-material); }
+.label--reagent { --stripe-color: var(--kind-reagent); }
+
+.code {
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Hazard diamond (GHS allusion, not an official pictogram) */
+.hazard {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border: 2px solid var(--hazard);
+  background: var(--paper);
+  transform: rotate(45deg);
+  vertical-align: 0.05em;
+}
+
+.meta {
+  color: var(--ink-soft);
+  font-size: var(--fs-14);
+}
+
+.footer-version {
+  text-align: center;
+  padding: var(--space-5) 0 var(--space-4);
+}
+
+.stack { display: grid; gap: var(--space-4); }
+
+.menu-list { display: grid; gap: var(--space-3); }
+.menu-list .label {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  color: var(--graphite);
+  text-decoration: none;
+  font-size: var(--fs-20);
+  font-weight: 500;
+}

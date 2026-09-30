@@ -1,0 +1,12 @@
+.cylinder { display: block; overflow: visible; }
+.cyl-glass { fill: none; stroke: var(--graphite); stroke-width: 2.5; stroke-linejoin: round; }
+.cyl-foot { fill: var(--graphite); }
+.cyl-ticks line { stroke: var(--graphite); stroke-width: 1.5; }
+.cyl-liquid {
+  fill: var(--glass);
+  transition: y var(--t-level) ease-out, height var(--t-level) ease-out;
+}
+.cylinder--low .cyl-liquid { fill: var(--hazard); }
+.cyl-lent { fill: none; stroke: var(--glass-edge); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.cyl-min { stroke: var(--hazard); stroke-width: 2; }
+.cyl-unit { font-family: var(--font-label); font-weight: 600; font-size: 11px; fill: var(--ink-soft); }

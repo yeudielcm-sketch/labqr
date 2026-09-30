@@ -1,0 +1,54 @@
+/* Design tokens from DESIGN.md. Colors only through these variables. */
+@import '@fontsource/barlow/latin-400.css';
+@import '@fontsource/barlow/latin-500.css';
+@import '@fontsource/barlow/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-600.css';
+
+:root {
+  /* Color */
+  --tile: #F3F6F8;
+  --graphite: #22272E;
+  --cobalt: #1B3A8C;
+  --glass: #BFE3EA;
+  --amber: #C77A12;
+  --hazard: #D32F2F;
+
+  /* Derived neutrals (graphite over tile), kept at AA contrast for text */
+  --paper: #FFFFFF;
+  --ink-soft: #4A525C;
+  --rule: #D5DCE2;
+  --glass-edge: #7FB4C0;
+
+  /* Kind stripe on the label */
+  --kind-equipment: var(--cobalt);
+  --kind-material: var(--glass);
+  --kind-reagent: var(--amber);
+
+  /* Type */
+  --font-ui: 'Barlow', system-ui, sans-serif;
+  --font-label: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-20: 1.25rem;
+  --fs-28: 1.75rem;
+  --fs-40: 2.5rem;
+
+  /* Shape and rhythm */
+  --radius: 4px;
+  --stripe: 8px;
+  --tap: 48px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --nav-h: 64px;
+
+  /* Motion */
+  --t-level: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-level: 0ms; }
+}
