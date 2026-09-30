@@ -55,5 +55,11 @@ startRouter(routes, async (match) => {
   lastPath = path;
 });
 
-registerSW({ immediate: true });
+// Check for a new version every hour while the app stays open (GitHub Pages caches up to 10 min).
+registerSW({
+  immediate: true,
+  onRegisteredSW(_url, registration) {
+    if (registration) setInterval(() => registration.update(), 60 * 60 * 1000);
+  },
+});
 requestPersistence().catch(() => {});

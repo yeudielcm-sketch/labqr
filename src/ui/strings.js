@@ -349,6 +349,10 @@ export const t = {
     storageReady: 'Base de datos lista',
     storageError: 'No se pudo abrir la base de datos. Cierra otras pestañas de LabQR y vuelve a abrirla.',
     offlineReady: 'Lista para usarse sin internet',
+    update: 'Buscar actualización',
+    updateHelp: 'Si falta una pantalla nueva, toca aquí con internet. La app se recarga sola si hay versión nueva.',
+    updateNone: 'Ya tienes la versión más reciente.',
+    updateOffline: 'Sin internet no se puede buscar una versión nueva.',
     offlinePending: 'Preparando uso sin internet…',
   },
 

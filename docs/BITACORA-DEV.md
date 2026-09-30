@@ -302,3 +302,11 @@ Encontró **12 fallas**: 1 alta, 5 medias y 6 bajas. Para las que se pueden prob
 
 ### Lección
 Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **auditar antes de decir "listo"**, no después.
+
+---
+
+## Publicación de F2 a F5 · 30 de septiembre de 2026
+
+- `dev` se unió a `main` después de la auditoría y GitHub Pages publicó la versión 0.6.1.
+- **Lo que se observó:** el navegador que tenía la 0.2.0 siguió mostrándola en las dos primeras aperturas y cambió a la nueva en la tercera. GitHub Pages guarda los archivos hasta 10 minutos (`max-age=600`), y la PWA actualiza su caché en la apertura siguiente a detectar la versión nueva.
+- **Qué se hizo:** en Ajustes hay un botón "Buscar actualización" y, con la app abierta, se revisa sola cada hora. La versión se ve al pie de Inicio y de Ajustes. Versión 0.6.2.

@@ -85,6 +85,8 @@ export const settings = {
           <h3>${t.settings.storage}</h3>
           <p class="meta">${dbStatus}</p>
           <p class="meta">${offline}</p>
+          <button type="button" class="btn btn--block" data-update>${t.settings.update}</button>
+          <p class="meta">${t.settings.updateHelp}</p>
         </section>
 
         <section class="block danger-zone">
@@ -156,6 +158,18 @@ export const settings = {
     root.addEventListener('change', (e) => {
       const form = e.target.closest('[data-lab], [data-loc]');
       if (form) form.requestSubmit();
+    });
+
+    view.querySelector('[data-update]').addEventListener('click', async (e) => {
+      if (!navigator.onLine) return toast(t.settings.updateOffline, { danger: true });
+      e.target.disabled = true;
+      const reg = await navigator.serviceWorker?.getRegistration();
+      await reg?.update().catch(() => {});
+      // With autoUpdate, a new service worker takes over and the page reloads by itself.
+      setTimeout(() => {
+        e.target.disabled = false;
+        if (!reg?.installing && !reg?.waiting) toast(t.settings.updateNone);
+      }, 2500);
     });
 
     view.querySelector('[data-wipe]').addEventListener('input', (e) => {
