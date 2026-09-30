@@ -7,8 +7,10 @@ const BOM = '﻿'; // lets Excel open accents correctly
 // Plain decimal for spreadsheets (no thousands separator): 132000 → "1320".
 const num = (q) => String((q ?? 0) / 100);
 
+// Text starting with = + - @ would run as a formula in Excel; prefix it with ' (numbers stay as they are).
 function cell(value) {
-  const s = value === null || value === undefined ? '' : String(value);
+  let s = value === null || value === undefined ? '' : String(value);
+  if (/^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) s = `'${s}`;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
@@ -18,32 +20,57 @@ export function toCSV(header, rows) {
 
 // RFC 4180-style parser: quoted fields, escaped quotes, commas and newlines inside quotes.
 // Also accepts ";" as separator (Excel in Spanish often saves that way).
+// Blank lines are skipped; parseCSVLines also returns each row's spreadsheet line number.
 export function parseCSV(text) {
+  return parseCSVLines(text).rows;
+}
+
+export function parseCSVLines(text) {
   const src = text.replace(/^﻿/, '');
   const firstLine = src.split(/\r?\n/, 1)[0];
   const sep = (firstLine.match(/;/g)?.length ?? 0) > (firstLine.match(/,/g)?.length ?? 0) ? ';' : ',';
   const rows = [];
+  const lines = [];
   let row = [];
   let field = '';
   let quoted = false;
+  let line = 1;
+  let rowStart = 1;
+  const endRow = () => {
+    row.push(field);
+    field = '';
+    if (row.some((f) => f.trim() !== '')) {
+      rows.push(row);
+      lines.push(rowStart);
+    }
+    row = [];
+  };
   for (let i = 0; i < src.length; i++) {
     const c = src[i];
     if (quoted) {
       if (c === '"' && src[i + 1] === '"') { field += '"'; i++; }
       else if (c === '"') quoted = false;
-      else field += c;
+      else {
+        if (c === '\n') line++;
+        field += c;
+      }
     } else if (c === '"') quoted = true;
     else if (c === sep) { row.push(field); field = ''; }
     else if (c === '\n' || c === '\r') {
       if (c === '\r' && src[i + 1] === '\n') i++;
-      row.push(field); field = '';
-      if (row.some((f) => f.trim() !== '')) rows.push(row);
-      row = [];
+      endRow();
+      line++;
+      rowStart = line;
     } else field += c;
   }
-  row.push(field);
-  if (row.some((f) => f.trim() !== '')) rows.push(row);
-  return rows;
+  endRow();
+  return { rows, lines };
+}
+
+function isRealDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T12:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
 }
 
 const KIND_ES = { equipment: 'equipo', material: 'material', reagent: 'reactivo' };
@@ -99,7 +126,7 @@ const normalizeHeader = (h) => h.normalize('NFD').replace(/[̀-ͯ]/g, '').trim()
 
 // Returns { rows: [...valid], errors: [{ line, message }] }. Line numbers match the spreadsheet.
 export function parseInventoryCSV(text) {
-  const table = parseCSV(text);
+  const { rows: table, lines } = parseCSVLines(text);
   if (!table.length) return { rows: [], errors: [{ line: 1, message: 'El archivo está vacío.' }] };
   const header = table[0].map(normalizeHeader);
   const col = Object.fromEntries(TEMPLATE_HEADER.map((h) => [h, header.indexOf(h)]));
@@ -109,12 +136,13 @@ export function parseInventoryCSV(text) {
   const rows = [];
   const errors = [];
   table.slice(1).forEach((r, i) => {
-    const line = i + 2;
+    const line = lines[i + 1];
     const get = (h) => (col[h] >= 0 ? (r[col[h]] ?? '').trim() : '');
     const kind = KIND_FROM_ES[normalizeHeader(get('tipo'))];
     const prefix = get('prefijo').toUpperCase();
     const unit = kind === 'equipment' ? 'pz' : (get('unidad').toLowerCase() || (kind === 'reagent' ? 'ml' : 'pz'));
-    const qty = kind === 'equipment' ? 100 : parseQty(get('cantidad') || '0');
+    const rawQty = parseQty(get('cantidad') || (kind === 'equipment' ? '1' : '0'));
+    const qty = kind === 'equipment' ? 100 : rawQty;
     const min = parseQty(get('minimo') || '0');
     const expires = get('caducidad');
     const problems = [];
@@ -125,7 +153,8 @@ export function parseInventoryCSV(text) {
     if (!UNITS.includes(unit)) problems.push(`unidad "${unit}" no válida (usa ${UNITS.join(', ')})`);
     if (qty === null) problems.push('cantidad no válida');
     if (min === null) problems.push('mínimo no válido');
-    if (expires && !/^\d{4}-\d{2}-\d{2}$/.test(expires)) problems.push('caducidad debe ser AAAA-MM-DD');
+    if (expires && !isRealDate(expires)) problems.push('caducidad debe ser una fecha real AAAA-MM-DD');
+    if (kind === 'equipment' && rawQty !== 100) problems.push('el equipo es pieza única: usa un renglón por pieza, con cantidad 1');
     if (problems.length) return errors.push({ line, message: problems.join('; ') });
     rows.push({
       labName: get('laboratorio'), prefix, locationName: get('ubicacion'), name: get('nombre'), kind, unit, qty,

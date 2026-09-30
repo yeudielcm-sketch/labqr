@@ -74,10 +74,18 @@ export async function createItem(fields, initialQty) {
   });
 }
 
-// `code` and `kind` never change: the code is printed on labels.
+// `code` and `kind` never change: the code is printed on labels. `unit` stays fixed once
+// there are movements, because every past quantity is expressed in it.
 export async function updateItem(id, fields) {
   const { code, id: _id, kind, createdAt, ...rest } = fields;
-  await db.items.update(id, { ...rest, updatedAt: now() });
+  return db.transaction('rw', db.items, db.movements, async () => {
+    if ('unit' in rest && (await hasMovements(id))) delete rest.unit;
+    await db.items.update(id, { ...rest, updatedAt: now() });
+  });
+}
+
+export async function hasMovements(itemId) {
+  return (await db.movements.where('itemId').equals(itemId).count()) > 0;
 }
 
 export async function setArchived(id, archived) {
@@ -92,9 +100,16 @@ export async function deleteItemIfUnused(id) {
   });
 }
 
+// Returns false if another lab already uses the prefix (checked inside the transaction,
+// so a double submit cannot create two labs with the same prefix).
 export async function saveLab({ id, name, prefix }) {
-  if (id) return db.labs.update(id, { name, prefix });
-  return db.labs.add({ id: crypto.randomUUID(), name, prefix, createdAt: now() });
+  return db.transaction('rw', db.labs, async () => {
+    const taken = await db.labs.filter((l) => l.prefix === prefix && l.id !== id).count();
+    if (taken) return false;
+    if (id) await db.labs.update(id, { name, prefix });
+    else await db.labs.add({ id: crypto.randomUUID(), name, prefix, createdAt: now() });
+    return true;
+  });
 }
 
 export async function labHasItems(labId) {

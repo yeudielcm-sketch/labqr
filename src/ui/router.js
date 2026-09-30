@@ -12,7 +12,11 @@ export function matchRoute(routes, path) {
     const params = {};
     const ok = pattern.every((seg, i) => {
       if (seg.startsWith(':')) {
-        params[seg.slice(1)] = decodeURIComponent(parts[i]);
+        try {
+          params[seg.slice(1)] = decodeURIComponent(parts[i]);
+        } catch {
+          params[seg.slice(1)] = parts[i];
+        }
         return true;
       }
       return seg === parts[i];

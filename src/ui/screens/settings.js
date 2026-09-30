@@ -101,7 +101,6 @@ export const settings = {
 
     const root = view.querySelector('.settings');
     const rerender = () => this.render(view);
-    const prefixTaken = (prefix, exceptId) => labs.some((l) => l.prefix === prefix && l.id !== exceptId);
 
     view.querySelector('[data-demo]')?.addEventListener('click', async (e) => {
       e.target.disabled = true;
@@ -119,8 +118,13 @@ export const settings = {
         const name = form.labName.value.trim();
         const prefix = form.prefix.value.trim().toUpperCase();
         if (!name || !PREFIX_RE.test(prefix)) return toast(t.settings.errLab, { danger: true });
-        if (prefixTaken(prefix, id)) return toast(t.settings.errPrefixTaken, { danger: true });
-        await saveLab({ id, name, prefix });
+        const submit = form.querySelector('[type="submit"]');
+        if (submit?.disabled) return;
+        if (submit) submit.disabled = true;
+        if (!(await saveLab({ id, name, prefix }))) {
+          if (submit) submit.disabled = false;
+          return toast(t.settings.errPrefixTaken, { danger: true });
+        }
         toast(t.settings.labSaved);
         return rerender();
       }

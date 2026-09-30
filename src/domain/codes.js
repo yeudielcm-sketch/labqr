@@ -27,7 +27,12 @@ export function extractCode(text) {
   if (!text) return null;
   const raw = String(text).trim();
   const fromUrl = /#\/i\/([^/?#\s]+)/.exec(raw);
-  const candidate = decodeURIComponent(fromUrl ? fromUrl[1] : raw).toUpperCase();
+  let candidate;
+  try {
+    candidate = decodeURIComponent(fromUrl ? fromUrl[1] : raw).toUpperCase();
+  } catch {
+    return null;
+  }
   if (isValidCode(candidate)) return candidate;
   const loose = /^([A-Z]{2,5})[\s\-_]*(\d{1,})$/.exec(candidate);
   return loose ? formatCode(loose[1], Number(loose[2])) : null;

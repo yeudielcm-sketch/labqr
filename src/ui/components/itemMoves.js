@@ -51,9 +51,23 @@ export function bindItemMoves(root, item, onDone) {
     if (open) block.querySelector(`[data-form="${b.dataset.move}"] input`)?.focus();
   });
 
+  // One submit at a time: a double tap must not write two movements.
+  let busy = false;
   block.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = e.target;
+    if (busy) return;
+    busy = true;
+    const button = e.target.querySelector('[type="submit"]');
+    button.disabled = true;
+    try {
+      await submitMove(e.target);
+    } finally {
+      busy = false;
+      button.disabled = false;
+    }
+  });
+
+  async function submitMove(f) {
     const type = f.dataset.form;
     const note = f.note.value.trim();
 
@@ -76,5 +90,5 @@ export function bindItemMoves(root, item, onDone) {
       toast(t.moves.savedLoss);
     }
     onDone();
-  });
+  }
 }

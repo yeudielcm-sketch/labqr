@@ -5,7 +5,7 @@ import { confirmLoan, createBorrower, listBorrowers } from '../../db/movements.j
 import { filterItems } from '../../domain/catalog.js';
 import { extractCode } from '../../domain/codes.js';
 import { deliverySeconds, dueDate } from '../../domain/loans.js';
-import { formatQty, parseQty } from '../../domain/quantity.js';
+import { formatQty, formatQtyInput, parseQty } from '../../domain/quantity.js';
 import { EMPTY_STOCK } from '../../domain/stock.js';
 import { beep, cameraSupported, confirmRead, startScanner } from '../../qr/scan.js';
 import { go } from '../router.js';
@@ -38,7 +38,10 @@ export const loanNew = {
     const [cat, borrowers, loanDays] = await Promise.all([loadCatalog(), listBorrowers(), getSetting('defaultLoanDays', 0)]);
     const itemsById = Object.fromEntries(cat.items.map((i) => [i.id, i]));
     const onHand = (id) => (cat.stocks[id] ?? EMPTY_STOCK).onHand;
-    const due = dueDate(new Date(), loanDays);
+    // The draft may point to data that no longer exists ("Borrar todo" or a restored backup).
+    draft.lines = draft.lines.filter((l) => itemsById[l.itemId] && !itemsById[l.itemId].archived);
+    if (!borrowers.some((b) => b.id === draft.borrowerId)) draft.borrowerId = '';
+    const due = dueDate(new Date(), loanDays); // shown as a hint; recalculated when confirming
 
     view.innerHTML = `
       <section class="screen stack loan-new">
@@ -108,10 +111,10 @@ export const loanNew = {
             : item.kind === 'material'
               ? `<div class="stepper">
                    <button type="button" class="stepper__btn" data-dec="${l.itemId}" aria-label="Menos">−</button>
-                   <input class="field stepper__input code-input" inputmode="numeric" data-qty="${l.itemId}" value="${formatQty(l.qty)}" aria-label="${t.moves.qty}" />
+                   <input class="field stepper__input code-input" inputmode="numeric" data-qty="${l.itemId}" value="${formatQtyInput(l.qty)}" aria-label="${t.moves.qty}" />
                    <button type="button" class="stepper__btn" data-inc="${l.itemId}" aria-label="Más">+</button>
                  </div>`
-              : `<div class="qty-unit"><input class="field code-input" inputmode="decimal" data-qty="${l.itemId}" value="${formatQty(l.qty)}" aria-label="${t.moves.qty}" /><span>${item.unit}</span></div>`;
+              : `<div class="qty-unit"><input class="field code-input" inputmode="decimal" data-qty="${l.itemId}" value="${formatQtyInput(l.qty)}" aria-label="${t.moves.qty}" /><span>${item.unit}</span></div>`;
           return `
             <li class="line label label--${item.kind}${bad ? ' line--bad' : ''}">
               <div class="line__head">
@@ -183,7 +186,9 @@ export const loanNew = {
       e.preventDefault();
       const f = e.target;
       const name = f.bname.value.trim();
-      if (!name) return;
+      const button = f.querySelector('[type="submit"]');
+      if (!name || button.disabled) return;
+      button.disabled = true;
       const b = await createBorrower({ name, type: f.btype.value, group: f.bgroup.value.trim(), studentId: f.bsid.value.trim() });
       draft.borrowerId = b.id;
       this.leave();
@@ -191,8 +196,11 @@ export const loanNew = {
     });
 
     // Continuous scanning: each read adds one; the same code again adds one more.
+    // `starting` ignores taps while the camera opens, so there is never a second stream.
+    let starting = false;
     $('[data-scan-toggle]').addEventListener('click', async (e) => {
       const panel = $('[data-scanner]');
+      if (starting) return;
       if (stopCamera) {
         this.leave();
         panel.hidden = true;
@@ -202,6 +210,7 @@ export const loanNew = {
       panel.hidden = false;
       e.target.textContent = t.newLoan.stopScan;
       status.textContent = t.scan.starting;
+      starting = true;
       try {
         stopCamera = await startScanner($('[data-video]'), (text) => {
           const code = extractCode(text);
@@ -228,6 +237,8 @@ export const loanNew = {
         status.textContent = err?.name === 'NotAllowedError' ? t.scan.denied : t.scan.failed;
         status.classList.add('scanner__status--bad');
         e.target.textContent = t.newLoan.scan;
+      } finally {
+        starting = false;
       }
     });
 
@@ -244,7 +255,7 @@ export const loanNew = {
       e.target.disabled = true;
       const labId = itemsById[draft.lines[0].itemId].labId;
       const before = Object.fromEntries(draft.lines.map((l) => [l.itemId, cat.stocks[l.itemId] ?? EMPTY_STOCK]));
-      const res = await confirmLoan({ borrowerId: draft.borrowerId, labId, practice: draft.practice.trim(), createdAt: draft.createdAt, dueAt: due, lines: draft.lines });
+      const res = await confirmLoan({ borrowerId: draft.borrowerId, labId, practice: draft.practice.trim(), createdAt: draft.createdAt, dueAt: dueDate(new Date(), loanDays), lines: draft.lines });
       if (!res.ok) {
         e.target.disabled = false;
         return showError(res.problems.some((p) => p.reason === 'stock') ? t.newLoan.errStock : t.newLoan.errQty);

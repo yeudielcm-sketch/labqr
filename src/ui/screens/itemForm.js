@@ -1,8 +1,8 @@
 // New item (#/articulos/nuevo) and edit (#/i/<code>/editar).
 import { db } from '../../db/schema.js';
-import { createItem, getItemByCode, updateItem } from '../../db/catalog.js';
+import { createItem, getItemByCode, hasMovements, updateItem } from '../../db/catalog.js';
 import { KINDS } from '../../domain/catalog.js';
-import { formatQty, parseQty, UNITS } from '../../domain/quantity.js';
+import { formatQty, formatQtyInput, parseQty, UNITS } from '../../domain/quantity.js';
 import { go } from '../router.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
@@ -25,6 +25,7 @@ function formScreen(mode) {
 
       const existing = mode === 'edit' ? (await getItemByCode(params.code))?.item : null;
       if (mode === 'edit' && !existing) return go(`/i/${encodeURIComponent(params.code)}`);
+      const unitLocked = existing ? await hasMovements(existing.id) : false;
       const it = existing ?? { kind: 'material', unit: 'pz', labId: query.lab || labs[0].id, locationId: query.ubic || '', minStock: 0 };
 
       view.innerHTML = `
@@ -62,7 +63,7 @@ function formScreen(mode) {
           <div class="row-2" data-qty-row>
             <label class="field-group" data-unit>
               <span>${t.itemForm.unit}</span>
-              <select class="field" name="unit">
+              <select class="field" name="unit" ${unitLocked ? 'disabled title="' + t.itemForm.unitLocked + '"' : ''}>
                 ${UNITS.map((u) => `<option value="${u}" ${u === it.unit ? 'selected' : ''}>${t.units[u]}</option>`).join('')}
               </select>
             </label>
@@ -76,7 +77,7 @@ function formScreen(mode) {
 
           <label class="field-group" data-min>
             <span>${t.itemForm.minStock}</span>
-            <input class="field" name="minStock" inputmode="decimal" autocomplete="off" value="${it.minStock ? formatQty(it.minStock) : ''}" placeholder="0" />
+            <input class="field" name="minStock" inputmode="decimal" autocomplete="off" value="${it.minStock ? formatQtyInput(it.minStock) : ''}" placeholder="0" />
             <span class="meta">${t.itemForm.minStockHelp}</span>
           </label>
 

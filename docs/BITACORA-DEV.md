@@ -256,3 +256,49 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
 - **Prueba en vivo:** con el tablero abierto en una pestaña, se registró desde otra pestaña una merma de 5 portaobjetos. En menos de 2 segundos, y sin recargar, el tablero pasó de 90 a 85 pz y la merma apareció arriba de la lista, resaltada.
 - 41 pruebas automáticas siguen pasando.
 - **Pendiente:** verlo en una TV o proyector real a 3 m (criterio de "listo" de F5).
+
+---
+
+## Auditoría independiente · 30 de septiembre de 2026
+
+### Qué se hizo
+Antes de publicar F2 a F5, un auditor con contexto limpio revisó el código:
+- No leyó CLAUDE.md, la bitácora ni los commits, para no heredar las suposiciones del desarrollo.
+- Solo reportó fallas con reproducción.
+- Solo leyó el código; no corrigió nada.
+
+Encontró **12 fallas**: 1 alta, 5 medias y 6 bajas. Para las que se pueden probar sin navegador primero se escribió una **prueba que fallaba** (`src/audit.test.js`, 6 pruebas) y después el arreglo.
+
+| # | Severidad | Falla | Arreglo |
+|---|---|---|---|
+| 1 | Alta | El nombre de un artículo entraba sin escapar en la probeta SVG (ficha, confirmación del vale y tablero): un nombre malicioso podía ejecutar código | Se escapa el texto |
+| 2 | Media | Las cantidades de 1,000 o más se mostraban como "1,000" en los campos y no se podían volver a leer (fallaba devolver 1,000 ml) | Los campos usan números sin separador y la lectura acepta separador de miles |
+| 3 | Media | Un doble toque en Recepción, Merma, Devuelto o Consumido guardaba dos movimientos | Un solo envío a la vez; el botón se desactiva |
+| 4 | Media | Un doble toque en "Escanear artículos" abría dos cámaras: cada QR contaba doble y la cámara no se apagaba | Se ignoran toques mientras abre; un número de turno apaga la cámara que llegue tarde |
+| 5 | Media | El borrador del vale conservaba artículos o solicitantes borrados ("Borrar todo" o restaurar un respaldo) | El borrador se limpia al abrir la pantalla; confirmar valida que el solicitante exista |
+| 6 | Media/baja | Cambiar la unidad de un artículo con historial cambiaba el sentido de todos sus movimientos | La unidad se bloquea en cuanto hay movimientos |
+| 7 | Baja | Un texto que empieza con =, +, - o @ se volvía fórmula al abrir el CSV en Excel | Se antepone un apóstrofo; los números negativos se respetan |
+| 8 | Baja | Escribir "50%" en Escanear rompía la lectura del código sin mensaje | La lectura nunca truena: responde "código no válido" |
+| 9 | Baja | Importación CSV: números de renglón corridos con renglones vacíos, fechas imposibles (2027-13-45) aceptadas y equipo con cantidad 3 convertido en 1 sin avisar | Número de renglón real, fecha validada y aviso de "pieza única" |
+| 10 | Baja | La fecha de devolución se calculaba al abrir la pantalla y no al confirmar | Se calcula al confirmar |
+| 11 | Baja | "Todo regresó completo" usaba datos viejos y avisaba "cerrado" aunque algo fallara | Relee el vale al momento y avisa el resultado real |
+| 12 | Baja | Un doble Enter podía crear dos laboratorios con el mismo prefijo o dos solicitantes iguales | El prefijo se valida dentro de la transacción; botones desactivados al enviar |
+
+Áreas que el auditor revisó y encontró sin fallas:
+- Aritmética de existencias y pendientes.
+- Límites de préstamo y devolución dentro de las transacciones.
+- Código inmutable y borrado solo sin movimientos.
+- Respaldo de ida y vuelta.
+- Escape en las demás pantallas y eventos que no se duplican.
+
+### Cómo se probó
+- 47 pruebas automáticas (6 nuevas de la auditoría): todas pasan.
+- **En el navegador, con las reproducciones del auditor:**
+  - Se prestaron 1,000 ml de alcohol: el campo de devolución mostró "1000".
+  - Un doble clic en "Devuelto" guardó **un solo** movimiento de devolución y el vale se cerró.
+  - Confirmar con un solicitante inexistente fue rechazado.
+  - Se creó un artículo con un nombre que intenta inyectar código: en el tablero y en la ficha no se generó ninguna imagen ni se ejecutó nada. Después se archivó.
+- Versión 0.6.1.
+
+### Lección
+Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **auditar antes de decir "listo"**, no después.

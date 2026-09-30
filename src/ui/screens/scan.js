@@ -7,11 +7,13 @@ import { t } from '../strings.js';
 import { esc } from '../components/html.js';
 
 let stopCamera = null;
+let startToken = 0;
 
 export const scan = {
   title: t.scan.title,
   tab: '/escanear',
   leave() {
+    startToken++;
     stopCamera?.();
     stopCamera = null;
   },
@@ -58,15 +60,17 @@ export const scan = {
 
     try {
       this.leave();
-      stopCamera = await startScanner(view.querySelector('[data-video]'), async (text) => {
+      const token = ++startToken;
+      const stop = await startScanner(view.querySelector('[data-video]'), async (text) => {
         frame.classList.remove('scanner__frame--hit');
         void frame.offsetWidth; // restart the pulse animation
         frame.classList.add('scanner__frame--hit');
         confirmRead();
         await openCode(text);
       });
-      // The user may have left while the camera was starting.
-      if (!view.contains(frame)) return this.leave();
+      // The user may have left (or come back, starting another camera) while this one opened.
+      if (token !== startToken || !view.contains(frame)) return stop();
+      stopCamera = stop;
       say(t.scan.aim);
     } catch (err) {
       frame.hidden = true;

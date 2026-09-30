@@ -51,7 +51,8 @@ export async function createBorrower({ name, type, group, studentId }) {
 // Writes the loan and its LEND movements in one transaction. `createdAt` is when the
 // capture started (SPEC §8); confirmedAt is now.
 export async function confirmLoan({ borrowerId, labId, practice, createdAt, dueAt, lines }) {
-  return db.transaction('rw', db.loans, db.movements, async () => {
+  return db.transaction('rw', db.loans, db.movements, db.borrowers, async () => {
+    if (!borrowerId || !(await db.borrowers.get(borrowerId))) return { ok: false, problems: [{ itemId: null, reason: 'borrower' }] };
     const onHand = {};
     for (const l of lines) onHand[l.itemId] = await onHandOf(l.itemId);
     const problems = validateLines(lines, onHand);

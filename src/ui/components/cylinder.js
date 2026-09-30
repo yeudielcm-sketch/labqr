@@ -1,3 +1,5 @@
+import { esc } from './html.js';
+
 // The graduated cylinder (DESIGN.md "la probeta"): the one bold visual of the app.
 // Pure function → SVG string. Quantities are integers in hundredths (SPEC §4).
 //   onHand: in the lab, lentOut: borrowed (drawn as dashed empty space),
@@ -33,8 +35,8 @@ export function cylinderSvg({ onHand = 0, lentOut = 0, minStock = 0, unit = '', 
     ? `<text x="${TUBE_X + 4}" y="${TOP + 14}" class="cyl-unit">${unit}</text>`
     : '';
 
-  return `<svg class="cylinder${low ? ' cylinder--low' : ''}" viewBox="0 0 ${W} ${H}" width="${W * size}" height="${H * size}" role="img" aria-label="${title}">
-  ${title ? `<title>${title}</title>` : ''}
+  return `<svg class="cylinder${low ? ' cylinder--low' : ''}" viewBox="0 0 ${W} ${H}" width="${W * size}" height="${H * size}" role="img" aria-label="${esc(title)}">
+  ${title ? `<title>${esc(title)}</title>` : ''}
   <rect class="cyl-liquid" x="${TUBE_X}" y="${TOP}" width="${TUBE_W}" height="${INNER}" style="transform: scaleY(${start.toFixed(4)})"${fromOnHand === null ? '' : ` data-to="${level.toFixed(4)}"`} />
   ${lentH > 0 ? `<rect class="cyl-lent" x="${TUBE_X + 2}" y="${levelY - lentH}" width="${TUBE_W - 4}" height="${lentH}" />` : ''}
   <g class="cyl-ticks">${ticks.join('')}</g>

@@ -291,6 +291,7 @@ export const t = {
     unit: 'Unidad',
     initialQty: 'Cantidad que hay hoy',
     initialQtyHelp: 'Se registra como recepción. Después, la existencia solo cambia con movimientos.',
+    unitLocked: 'La unidad ya no cambia: el historial está registrado en ella.',
     minStock: 'Mínimo',
     minStockHelp: 'Si la existencia baja de aquí, se marca en rojo. Deja 0 si no aplica.',
     expiresAt: 'Fecha de caducidad',

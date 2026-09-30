@@ -1,7 +1,7 @@
 // Vale detail (#/vales/<id>): return by line — all or partial, broken/lost, or consumed (reagents).
 import { getLoan, settleLine } from '../../db/movements.js';
 import { deliverySeconds } from '../../domain/loans.js';
-import { formatQty, parseQty } from '../../domain/quantity.js';
+import { formatQty, formatQtyInput, parseQty } from '../../domain/quantity.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
 import { confirmDialog, toast } from '../components/feedback.js';
@@ -70,25 +70,46 @@ export const loanDetail = {
       rerender();
     };
 
+    // One action at a time on this screen: a double tap must not write two movements.
+    let busy = false;
+    const lockButtons = (on) => {
+      for (const btn of view.querySelectorAll('[data-act], [data-return-all]')) btn.disabled = on;
+    };
+
     view.querySelector('.lines').addEventListener('click', async (e) => {
       const b = e.target.closest('[data-act]');
-      if (!b) return;
+      if (!b || busy) return;
       const line = lines.find((l) => l.itemId === b.dataset.item);
       const input = view.querySelector(`[data-qty="${line.itemId}"]`);
       const qty = input ? parseQty(input.value) : line.pending;
       if (!(qty > 0) || qty > line.pending) return toast(t.loanDetail.badQty, { danger: true });
+      busy = true;
+      lockButtons(true);
       if (b.dataset.act === 'LOSS') {
         const ok = await confirmDialog(t.loanDetail.lossQ(`${formatQty(qty)} ${line.item.unit} de ${line.item.name}`, who), { confirmLabel: t.loanDetail.lossBtn, danger: true });
-        if (!ok) return;
+        if (!ok) {
+          busy = false;
+          return lockButtons(false);
+        }
       }
-      settle(line.itemId, b.dataset.act, qty);
+      await settle(line.itemId, b.dataset.act, qty);
+      busy = false;
+      lockButtons(false);
     });
 
-    view.querySelector('[data-return-all]')?.addEventListener('click', async (e) => {
-      if (!(await confirmDialog(t.loanDetail.returnAllQ, { confirmLabel: t.loanDetail.returnBtn }))) return;
-      e.target.disabled = true;
-      for (const l of pendingLines) await settleLine(loan.id, l.itemId, 'RETURN', l.pending);
-      toast(t.loanDetail.closedToast);
+    // Uses the pending amounts as they are now in the database (another window may have
+    // changed them) and reports honestly if something could not be saved.
+    view.querySelector('[data-return-all]')?.addEventListener('click', async () => {
+      if (busy || !(await confirmDialog(t.loanDetail.returnAllQ, { confirmLabel: t.loanDetail.returnBtn }))) return;
+      busy = true;
+      lockButtons(true);
+      const fresh = await getLoan(loan.id);
+      let allOk = true;
+      for (const l of fresh.lines.filter((x) => x.pending > 0)) {
+        allOk = (await settleLine(loan.id, l.itemId, 'RETURN', l.pending)) && allOk;
+      }
+      const after = await getLoan(loan.id);
+      toast(after.status === 'closed' && allOk ? t.loanDetail.closedToast : t.loanDetail.badQty, { danger: after.status !== 'closed' });
       rerender();
     });
   },
@@ -114,7 +135,7 @@ function lineHtml(l) {
       ${l.pending > 0 ? `
         <div class="line__pending">
           <span><strong class="code">${formatQty(l.pending)}</strong> ${u} ${t.loanDetail.pending.toLowerCase()}</span>
-          ${single ? '' : `<input class="field field--num code-input" inputmode="decimal" data-qty="${item.id}" value="${formatQty(l.pending)}" aria-label="${t.moves.qty}" />`}
+          ${single ? '' : `<input class="field field--num code-input" inputmode="decimal" data-qty="${item.id}" value="${formatQtyInput(l.pending)}" aria-label="${t.moves.qty}" />`}
         </div>
         <div class="line__actions">
           <button type="button" class="btn btn--sm" data-act="RETURN" data-item="${item.id}">${t.loanDetail.returnBtn}</button>
