@@ -14,7 +14,10 @@ import { itemByCode } from './ui/screens/item.js';
 import { newItem, editItem } from './ui/screens/itemForm.js';
 import { scan } from './ui/screens/scan.js';
 import { labels } from './ui/screens/labels.js';
-import { loans, backup, notFound } from './ui/screens/simple.js';
+import { loans } from './ui/screens/loans.js';
+import { loanNew } from './ui/screens/loanNew.js';
+import { loanDetail } from './ui/screens/loanDetail.js';
+import { backup, notFound } from './ui/screens/simple.js';
 
 const routes = [
   { path: '/', screen: home },
@@ -22,6 +25,8 @@ const routes = [
   { path: '/articulos', screen: items },
   { path: '/articulos/nuevo', screen: newItem },
   { path: '/vales', screen: loans },
+  { path: '/vales/nuevo', screen: loanNew },
+  { path: '/vales/:id', screen: loanDetail },
   { path: '/menu', screen: menu },
   { path: '/ajustes', screen: settings },
   { path: '/etiquetas', screen: labels },

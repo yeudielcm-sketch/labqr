@@ -1,4 +1,5 @@
 import { loadCatalog } from '../../db/catalog.js';
+import { loadLoans } from '../../db/movements.js';
 import { EMPTY_STOCK, isExpired, isExpiringSoon, isLowStock } from '../../domain/stock.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
@@ -9,7 +10,7 @@ export const home = {
   title: t.home.title,
   tab: '/',
   async render(view, _params, query) {
-    const cat = await loadCatalog();
+    const [cat, loanRows] = await Promise.all([loadCatalog(), loadLoans()]);
     if (cat.items.length === 0) {
       view.innerHTML = `
         <section class="screen">
@@ -32,6 +33,9 @@ export const home = {
     const expired = items.filter((i) => isExpired(i));
     const lent = items.filter((i) => stockOf(i).lentOut > 0);
     const labQ = labId ? `&lab=${labId}` : '';
+    const loansHere = loanRows.filter((r) => !labId || r.loan.labId === labId);
+    const openLoans = loansHere.filter((r) => r.status === 'open' || r.status === 'overdue');
+    const overdue = loansHere.filter((r) => r.status === 'overdue');
 
     // Overall level: share of pieces in the lab vs. total (just the headline cylinder).
     const onHand = items.reduce((s, i) => s + (i.unit === 'pz' ? stockOf(i).onHand : 0), 0);
@@ -54,12 +58,15 @@ export const home = {
         </div>
 
         <nav class="status-cards">
+          ${card('#/vales', t.home.openLoans(openLoans.length), openLoans.length, 'open')}
+          ${overdue.length ? card('#/vales?estado=vencidos', t.home.overdueLoans(overdue.length), overdue.length, 'hazard') : ''}
           ${card(`#/articulos?bajo=1${labQ}`, t.home.low(low.length), low.length, 'hazard')}
           ${card(`#/articulos?caduca=1${labQ}`, t.home.expiring(expiring.length), expiring.length, 'amber')}
           ${expired.length ? card(`#/articulos?caduca=1${labQ}`, t.home.expired(expired.length), expired.length, 'hazard') : ''}
         </nav>
 
-        <p class="meta">${t.home.loansSoon}</p>
+        <a class="btn btn--primary btn--block btn--big" href="#/vales/nuevo">+ ${t.home.newLoan}</a>
+
         ${versionFooter()}
       </section>`;
 
@@ -70,6 +77,6 @@ export const home = {
 };
 
 function card(href, text, n, level) {
-  const marker = level === 'hazard' ? '<span class="hazard" aria-hidden="true"></span>' : '<span class="amber-dot" aria-hidden="true"></span>';
+  const marker = { hazard: '<span class="hazard" aria-hidden="true"></span>', amber: '<span class="amber-dot" aria-hidden="true"></span>', open: '<span class="open-dot" aria-hidden="true"></span>' }[level];
   return `<a class="status-card${n ? ` status-card--${level}` : ' status-card--calm'}" href="${href}">${n ? marker : ''}<span>${text}</span><span aria-hidden="true">›</span></a>`;
 }

@@ -136,3 +136,54 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
   - Imprimir una hoja real.
   - Escanear la etiqueta con la cámara normal del Android (debe abrir la ficha).
   - Escanearla con la cámara de la app.
+
+---
+
+## F3 — Movimientos y vales · 30 de septiembre de 2026
+
+### Qué se hizo
+- **Nuevo vale** (Inicio → "+ Nuevo vale", o la pestaña Vales). Todo ocurre en una sola pantalla, sin ventanas encadenadas:
+  1. Solicitante: se elige de la lista o se agrega ahí mismo (nombre, tipo, grupo y matrícula opcional).
+  2. Práctica (opcional).
+  3. Artículos, de dos formas:
+     - "Escanear artículos": escaneo continuo; cada lectura suma 1 con vibración, sonido corto y pulso en el marco.
+     - Búsqueda por nombre o código.
+  4. Cantidades: el material se ajusta con − / +, los reactivos con decimales y en su unidad, y el equipo siempre es 1.
+  5. "Confirmar préstamo" es un solo toque. Si se pide más de lo que hay en el laboratorio, lo marca en rojo y no deja confirmar.
+- **Momento orquestado de DESIGN.md:** al confirmar, las probetas de los artículos prestados bajan de nivel (400 ms; sin animación si el celular pide reducir movimiento). Muestra también el tiempo de captura en segundos.
+- **Vales:** lista con filtros (abiertos, vencidos, cerrados, todos); los vencidos van primero y en rojo, con "Venció hace N días".
+- **Detalle del vale:**
+  - Por renglón: "Devuelto" (todo o parcial), "Roto o perdido" (merma a cargo del solicitante, con confirmación) y "Consumido" (solo reactivos).
+  - "Todo regresó completo" salda lo pendiente de un toque, con confirmación.
+  - El vale se cierra solo cuando no queda nada pendiente.
+- **Acciones en la ficha del artículo:**
+  - Recepción: cantidad y nota.
+  - Merma: cantidad, motivo y nota.
+  - Ajuste por conteo: se escribe lo que se contó y la app registra la diferencia. La nota es obligatoria.
+  - El equipo solo permite merma (dar de baja).
+- **Inicio:** tarjetas de vales abiertos y vencidos, y el botón grande "+ Nuevo vale".
+
+### Decisiones y por qué
+- **La fecha de devolución** es el fin del día más los días de préstamo de Ajustes (0 = mismo día, 11:59 p. m.).
+- **`createdAt` del vale es el momento en que se abrió la captura y `confirmedAt` el de la entrega** (SPEC §8). La diferencia es la métrica de "tiempo de entrega" para el informe.
+- **El borrador del vale sobrevive** si el laboratorista sale a revisar una ficha y regresa; se borra al confirmar o al tocar "Descartar".
+- **La validación de existencia se repite dentro de la transacción al confirmar**, no solo en pantalla, para que dos toques rápidos no presten de más.
+- **El ajuste guarda la diferencia con signo, no la cantidad contada**, para respetar el ledger: la existencia sigue saliendo de sumar movimientos.
+- **Sonido sintetizado con WebAudio** en vez de archivos de audio: pesa 0 KB y funciona sin internet.
+- Versión 0.4.0.
+
+### Problemas encontrados
+- Los renglones del vale cambiaban de orden entre recargas (los movimientos se leen por su ID al azar). Se ordenaron por código.
+- En la confirmación, el equipo aparecía como probeta vacía; DESIGN.md pide para el equipo el indicador de dos estados. Se corrigió.
+- "Todo regresó completo" se podía tocar dos veces mientras guardaba. Ahora se desactiva al primer toque.
+
+### Cómo se probó
+- 33 pruebas automáticas; 6 nuevas de la lógica del vale: pendientes por renglón, abierto, vencido y cerrado, fecha de devolución, validación de existencia, ajuste con signo y tiempo de entrega.
+- **Recorrido completo en el navegador con vista de celular, con la demo:**
+  - Nuevo vale para "Equipo 5 · 2° C" con 5 artículos: 3 vasos de 250 ml, 1 matraz, 1 g de NaCl, la balanza y 1 mechero.
+  - Confirmado en **29 s** (criterio de F3: menos de 1 minuto con 5 artículos).
+  - En el detalle se devolvieron 2 vasos, 1 vaso se registró como roto (el aviso dijo "¿Registrar 1 pz de Vaso de precipitado 250 ml como merma a cargo de Equipo 5 · 2° C?") y el NaCl se marcó como consumido.
+  - "Todo regresó completo" saldó el resto y el vale se cerró solo.
+  - Existencias finales: vasos 22 (23 − 1 roto), balanza 1 en lab, NaCl 379 g.
+- **Ficha del alcohol etílico:** recepción de 1,000 ml (350 → 1,350) y ajuste por conteo a 1,320 ml, que registró −30 ml con la nota "Conteo semestral". Sin nota, el formulario no se envía.
+- **Pendiente:** el escaneo continuo con cámara real, en el Android del autor.

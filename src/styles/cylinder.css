@@ -4,7 +4,9 @@
 .cyl-ticks line { stroke: var(--graphite); stroke-width: 1.5; }
 .cyl-liquid {
   fill: var(--glass);
-  transition: y var(--t-level) ease-out, height var(--t-level) ease-out;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform var(--t-level) ease-out;
 }
 .cylinder--low .cyl-liquid { fill: var(--hazard); }
 .cyl-lent { fill: none; stroke: var(--glass-edge); stroke-width: 1.5; stroke-dasharray: 4 3; }

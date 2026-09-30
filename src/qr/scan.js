@@ -77,3 +77,21 @@ export async function startScanner(video, onCode, { repeatMs = 1500 } = {}) {
 export function confirmRead() {
   navigator.vibrate?.(60);
 }
+
+// Short beep for each read inside a loan (continuous scanning). Synthesized: no audio files.
+let audioCtx;
+export function beep() {
+  try {
+    audioCtx ??= new AudioContext();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = 1320;
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.09);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+  } catch {
+    // No audio available: vibration and the on-screen message still confirm.
+  }
+}

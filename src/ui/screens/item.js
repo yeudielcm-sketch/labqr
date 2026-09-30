@@ -8,6 +8,7 @@ import { esc } from '../components/html.js';
 import { confirmDialog, toast } from '../components/feedback.js';
 import { formatDate, formatDateTime, relativeDays } from '../components/format.js';
 import { flagsHtml, statusFlags, stockPanel } from '../components/stockView.js';
+import { bindItemMoves, itemMovesHtml } from '../components/itemMoves.js';
 
 export const itemByCode = {
   title: t.itemCard.title,
@@ -71,7 +72,7 @@ export const itemByCode = {
           </form>
         </section>
 
-        <p class="meta">${t.itemCard.actionsSoon}</p>
+        ${item.archived ? '' : itemMovesHtml(item, stock)}
 
         <section class="block">
           <h3>${t.itemCard.history}</h3>
@@ -86,6 +87,7 @@ export const itemByCode = {
       </section>`;
 
     const rerender = () => this.render(view, { code: item.code });
+    bindItemMoves(view, item, rerender);
 
     view.querySelector('[data-extra-form]').addEventListener('submit', async (e) => {
       e.preventDefault();
