@@ -3,6 +3,7 @@ import './styles/base.css';
 import './styles/cylinder.css';
 import './styles/screens.css';
 import './styles/labels.css';
+import './styles/board.css';
 import { registerSW } from 'virtual:pwa-register';
 import { startRouter } from './ui/router.js';
 import { renderShell } from './ui/components/shell.js';
@@ -18,6 +19,7 @@ import { loans } from './ui/screens/loans.js';
 import { loanNew } from './ui/screens/loanNew.js';
 import { loanDetail } from './ui/screens/loanDetail.js';
 import { backup } from './ui/screens/backup.js';
+import { board } from './ui/screens/board.js';
 import { notFound } from './ui/screens/simple.js';
 import { requestPersistence } from './db/backupStore.js';
 
@@ -33,6 +35,7 @@ const routes = [
   { path: '/ajustes', screen: settings },
   { path: '/etiquetas', screen: labels },
   { path: '/respaldo', screen: backup },
+  { path: '/tablero', screen: board },
   { path: '/i/:code', screen: itemByCode },
   { path: '/i/:code/editar', screen: editItem },
 ];
@@ -45,7 +48,7 @@ startRouter(routes, async (match) => {
   const screen = match?.route.screen ?? notFound;
   current?.leave?.();
   current = screen;
-  shell.setChrome({ title: screen.title, tab: screen.tab, back: screen.back });
+  shell.setChrome({ title: screen.title, tab: screen.tab, back: screen.back, bare: screen.bare });
   await screen.render(shell.view, match?.params ?? {}, match?.query ?? {});
   const path = location.hash.split('?')[0];
   if (path !== lastPath) window.scrollTo(0, 0);

@@ -23,7 +23,8 @@ export function renderShell(root) {
     </div>`;
   return {
     view: root.querySelector('[data-view]'),
-    setChrome({ title, tab, back }) {
+    setChrome({ title, tab, back, bare }) {
+      root.querySelector('.app').classList.toggle('app--bare', Boolean(bare));
       root.querySelector('[data-title]').textContent = title;
       const backEl = root.querySelector('[data-back]');
       backEl.hidden = !back;

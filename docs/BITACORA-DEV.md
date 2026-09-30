@@ -232,3 +232,27 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
   3. "Restaurar desde archivo" mostró "Trae 33 artículos, 3 vales y 53 movimientos" y, tras confirmar, **las 7 tablas (106 renglones) quedaron idénticas a antes**.
 - **Importación:** la plantilla más un multímetro de Física y un renglón con tipo "herramienta". La vista previa dijo "4 artículos listos · 1 renglón con error. Renglón 6: tipo debe ser equipo, material o reactivo". Se importaron 4: se creó el laboratorio Física (FIS-0001) y los códigos siguieron la numeración existente (QUI-0023, BIO-0013).
 - **Pendiente:** probar descargar y compartir en el Android real (WhatsApp o Drive) y restaurar allí.
+
+---
+
+## F5 — Tablero de exposición · 30 de septiembre de 2026
+
+### Qué se hizo
+- **`#/tablero`** (☰ → Tablero de exposición), pantalla completa sin barras, pensada para una laptop o una TV en el stand:
+  - Encabezado con "LabQR", el laboratorio, botones para cambiar de laboratorio y reloj.
+  - **Una fila de probetas por ubicación.** Debajo de cada probeta van el código, el nombre y la existencia; en rojo si está bajo mínimo. El equipo aparece como tarjeta: "En su lugar" o el nombre de quien lo tiene, con contorno punteado.
+  - A un lado, los **vales abiertos** (los vencidos primero, en rojo, con "Venció hace N días") y los **últimos 8 movimientos**. Los nuevos entran resaltados y las probetas bajan con la misma animación del vale.
+  - El tamaño de todo se calcula con el ancho de la pantalla (entre 14 y 28 px de base), para que se lea a 3 metros en una TV de 1920 × 1080.
+
+### Decisiones y por qué
+- **"En vivo" con `liveQuery` de Dexie** (ya incluido, sin paquetes nuevos). El tablero se actualiza solo cuando cambia la base de datos, incluso si el cambio se hizo en otra ventana del mismo navegador.
+- **Contradicción encontrada entre DESIGN.md y SPEC.md:** DESIGN dice que el tablero muestra en vivo lo que se hace en el celular, pero SPEC §2 fija un solo dispositivo sin sincronización en v0. Por eso el tablero solo ve lo que pasa **en el mismo dispositivo**. Para la exposición se proponen dos opciones:
+  1. La laptop muestra el tablero en la TV y la demo se hace en otra ventana de esa laptop.
+  2. Adelantar la sincronización de v1 (Neon), que es una decisión del autor.
+- Versión 0.6.0.
+
+### Cómo se probó
+- A 1920 × 1080 con la demo: se ven las 3 ubicaciones de Biología, los 6 equipos (el microscopio 2 "Equipo 3" con contorno punteado), 1 vale abierto y los últimos movimientos.
+- **Prueba en vivo:** con el tablero abierto en una pestaña, se registró desde otra pestaña una merma de 5 portaobjetos. En menos de 2 segundos, y sin recargar, el tablero pasó de 90 a 85 pz y la merma apareció arriba de la lista, resaltada.
+- 41 pruebas automáticas siguen pasando.
+- **Pendiente:** verlo en una TV o proyector real a 3 m (criterio de "listo" de F5).

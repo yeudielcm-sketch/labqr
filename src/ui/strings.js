@@ -15,6 +15,7 @@ export const t = {
     settings: 'Ajustes',
     labels: 'Etiquetas',
     backup: 'Respaldo',
+    board: 'Tablero de exposición',
   },
 
   common: {
@@ -348,6 +349,18 @@ export const t = {
     storageError: 'No se pudo abrir la base de datos. Cierra otras pestañas de LabQR y vuelve a abrirla.',
     offlineReady: 'Lista para usarse sin internet',
     offlinePending: 'Preparando uso sin internet…',
+  },
+
+  board: {
+    title: 'Tablero',
+    menu: 'Tablero de exposición',
+    loading: 'Cargando tablero…',
+    empty: 'Aún no hay datos. Carga la demo para ver el tablero.',
+    lab: (name) => `Laboratorio ${name}`,
+    openLoans: (n) => `${n} ${n === 1 ? 'vale abierto' : 'vales abiertos'}`,
+    noLoans: 'Todo el material está en su lugar.',
+    recent: 'Últimos movimientos',
+    error: 'No se pudo leer la base de datos.',
   },
 
   backup: {

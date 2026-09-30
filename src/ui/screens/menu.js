@@ -10,6 +10,7 @@ export const menu = {
         <a class="label" href="#/ajustes">${t.menu.settings}</a>
         <a class="label" href="#/etiquetas">${t.menu.labels}</a>
         <a class="label" href="#/respaldo">${t.menu.backup}</a>
+        <a class="label" href="#/tablero">${t.menu.board}</a>
       </section>`;
   },
 };
