@@ -312,3 +312,4 @@ Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **au
 - **Qué se hizo:** en Ajustes hay un botón "Buscar actualización" y, con la app abierta, se revisa sola cada hora. La versión se ve al pie de Inicio y de Ajustes. Versión 0.6.2.
 - 30 sep 2026: el autor abrió la app en su Android y confirmó que muestra "Versión 0.6.2". La actualización llegó al celular.
 - 30 sep 2026: el autor imprimió una hoja de etiquetas y, al escanear un QR impreso con la cámara normal del Android, se abrió la ficha del artículo. Criterio de F2 cumplido en la parte de etiqueta impresa y cámara normal; falta confirmar la lectura con la cámara de la app.
+- 30 sep 2026: con la pestaña Escanear, la cámara de la app leyó la etiqueta impresa y abrió la ficha en el Android del autor. **F2 cerrada:** se cumple su criterio completo (etiqueta impresa → la cámara normal abre la ficha; la cámara de la app también).
