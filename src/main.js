@@ -2,6 +2,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/cylinder.css';
 import './styles/screens.css';
+import './styles/labels.css';
 import { registerSW } from 'virtual:pwa-register';
 import { startRouter } from './ui/router.js';
 import { renderShell } from './ui/components/shell.js';
@@ -11,7 +12,9 @@ import { settings } from './ui/screens/settings.js';
 import { items } from './ui/screens/items.js';
 import { itemByCode } from './ui/screens/item.js';
 import { newItem, editItem } from './ui/screens/itemForm.js';
-import { scan, loans, labels, backup, notFound } from './ui/screens/simple.js';
+import { scan } from './ui/screens/scan.js';
+import { labels } from './ui/screens/labels.js';
+import { loans, backup, notFound } from './ui/screens/simple.js';
 
 const routes = [
   { path: '/', screen: home },
@@ -29,9 +32,12 @@ const routes = [
 
 const shell = renderShell(document.getElementById('app'));
 let lastPath = '';
+let current = null;
 
 startRouter(routes, async (match) => {
   const screen = match?.route.screen ?? notFound;
+  current?.leave?.();
+  current = screen;
   shell.setChrome({ title: screen.title, tab: screen.tab, back: screen.back });
   await screen.render(shell.view, match?.params ?? {}, match?.query ?? {});
   const path = location.hash.split('?')[0];

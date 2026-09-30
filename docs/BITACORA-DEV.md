@@ -96,4 +96,43 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
   - Se dio de alta "Ácido acético" y recibió el código QUI-0022. Se le agregó la especificación "Glacial 99.7 %" y la búsqueda "glacial" lo encontró.
   - El filtro "Equipo" devolvió los 8 equipos.
   - "Borrar todo" con BORRAR y confirmación dejó las 7 tablas vacías.
-- Pendiente: probarlo en el Android del autor y mostrarlo a un laboratorista.
+- 30 sep 2026: el autor cargó la demo en su Android y confirmó que se ve bien. F1 se da por cerrada. Pendiente: mostrarlo a un laboratorista.
+
+---
+
+## F2 — Códigos QR, etiquetas y escáner · 30 de septiembre de 2026
+
+### Qué se hizo
+- **Generación de QR** en el celular, en SVG, con `uqr`. Cada QR guarda la dirección completa de la ficha (`https://yeudielcm-sketch.github.io/labqr/#/i/QUI-0007`), así que la cámara normal de cualquier celular abre la ficha sin instalar nada.
+- **Pantalla Etiquetas** (☰ → Etiquetas):
+  - Filtros por laboratorio y ubicación, y botón "Todos los de esta vista" para imprimir una ubicación completa.
+  - Dos tamaños en hoja carta: grande (10 por hoja, 4 × 2 in) o chica (24 por hoja, 2.5 × 1.25 in).
+  - Cada etiqueta lleva QR, código grande, nombre, laboratorio y ubicación, con la franja de color del tipo, igual que una etiqueta de frasco.
+  - La vista previa se ve dentro de la app; al imprimir solo salen las hojas.
+- **Botón "Imprimir etiqueta"** en la ficha: abre la hoja con ese artículo ya marcado.
+- **Pantalla Escanear:**
+  - Cámara trasera con marco de apuntado. Al leer un QR válido: pulso en el marco, vibración y abre la ficha.
+  - Si el QR no es de LabQR o el código no existe, lo dice y explica qué hacer.
+  - Campo para escribir el código a mano (acepta "bio 2" → BIO-0002).
+  - Si no hay permiso o no hay cámara, lo explica y ofrece "Reintentar".
+  - La cámara se apaga al salir de la pantalla.
+- **Lectura de QR:** usa el lector nativo `BarcodeDetector` de Chrome Android. Si no existe (iPhone, computadoras con Windows), carga `barcode-detector`, basado en zxing-wasm, solo en ese momento.
+
+### Decisiones y por qué
+- **El `.wasm` del lector de respaldo va dentro de la app** (1.09 MB, se guarda para uso sin internet) en vez de descargarse de un CDN, que es lo que hace el paquete por omisión. Si no, en un laboratorio sin internet el escáner no funcionaría en celulares sin lector nativo.
+- **QR en negro sobre blanco y corrección de errores nivel M:** es lo más confiable al imprimir y con cámaras viejas. El color queda en la franja de la etiqueta, no en el QR.
+- **Hoja carta de papel normal** (se recorta), porque no sabemos qué hojas de etiquetas hay en el plantel. El tamaño grande coincide casi con las hojas de etiquetas de 4 × 2 pulgadas.
+- Versión 0.3.0. Se trabajó en la rama `dev` para no cambiar la app publicada mientras el autor la enseñaba en las demostraciones.
+
+### Problemas encontrados
+- El navegador de pruebas bloquea la cámara, así que el escáner en vivo no se pudo probar aquí. Se probó el lector con una imagen del QR (abajo).
+
+### Cómo se probó
+- 27 pruebas automáticas: 2 nuevas para el contenido del QR, que genera la dirección correcta y de vuelta se extrae el código.
+- **Lector de respaldo:** en un navegador sin lector nativo se generó el QR de QUI-0007, se dibujó en un canvas y el lector devolvió la dirección correcta. El `.wasm` se cargó desde la propia app, no de internet.
+- **Etiquetas:** con la demo, abrir `#/etiquetas?codigos=QUI-0007,BIO-0002,QUI-0016` marcó los 3 y mostró 1 hoja con las 3 etiquetas.
+- **Escaner:** sin permiso de cámara mostró el mensaje y la captura manual. "bio 2" abrió la ficha BIO-0002.
+- **Pendiente (criterio de "listo" de F2):**
+  - Imprimir una hoja real.
+  - Escanear la etiqueta con la cámara normal del Android (debe abrir la ficha).
+  - Escanearla con la cámara de la app.

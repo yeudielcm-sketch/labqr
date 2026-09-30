@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "labqr-preview", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "preview", "--port", "4173", "--strictPort", "--base", "/labqr/"], "port": 4173, "url": "http://localhost:4173" }
+    { "name": "labqr-preview", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "preview", "--port", "4173", "--strictPort", "--base", "/labqr/"], "port": 4173, "url": "http://localhost:4173" },
+    { "name": "labqr-dev", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "--port", "5173", "--strictPort"], "port": 5173, "url": "http://localhost:5173" }
   ]
 }

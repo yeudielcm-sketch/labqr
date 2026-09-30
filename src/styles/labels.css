@@ -1,0 +1,122 @@
+/* ---------- Scanner ---------- */
+.scanner {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  max-width: 720px;
+  margin: 0 auto;
+}
+.scanner__frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  max-height: calc(100dvh - 300px);
+  width: 100%;
+  background: var(--graphite);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 3px solid var(--graphite);
+}
+.scanner__video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scanner__target {
+  position: absolute;
+  inset: 18% 14%;
+  border: 3px solid var(--glass);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 2000px rgb(34 39 46 / 0.35);
+}
+.scanner__frame--hit { animation: scan-pulse 350ms ease-out; }
+@keyframes scan-pulse {
+  0% { border-color: var(--glass); box-shadow: 0 0 0 0 var(--glass); }
+  100% { border-color: var(--graphite); box-shadow: 0 0 0 14px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scanner__frame--hit { animation: none; border-color: var(--glass); }
+}
+.scanner__status { margin: 0; font-size: var(--fs-20); font-weight: 500; text-align: center; min-height: 2.8em; }
+.scanner__status--bad { color: var(--hazard); font-size: var(--fs-16); }
+.scanner__manual { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2); }
+
+/* ---------- Label picker ---------- */
+.pick-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 40vh; overflow: auto; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--paper); }
+.pick { display: grid; grid-template-columns: auto auto 1fr; gap: var(--space-3); align-items: center; min-height: var(--tap); padding: 0 var(--space-3); border-left: 4px solid var(--stripe-color, var(--rule)); cursor: pointer; }
+.pick input { width: 22px; height: 22px; accent-color: var(--cobalt); }
+.pick .code { color: var(--cobalt); }
+.print-bar {
+  position: sticky;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + var(--space-2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  z-index: 1;
+}
+
+/* ---------- Printed labels ---------- */
+.sheets { display: grid; gap: var(--space-4); justify-items: center; }
+.sheet {
+  width: 8.5in;
+  height: 11in;
+  background: #fff;
+  display: grid;
+  box-sizing: border-box;
+  transform-origin: top center;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+.sheet--large { padding: 0.5in 0.25in; grid-template-columns: repeat(2, 4in); grid-template-rows: repeat(5, 2in); }
+.sheet--small { padding: 0.5in; grid-template-columns: repeat(3, 2.5in); grid-template-rows: repeat(8, 1.25in); }
+
+.qr-label {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.12in;
+  padding: 0.1in 0.12in 0.1in 0.2in;
+  border: 1px dashed #bbb;
+  overflow: hidden;
+  color: #000;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.qr-label::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 0.08in; background: var(--stripe-color); }
+.qr-label.label--equipment { --stripe-color: var(--kind-equipment); }
+.qr-label.label--material { --stripe-color: var(--glass-edge); }
+.qr-label.label--reagent { --stripe-color: var(--kind-reagent); }
+.qr-label__qr svg { display: block; width: 100%; height: 100%; }
+.qr-label__text { display: grid; gap: 0.03in; min-width: 0; }
+.qr-label__code { font-family: var(--font-label); font-weight: 600; line-height: 1; color: var(--cobalt); }
+.qr-label__name { font-weight: 600; line-height: 1.15; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; }
+.qr-label__place { color: #444; line-height: 1.1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.sheet--large .qr-label__qr { width: 1.7in; height: 1.7in; }
+.sheet--large .qr-label__code { font-size: 26pt; }
+.sheet--large .qr-label__name { font-size: 12pt; -webkit-line-clamp: 3; }
+.sheet--large .qr-label__place { font-size: 9pt; }
+.sheet--small .qr-label { gap: 0.08in; padding: 0.06in 0.08in 0.06in 0.14in; }
+.sheet--small .qr-label::before { width: 0.06in; }
+.sheet--small .qr-label__qr { width: 1.08in; height: 1.08in; }
+.sheet--small .qr-label__code { font-size: 15pt; }
+.sheet--small .qr-label__name { font-size: 8pt; -webkit-line-clamp: 3; }
+.sheet--small .qr-label__place { font-size: 6.5pt; }
+
+/* On screen, sheets are shrunk to fit the phone. */
+@media screen and (max-width: 860px) {
+  .sheets { overflow: hidden; }
+  .sheet { zoom: 0.42; }
+}
+
+@media print {
+  @page { size: letter; margin: 0; }
+  body { background: #fff; }
+  .topbar, .tabbar, .toast, .no-print { display: none !important; }
+  .app { padding: 0; min-height: 0; }
+  .screen { padding: 0; max-width: none; }
+  .sheets { display: block; gap: 0; }
+  .sheet { zoom: 1; box-shadow: none; page-break-after: always; break-after: page; }
+  .sheet:last-child { page-break-after: auto; break-after: auto; }
+  .qr-label { border-color: #ddd; }
+}

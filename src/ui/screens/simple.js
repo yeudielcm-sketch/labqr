@@ -10,9 +10,7 @@ const emptyScreen = (title, tab, text, back) => ({
   },
 });
 
-export const scan = emptyScreen(t.scan.title, '/escanear', t.scan.pending);
 export const loans = emptyScreen(t.loans.title, '/vales', t.loans.empty);
-export const labels = emptyScreen(t.menu.labels, null, t.pending.body, '/menu');
 export const backup = emptyScreen(t.menu.backup, null, t.pending.body, '/menu');
 
 export const notFound = {

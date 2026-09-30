@@ -48,7 +48,10 @@ export const itemByCode = {
             ${item.expiresAt ? `<div><dt>${t.itemCard.expires}</dt><dd>${formatDate(item.expiresAt)} <span class="meta">(${relativeDays(item.expiresAt)})</span></dd></div>` : ''}
             ${item.notes ? `<div><dt>${t.itemCard.notes}</dt><dd>${esc(item.notes)}</dd></div>` : ''}
           </dl>
-          <a class="btn btn--block" href="#/i/${encodeURIComponent(item.code)}/editar">${t.common.edit}</a>
+          <div class="row-2">
+            <a class="btn" href="#/i/${encodeURIComponent(item.code)}/editar">${t.common.edit}</a>
+            <a class="btn" href="#/etiquetas?codigos=${encodeURIComponent(item.code)}">${t.itemCard.printLabel}</a>
+          </div>
         </section>
 
         <section class="block">
