@@ -40,4 +40,7 @@ Registro verídico de cada fase, para el concurso CNPyPE (fase local: 4 de dicie
 - 6 pruebas automáticas (códigos de artículo y router) con Vitest: todas pasan.
 - En el navegador con vista de celular (375×812): se recorrieron Inicio, Menú, Ajustes y `#/i/qui-7` (muestra "No existe un artículo con el código QUI-0007…").
 - Prueba offline: se apagó el servidor, se recargó la página y la app abrió completa desde el caché.
-- Pendiente en esta entrada: instalar en un Android real desde la URL pública de GitHub Pages y abrir sin internet (criterio de "listo" de F0).
+- Publicación (30 sep 2026): repositorio público `yeudielcm-sketch/labqr` y sitio en https://yeudielcm-sketch.github.io/labqr/. El primer despliegue automático pasó pruebas, compilación y publicación. En la página en vivo se verificó que el manifest, los 3 íconos y el service worker cargan correctamente.
+- QR de la app (`docs/concurso/qr/labqr-app.png`): se decodificó con zxing-wasm y devuelve la URL correcta.
+- Avisos de GitHub Actions que no bloquean: algunas acciones todavía usan Node 20 (GitHub las corre en Node 24) y `ubuntu-latest` pasa a Ubuntu 26 desde el 19 de octubre de 2026.
+- Pendiente en esta entrada: instalar en un Android real desde la URL pública y abrir sin internet (criterio de "listo" de F0).

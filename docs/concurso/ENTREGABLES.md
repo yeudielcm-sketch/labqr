@@ -11,7 +11,7 @@ Fuente: convocatoria local del CBTIS 108 (28 sep 2026) y convocatoria nacional d
 | Bitácora | `docs/BITACORA-DEV.md` | Al día (F0) | Cada cierre de fase |
 | Informe del prototipo | `docs/concurso/INFORME.md` | Esqueleto pendiente | RESEARCH (antecedentes), SPEC §10 (factibilidad económica), métricas de SPEC §8 |
 | Manual de usuario | `docs/concurso/MANUAL-USUARIO.md` | Pendiente (arranca en F1) | Pantallas reales, con capturas del celular |
-| Manual de instalación | `docs/concurso/MANUAL-INSTALACION.md` | Pendiente, se escribe al publicar F0 | Pasos para instalar la PWA en Android |
+| Manual de instalación | `docs/concurso/MANUAL-INSTALACION.md` | Primera versión (F0) | Pasos para instalar la PWA en Android |
 | Cartel | — | Pendiente (después de F3) | Probeta, flujo del vale, costo $0 |
 | Formatos FOREG, FOAPA, FOCOMO, FOAS | — | Los llenan autores y asesor | Los formatos los da Vinculación |
 
