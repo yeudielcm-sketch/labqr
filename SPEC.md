@@ -121,7 +121,7 @@ No se avanza a la siguiente fase hasta que la anterior funcione en el celular.
 | F4 | Respaldo: JSON export/import, CSV export, importación CSV con plantilla, aviso de respaldo, `navigator.storage.persist()` | Borrar datos → importar respaldo → todo regresa idéntico |
 | F5 | Tablero de exposición (`#/tablero`) según `DESIGN.md` | Se ve bien en laptop o TV a 3 metros de distancia |
 
-Nota (F5, 30 sep 2026): sin sincronización en v0, el tablero se actualiza en vivo solo con lo que ocurre **en el mismo dispositivo** (otra ventana o pestaña). Verlo en vivo desde el celular requiere la sincronización de v1. Decisión pendiente del autor (`docs/PENDIENTES.md`).
+Nota (F5, 30 sep 2026): sin sincronización en v0, el tablero se actualiza en vivo solo con lo que ocurre **en el mismo dispositivo** (otra ventana o pestaña). Verlo en vivo desde el celular requiere la sincronización de v1. **Decisión del autor (30 sep 2026):** en la exposición, la laptop muestra el tablero y la demo en vivo se hace en otra ventana de esa misma laptop; la sincronización queda para v1.
 
 MVP = F0 a F4. F5 va antes del 4 de diciembre. Los tokens visuales de `DESIGN.md` se montan desde F0, no al final. Después de F4 se hace la entrevista con laboratoristas y se escribe `SPEC-v1.md`.
 

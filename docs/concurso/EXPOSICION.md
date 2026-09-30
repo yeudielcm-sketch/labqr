@@ -10,7 +10,7 @@
 |---|---|---|
 | 0:00–0:40 | **El problema.** "En el laboratorio del CBTIS 108 se prestan equipo, vidrio y reactivos a equipos de alumnos en cada práctica. **[dato de la entrevista: cómo se registra hoy y cuánto tarda]**." | Foto del laboratorio o de la libreta actual |
 | 0:40–1:10 | **La solución.** "LabQR: cada artículo lleva una etiqueta QR, y el celular del laboratorista es el inventario." | Tablero en la TV |
-| 1:10–2:40 | **Demo en vivo:**<br>1. Escanear una etiqueta con la cámara normal: abre la ficha sin instalar nada.<br>2. Nuevo vale: escanear 5 artículos → Confirmar. "40 segundos."<br>3. Las probetas bajan en el tablero. | Celular + etiquetas pegadas en material real + TV |
+| 1:10–2:40 | **Demo en vivo:**<br>1. Con el celular, escanear una etiqueta con la cámara normal: abre la ficha sin instalar nada.<br>2. En la laptop (segunda ventana): Nuevo vale → buscar o escanear 5 artículos → Confirmar. "En el celular lo hicimos en 40 segundos."<br>3. Las probetas bajan en el tablero de la TV al momento. | Celular + etiquetas en material real + laptop con dos ventanas + TV |
 | 2:40–3:20 | **Lo que la hace distinta:**<br>- Costo $0.<br>- Funciona sin internet.<br>- Préstamo a equipos de práctica.<br>- Lo roto queda a cargo de quien lo tenía.<br>- Maneja equipo, material y reactivos con caducidad. | Ficha de la probeta rota (historial con responsable) |
 | 3:20–4:10 | **Resultados:** "antes **[X] s**, después **[Y] s**", más lo que dijeron los laboratoristas. | Cartel: gráfica antes/después |
 | 4:10–4:40 | **Factibilidad.** "$0: GitHub Pages y base de datos en el celular. Para varios dispositivos, Neon en plan gratuito." | Cartel: tabla de costos |
@@ -43,7 +43,7 @@
 
 **En el stand**
 - [ ] TV o monitor con el tablero: laptop en `#/tablero`, pantalla completa (F11).
-- [ ] Si se quiere que el tablero cambie en vivo, la demo se hace **en otra ventana de la misma laptop** (v0 no sincroniza con el celular).
+- [ ] **Demo en vivo en la laptop (decidido):** una ventana con el tablero en la TV y otra ventana de la misma laptop para capturar el vale; el tablero cambia solo. El celular se usa para enseñar que la cámara normal abre la ficha.
 - [ ] Material real con etiquetas pegadas: un vaso, una probeta, un reactivo y un equipo.
 - [ ] Hoja de etiquetas de repuesto.
 - [ ] QR grande del enlace a la app (`docs/concurso/qr/labqr-app.png`) para que los jueces la abran en su propio celular.

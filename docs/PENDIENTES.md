@@ -17,7 +17,7 @@ Si algo no aparece: **manda primero la versión** (pie de Inicio o de Ajustes) y
 
 ## 2. Decisiones que son tuyas
 
-- [ ] **Tablero en vivo desde el celular.** Hoy el tablero solo ve lo que pasa en el mismo dispositivo. Opciones:
+- [x] **Tablero en vivo desde el celular.** **Decidido (30 sep 2026): opción A.** Hoy el tablero solo ve lo que pasa en el mismo dispositivo. Opciones:
   - A) En la exposición, la laptop muestra el tablero y la demo se hace en otra ventana de esa laptop. Costo $0, ya funciona.
   - B) Adelantar la sincronización de v1 con Neon (plan gratis). Es más trabajo y conviene decidirlo después de la entrevista.
 - [ ] **Tamaño de etiqueta:** ¿grande (10 por hoja) o chica (24 por hoja)? ¿Hay hojas de etiquetas adhesivas en el plantel?

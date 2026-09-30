@@ -328,3 +328,4 @@ Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **au
   - `EXPOSICION.md`: guion de 5 minutos, preguntas probables de los jueces y lista para el 4 de diciembre.
   - `CARTEL.md`: contenido y jerarquía, en espera de las medidas de la guía.
 - No se agregaron funciones nuevas a propósito: primero se valida con laboratoristas (lección de proyectos anteriores).
+- 30 sep 2026 · **Decisión del autor sobre el tablero:** en la exposición el tablero se ve en vivo con la demo en otra ventana de la misma laptop ($0, ya funciona). La sincronización con el celular queda para v1. Se actualizaron SPEC, PENDIENTES y el guion de exposición.
