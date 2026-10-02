@@ -329,3 +329,16 @@ Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **au
   - `CARTEL.md`: contenido y jerarquía, en espera de las medidas de la guía.
 - No se agregaron funciones nuevas a propósito: primero se valida con laboratoristas (lección de proyectos anteriores).
 - 30 sep 2026 · **Decisión del autor sobre el tablero:** en la exposición el tablero se ve en vivo con la demo en otra ventana de la misma laptop ($0, ya funciona). La sincronización con el celular queda para v1. Se actualizaron SPEC, PENDIENTES y el guion de exposición.
+
+---
+
+## Manual de usuario con capturas · 1 de octubre de 2026
+
+- `docs/concurso/MANUAL-USUARIO.pdf`: 18 páginas tamaño carta, 13 pasos y 24 capturas reales de la app (versión 0.6.2) con la demo cargada. Está escrito para alguien que nunca ha usado la app: glosario, pasos numerados, avisos y una tabla de problemas comunes.
+- **Cómo se hicieron las capturas:**
+  - Chrome automatizado (`puppeteer-core`, instalado fuera del proyecto para no agregar dependencias) recorrió la app como una persona en un celular de 390 × 844.
+  - Para la pantalla Escanear se simuló una cámara que apunta a la etiqueta real de QUI-0007. La cámara de prueba de Chrome muestra un patrón verde que confundiría al lector.
+  - Los scripts quedaron en `scripts/manual/` para regenerar el manual si cambian las pantallas.
+- **Problemas:**
+  - Git Bash volvió a alterar la ruta `/labqr/` del servidor (mismo problema de F0); se resolvió sirviendo desde PowerShell.
+  - En la primera versión del PDF, las viñetas dentro del paso 3 de "Recibir la devolución" tomaron números y la portada tenía un fondo recortado. Ambas cosas se corrigieron tras revisar las 18 páginas.

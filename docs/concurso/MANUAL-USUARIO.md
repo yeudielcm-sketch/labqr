@@ -1,6 +1,7 @@
 # Manual de usuario — LabQR
 
-> Se escribe a la par de cada fase. Versión 0.6.0 (fases 1 a 5). Faltan capturas del celular.
+> Se escribe a la par de cada fase. Versión 0.6.2.
+> **Versión con capturas para entregar: [MANUAL-USUARIO.pdf](MANUAL-USUARIO.pdf)** (18 páginas, carta). Su fuente es `manual/MANUAL-USUARIO.html` y las capturas están en `capturas/`.
 
 ## Pantallas
 

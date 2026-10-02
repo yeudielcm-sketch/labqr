@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8" />
+<title>Manual de usuario — LabQR</title>
+<style>
+  @font-face { font-family: 'Barlow'; font-weight: 400; src: url('../../../node_modules/@fontsource/barlow/files/barlow-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow'; font-weight: 500; src: url('../../../node_modules/@fontsource/barlow/files/barlow-latin-500-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow'; font-weight: 600; src: url('../../../node_modules/@fontsource/barlow/files/barlow-latin-600-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow Condensed'; font-weight: 600; src: url('../../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-600-normal.woff2') format('woff2'); }
+
+  :root {
+    --tile: #F3F6F8; --graphite: #22272E; --cobalt: #1B3A8C; --glass: #BFE3EA;
+    --amber: #C77A12; --hazard: #D32F2F; --ink-soft: #4A525C; --rule: #D5DCE2;
+  }
+  @page { size: letter; margin: 0.6in 0.65in 0.7in; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Barlow', sans-serif; font-size: 11.5pt; line-height: 1.45; color: var(--graphite); }
+  h1, h2, h3, .code { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; }
+  h2 { font-size: 22pt; color: var(--cobalt); margin: 0 0 4pt; line-height: 1.1; }
+  h3 { font-size: 14pt; margin: 14pt 0 4pt; }
+  p { margin: 0 0 7pt; }
+  ol, ul { margin: 0 0 8pt; padding-left: 18pt; }
+  li { margin-bottom: 4pt; }
+  b, strong { font-weight: 600; }
+  .lead { font-size: 12.5pt; color: var(--ink-soft); margin-bottom: 12pt; }
+  .btn { display: inline-block; padding: 0 5pt; border: 1.2pt solid var(--cobalt); border-radius: 3pt; color: var(--cobalt); font-weight: 600; font-size: 10.5pt; white-space: nowrap; }
+  .btn.fill { background: var(--cobalt); color: #fff; }
+  .path { font-weight: 600; color: var(--cobalt); white-space: nowrap; }
+
+  .section { page-break-before: always; break-before: page; }
+  .section-tag { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 11pt; color: var(--ink-soft); letter-spacing: .04em; }
+
+  /* text + screenshot side by side */
+  .row { display: grid; grid-template-columns: 1fr 2.15in; gap: 18pt; align-items: start; margin-bottom: 10pt; break-inside: avoid; }
+  .row.two { grid-template-columns: 1fr 2.15in 2.15in; gap: 12pt; }
+  figure { margin: 0; break-inside: avoid; }
+  figure img { width: 100%; display: block; border: 1pt solid var(--rule); border-radius: 10pt; box-shadow: 0 1pt 4pt rgba(0,0,0,.08); }
+  figcaption { font-size: 9pt; color: var(--ink-soft); text-align: center; margin-top: 4pt; line-height: 1.25; }
+  .wide img { border-radius: 4pt; }
+
+  .tip, .warn { padding: 7pt 10pt; border-radius: 4pt; margin: 8pt 0; break-inside: avoid; font-size: 10.5pt; }
+  .tip { background: #fff; border: 1pt solid var(--rule); border-left: 5pt solid var(--cobalt); }
+  .warn { background: #fff; border: 1pt solid var(--rule); border-left: 5pt solid var(--hazard); }
+  .tip b:first-child, .warn b:first-child { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 11.5pt; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 10.5pt; margin: 6pt 0 10pt; break-inside: avoid; }
+  th, td { text-align: left; padding: 5pt 7pt; border-bottom: 1pt solid var(--rule); vertical-align: top; }
+  th { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 11pt; color: var(--cobalt); }
+
+  /* cover */
+  .cover { height: 9.4in; display: grid; grid-template-rows: auto 1fr auto; padding: 0.2in 0 0; }
+  .cover .brand { display: inline-block; background: var(--cobalt); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 30pt; padding: 2pt 12pt; border-radius: 4pt; }
+  .cover h1 { font-size: 44pt; line-height: 1; margin: 22pt 0 8pt; }
+  .cover .sub { font-size: 16pt; color: var(--ink-soft); max-width: 5in; }
+  .cover .mid { display: flex; gap: 28pt; align-items: center; align-self: center; }
+  .cover .mid img.phone { width: 2.4in; border-radius: 14pt; border: 1pt solid var(--rule); }
+  .cover .mid .qrbox { text-align: center; }
+  .cover .mid .qrbox img { width: 1.9in; border: 6pt solid #fff; }
+  .cover .foot { font-size: 10pt; color: var(--ink-soft); border-top: 2pt solid var(--graphite); padding-top: 8pt; }
+
+  .toc ol { columns: 2; column-gap: 24pt; font-size: 12pt; }
+  .steps-big { counter-reset: s; list-style: none; padding: 0; }
+  .steps-big > li { counter-increment: s; position: relative; padding-left: 26pt; margin-bottom: 7pt; }
+  .steps-big > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 18pt; height: 18pt; border-radius: 50%; background: var(--cobalt); color: #fff; font-weight: 600; font-size: 10pt; display: grid; place-items: center; }
+  .steps-big ul { margin-top: 4pt; padding-left: 14pt; list-style: disc; }
+  .steps-big ul li { margin-bottom: 5pt; }
+</style>
+</head>
+<body>
+
+<!-- ============ PORTADA ============ -->
+<div class="cover">
+  <div>
+    <span class="brand">LabQR</span>
+    <h1>Manual de usuario</h1>
+    <p class="sub">Cómo llevar el inventario y los préstamos del laboratorio con el celular y etiquetas QR. Explicado paso a paso, para cualquier persona.</p>
+  </div>
+  <div class="mid">
+    <img class="phone" src="../capturas/04-inicio-con-datos.png" alt="Pantalla de Inicio" />
+    <div class="qrbox">
+      <img src="../qr/labqr-app.png" alt="QR para abrir LabQR" />
+      <p><b>Escanea para abrir LabQR</b><br />yeudielcm-sketch.github.io/labqr</p>
+    </div>
+  </div>
+  <div class="foot">CBTIS 108 · Prototipo de Desarrollo de Software · CNPyPE 2027 · Versión de la app 0.6.2 · Octubre de 2026</div>
+</div>
+
+<!-- ============ ÍNDICE + QUÉ ES ============ -->
+<div class="section">
+  <span class="section-tag">ANTES DE EMPEZAR</span>
+  <h2>¿Qué es LabQR?</h2>
+  <p class="lead">Es una aplicación gratuita para saber <b>qué hay</b> en el laboratorio, <b>dónde está</b> y <b>quién lo tiene prestado</b>. Cada artículo lleva una etiqueta con un código QR; con el celular se escanea para prestar, recibir o consultar.</p>
+
+  <table>
+    <tr><th>Necesitas</th><th>No necesitas</th></tr>
+    <tr><td>Un celular (de preferencia Android con Chrome) y, la primera vez, internet.</td><td>Cuenta, contraseña, pagar ni descargar nada de una tienda. Tampoco internet después de la primera vez.</td></tr>
+  </table>
+
+  <h3>Palabras que usa la app</h3>
+  <table>
+    <tr><th>Palabra</th><th>Qué significa</th></tr>
+    <tr><td><b>Artículo</b></td><td>Cualquier cosa del inventario.</td></tr>
+    <tr><td><b>Equipo</b></td><td>Pieza única con número de serie: microscopio, balanza. <i>Franja azul.</i></td></tr>
+    <tr><td><b>Material</b></td><td>Piezas que se prestan y pueden romperse: vasos, probetas, pinzas. <i>Franja azul claro.</i></td></tr>
+    <tr><td><b>Reactivo</b></td><td>Se gasta en la práctica; tiene unidad (ml, g) y caducidad. <i>Franja ámbar.</i></td></tr>
+    <tr><td><b>Vale</b></td><td>El papelito de préstamo, pero en el celular: quién se lleva qué y para qué práctica.</td></tr>
+    <tr><td><b>Recepción</b></td><td>Llegó material nuevo.</td></tr>
+    <tr><td><b>Merma</b></td><td>Algo se rompió, se perdió o caducó.</td></tr>
+    <tr><td><b>Existencia</b></td><td>Cuánto hay. La app lo dibuja como una <b>probeta</b>: el líquido es lo que hay en el laboratorio.</td></tr>
+  </table>
+
+  <div class="toc">
+    <h3>Contenido</h3>
+    <ol>
+      <li>Instalar la app</li>
+      <li>Conocer la pantalla</li>
+      <li>Probar con datos de ejemplo</li>
+      <li>Buscar y consultar artículos</li>
+      <li>Agregar artículos</li>
+      <li>Imprimir etiquetas QR</li>
+      <li>Escanear</li>
+      <li>Prestar material (vale)</li>
+      <li>Recibir la devolución</li>
+      <li>Recepción, merma y ajuste</li>
+      <li>Respaldo: no perder los datos</li>
+      <li>Tablero para TV</li>
+      <li>Si algo no funciona</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============ 1. INSTALAR ============ -->
+<div class="section">
+  <span class="section-tag">PASO 1</span>
+  <h2>Instalar la app</h2>
+  <p class="lead">Se hace una sola vez y tarda un minuto.</p>
+  <div class="row">
+    <div>
+      <ol class="steps-big">
+        <li>Con la cámara del celular, escanea el QR de la portada (o escribe <b>yeudielcm-sketch.github.io/labqr</b> en Chrome).</li>
+        <li>Espera a que aparezca la pantalla de <b>Inicio</b> con una probeta vacía.</li>
+        <li>Toca el menú de Chrome <b>⋮</b> (arriba a la derecha) → <b>Agregar a la pantalla principal</b> → <b>Instalar</b>.</li>
+        <li>Desde ahora ábrela con el ícono azul de la probeta, como cualquier otra app.</li>
+      </ol>
+      <div class="tip"><b>¿iPhone?</b>Abre el enlace en Safari → botón <b>Compartir</b> → <b>Agregar a inicio</b>.</div>
+      <div class="tip"><b>Sin internet</b>Después de abrirla una vez con internet, funciona sin señal: el laboratorio no necesita Wi-Fi.</div>
+    </div>
+    <figure><img src="../capturas/01-inicio-vacio.png" alt="" /><figcaption>Así se ve la primera vez: todavía no hay artículos.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 2. PANTALLA ============ -->
+<div class="section">
+  <span class="section-tag">PASO 2</span>
+  <h2>Conocer la pantalla</h2>
+  <div class="row two">
+    <div>
+      <h3>La barra de abajo</h3>
+      <p>Siempre está visible y tiene las cuatro cosas que más se usan:</p>
+      <ul>
+        <li><b>Inicio:</b> el resumen del día.</li>
+        <li><b>Escanear:</b> abre la cámara para leer una etiqueta.</li>
+        <li><b>Artículos:</b> todo el inventario.</li>
+        <li><b>Vales:</b> los préstamos.</li>
+      </ul>
+      <h3>El botón ☰ de arriba</h3>
+      <p>Abre lo que se usa menos: <b>Ajustes</b>, <b>Etiquetas</b>, <b>Respaldo</b> y el <b>Tablero</b> para TV.</p>
+      <h3>La flecha ‹</h3>
+      <p>Regresa a la pantalla anterior.</p>
+    </div>
+    <figure><img src="../capturas/04-inicio-con-datos.png" alt="" /><figcaption>Inicio: cada tarjeta lleva a su lista. Lo rojo con rombo ◇ pide atención.</figcaption></figure>
+    <figure><img src="../capturas/02-menu.png" alt="" /><figcaption>El menú ☰.</figcaption></figure>
+  </div>
+  <h3>Cómo leer Inicio</h3>
+  <table>
+    <tr><th>Tarjeta</th><th>Qué quiere decir</th></tr>
+    <tr><td>◌ <b>vales abiertos</b></td><td>Material que está prestado ahora.</td></tr>
+    <tr><td>◇ <b>vale vencido</b> (rojo)</td><td>Ya pasó la hora de devolver y algo no ha regresado.</td></tr>
+    <tr><td>◇ <b>bajo mínimo</b> (rojo)</td><td>Queda menos de lo necesario; hay que pedir más.</td></tr>
+    <tr><td>● <b>por caducar</b> (ámbar)</td><td>Reactivos que caducan en los próximos 30 días.</td></tr>
+    <tr><td>Aviso de <b>respaldo</b></td><td>Pasaron más de 7 días sin respaldar (ver Paso 11).</td></tr>
+  </table>
+</div>
+
+<!-- ============ 3. DEMO ============ -->
+<div class="section">
+  <span class="section-tag">PASO 3</span>
+  <h2>Probar con datos de ejemplo</h2>
+  <p class="lead">Para conocer la app sin capturar nada, carga un laboratorio de ejemplo con 33 artículos reales de Química y Biología.</p>
+  <div class="row">
+    <div>
+      <ol class="steps-big">
+        <li>Toca <span class="path">☰ → Ajustes</span>.</li>
+        <li>Toca <span class="btn fill">Cargar datos de demostración</span>.</li>
+        <li>Listo: Inicio ya muestra artículos, préstamos y avisos.</li>
+      </ol>
+      <div class="warn"><b>Antes de usarla de verdad</b>Borra el ejemplo: en <span class="path">☰ → Ajustes</span>, al final, escribe <b>BORRAR</b> y toca <b>Borrar todos los datos</b>. Esto borra todo y no se puede deshacer.</div>
+      <h3>Para usarla con tu laboratorio</h3>
+      <p>En la misma pantalla de Ajustes agrega cada laboratorio con un <b>prefijo</b> de 2 a 5 letras (Química = <b>QUI</b>) y sus ubicaciones (anaqueles, gavetas). El prefijo aparece en cada código: QUI-0001, QUI-0002…</p>
+    </div>
+    <figure><img src="../capturas/03-ajustes-demo.png" alt="" /><figcaption>Ajustes: el botón azul carga el ejemplo.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 4. ARTÍCULOS ============ -->
+<div class="section">
+  <span class="section-tag">PASO 4</span>
+  <h2>Buscar y consultar artículos</h2>
+  <div class="row two">
+    <div>
+      <p>En la pestaña <b>Artículos</b> está todo el inventario. Cada renglón muestra:</p>
+      <ul>
+        <li>La <b>franja de color</b> según el tipo.</li>
+        <li>El <b>código</b> (lo que va impreso en la etiqueta).</li>
+        <li>Dónde está guardado.</li>
+        <li>Una probeta pequeña con cuánto hay.</li>
+      </ul>
+      <h3>Buscar</h3>
+      <p>Escribe parte del nombre, el código o cualquier dato (marca, concentración…). No importan acentos ni mayúsculas: <i>alcohol</i> encuentra <i>Alcohol etílico</i>.</p>
+      <p>Los botones de abajo filtran por tipo, <b>Bajo mínimo</b> y <b>Por caducar</b>.</p>
+    </div>
+    <figure><img src="../capturas/05-articulos.png" alt="" /><figcaption>La lista completa.</figcaption></figure>
+    <figure><img src="../capturas/06-articulos-busqueda.png" alt="" /><figcaption>Buscando "alcohol": aparece en rojo porque está bajo el mínimo.</figcaption></figure>
+  </div>
+</div>
+
+<div class="section">
+  <span class="section-tag">PASO 4 · CONTINUACIÓN</span>
+  <h2>La ficha de un artículo</h2>
+  <p class="lead">Toca cualquier artículo (o escanea su etiqueta) para ver su ficha.</p>
+  <div class="row two">
+    <div>
+      <h3>Cómo leer la probeta</h3>
+      <ul>
+        <li><b>Líquido azul:</b> lo que está en el laboratorio.</li>
+        <li><b>Parte punteada:</b> lo que está prestado.</li>
+        <li><b>Línea roja:</b> el mínimo. Si el líquido baja de ahí, se pone rojo.</li>
+      </ul>
+      <p>A un lado aparecen los números: <b>en lab</b>, <b>prestados</b>, <b>total</b> y <b>mín</b>.</p>
+      <h3>El equipo es distinto</h3>
+      <p>Un microscopio o una balanza es una sola pieza, así que en vez de probeta dice <b>"En su lugar"</b> o <b>"Prestado a…"</b> con el nombre de quien lo tiene.</p>
+    </div>
+    <figure><img src="../capturas/07-ficha-probeta.png" alt="" /><figcaption>Probeta de 100 ml: 10 en el laboratorio y 1 prestada.</figcaption></figure>
+    <figure><img src="../capturas/10-ficha-equipo-prestado.png" alt="" /><figcaption>Un microscopio prestado al Equipo 3.</figcaption></figure>
+  </div>
+  <div class="row">
+    <div>
+      <h3>Historial</h3>
+      <p>Al final de la ficha está todo lo que le ha pasado al artículo: cuándo llegó, a quién se prestó, qué regresó y qué se rompió y a cargo de quién.</p>
+      <div class="tip"><b>El historial no se puede borrar ni editar</b>Así nadie puede cambiar lo que pasó. Si te equivocas, se corrige con un movimiento nuevo (por ejemplo, un ajuste por conteo).</div>
+      <h3>Especificaciones</h3>
+      <p>Agrega los datos que pida cada maestro (marca, modelo, voltaje, concentración…) con <b>Agregar dato</b>. También sirven para buscar.</p>
+    </div>
+    <figure><img src="../capturas/09-ficha-historial.png" alt="" /><figcaption>La probeta rota queda registrada con su responsable.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 5. AGREGAR ============ -->
+<div class="section">
+  <span class="section-tag">PASO 5</span>
+  <h2>Agregar artículos</h2>
+  <div class="row">
+    <div>
+      <ol class="steps-big">
+        <li>Ve a <b>Artículos</b> y toca <span class="btn fill">+ Agregar artículo</span>.</li>
+        <li>Escribe el <b>nombre</b> y elige el <b>tipo</b>: equipo, material o reactivo. El formulario cambia según lo que elijas.</li>
+        <li>Elige <b>laboratorio</b> y <b>ubicación</b>.</li>
+        <li>Escribe la <b>cantidad que hay hoy</b> y el <b>mínimo</b> (si no aplica, déjalo en 0).</li>
+        <li>En reactivos, pon la <b>fecha de caducidad</b>. En equipo, el <b>número de serie</b>.</li>
+        <li>Toca <span class="btn fill">Guardar</span>. La app le pone su código automáticamente.</li>
+      </ol>
+      <div class="tip"><b>El código no cambia nunca</b>Porque va impreso en la etiqueta. Si te equivocas de nombre o ubicación, usa <b>Editar</b> en la ficha.</div>
+      <div class="tip"><b>¿Muchos artículos?</b>Puedes cargarlos todos desde Excel con la plantilla de <span class="path">☰ → Respaldo → Importar inventario inicial</span>.</div>
+      <p>Un artículo que ya no se usa se <b>archiva</b> (desaparece de la lista pero conserva su historial).</p>
+    </div>
+    <figure><img src="../capturas/11-nuevo-articulo.png" alt="" /><figcaption>Agregando un reactivo.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 6. ETIQUETAS ============ -->
+<div class="section">
+  <span class="section-tag">PASO 6</span>
+  <h2>Imprimir etiquetas QR</h2>
+  <div class="row two">
+    <div>
+      <ol class="steps-big">
+        <li>Toca <span class="path">☰ → Etiquetas</span>.</li>
+        <li>Marca los artículos. Para todo un anaquel: elige la ubicación y toca <b>Todos los de esta vista</b>.</li>
+        <li>Elige el tamaño: <b>Grande</b> (10 por hoja) o <b>Chica</b> (24 por hoja).</li>
+        <li>Toca <span class="btn fill">Imprimir</span>. En la ventana de impresión: <b>hoja carta</b> y <b>escala 100 %</b>.</li>
+        <li>Recorta y pega cada etiqueta en su artículo o en su lugar del anaquel.</li>
+      </ol>
+      <p>Desde la ficha de cualquier artículo, <b>Imprimir etiqueta</b> abre la hoja con ese artículo ya marcado.</p>
+    </div>
+    <figure><img src="../capturas/12-etiquetas.png" alt="" /><figcaption>Eligiendo artículos.</figcaption></figure>
+    <figure><img src="../capturas/13-etiquetas-vista-previa.png" alt="" /><figcaption>Vista previa de la hoja.</figcaption></figure>
+  </div>
+  <figure class="wide" style="width: 4.2in; margin: 6pt auto 0;"><img src="../capturas/23-etiqueta-impresa.png" alt="" /><figcaption>Así queda una etiqueta: QR, código grande, nombre y dónde se guarda. La franja indica el tipo.</figcaption></figure>
+  <div class="tip"><b>Lo mejor de la etiqueta</b>Cualquier persona puede escanearla con la cámara normal de su celular, sin instalar nada, y ver qué es, dónde va y si está prestado.</div>
+</div>
+
+<!-- ============ 7. ESCANEAR ============ -->
+<div class="section">
+  <span class="section-tag">PASO 7</span>
+  <h2>Escanear</h2>
+  <div class="row">
+    <div>
+      <ol class="steps-big">
+        <li>Toca la pestaña <b>Escanear</b>. La primera vez el celular pide permiso para usar la cámara: tócale <b>Permitir</b>.</li>
+        <li>Apunta a la etiqueta, dentro del recuadro.</li>
+        <li>Cuando la lee, el celular <b>vibra</b> y abre la ficha del artículo.</li>
+      </ol>
+      <h3>Si la cámara no lee</h3>
+      <ul>
+        <li>Acerca o aleja un poco el celular y busca buena luz.</li>
+        <li>O escribe el código en el campo de abajo y toca <b>Abrir ficha</b>. No necesitas escribirlo completo: <b>qui 7</b> abre QUI-0007.</li>
+      </ul>
+      <div class="warn"><b>"No hay permiso para usar la cámara"</b>En Chrome toca el candado junto a la dirección → <b>Permisos</b> → <b>Cámara: Permitir</b>, y luego <b>Reintentar</b>.</div>
+    </div>
+    <figure><img src="../capturas/14-escanear.png" alt="" /><figcaption>Apuntando a una etiqueta.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 8. PRESTAR ============ -->
+<div class="section">
+  <span class="section-tag">PASO 8</span>
+  <h2>Prestar material (vale)</h2>
+  <p class="lead">Es lo que más se usa: un equipo de alumnos llega por el material de su práctica.</p>
+  <div class="row two">
+    <div>
+      <ol class="steps-big">
+        <li>Toca <span class="btn fill">+ Nuevo vale</span> (en Inicio o en Vales).</li>
+        <li><b>Solicitante:</b> elige quién se lo lleva. Si no está en la lista, toca <b>+ Nuevo solicitante</b> y agrégalo ahí mismo (nombre, tipo, grupo).</li>
+        <li><b>Práctica:</b> escribe cuál es (opcional).</li>
+        <li>Toca <b>Escanear artículos</b> y escanea cada etiqueta una tras otra. Cada lectura suma 1 y suena un <b>bip</b>. Escanear dos veces el mismo vaso = 2 vasos.</li>
+        <li>Ajusta cantidades con <b>−</b> y <b>+</b>. En reactivos escribe la cantidad (por ejemplo 25.5 ml).</li>
+      </ol>
+    </div>
+    <figure><img src="../capturas/16-nuevo-vale.png" alt="" /><figcaption>Arriba: solicitante y práctica.</figcaption></figure>
+    <figure><img src="../capturas/17-nuevo-vale-articulos.png" alt="" /><figcaption>Abajo: lo que se lleva, con cuánto hay.</figcaption></figure>
+  </div>
+  <div class="row">
+    <div>
+      <ol class="steps-big" start="6" style="counter-reset: s 5;">
+        <li>Toca <span class="btn fill">Confirmar préstamo</span>. Es un solo toque.</li>
+        <li>La app muestra <b>Préstamo confirmado</b>, cómo bajan las probetas y cuántos segundos tardaste.</li>
+      </ol>
+      <div class="tip"><b>La app te cuida</b>No deja prestar más de lo que hay en el laboratorio: lo marca en rojo. Si te sales a revisar algo, el vale que estabas armando te espera al regresar; si no lo quieres, toca <b>Descartar</b>.</div>
+      <p>La hora de devolución es el mismo día a las 11:59 p.m. (se puede cambiar en Ajustes → Días de préstamo).</p>
+    </div>
+    <figure><img src="../capturas/18-prestamo-confirmado.png" alt="" /><figcaption>Préstamo confirmado.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 9. DEVOLUCIÓN ============ -->
+<div class="section">
+  <span class="section-tag">PASO 9</span>
+  <h2>Recibir la devolución</h2>
+  <div class="row two">
+    <div>
+      <ol class="steps-big">
+        <li>Ve a <b>Vales</b>. Los vencidos aparecen primero, en rojo.</li>
+        <li>Toca el vale del equipo que está devolviendo.</li>
+        <li>En cada artículo toca lo que pasó:
+          <ul>
+            <li><span class="btn">Devuelto</span> regresó. Si fue solo una parte, cambia el número antes de tocar.</li>
+            <li><span class="btn" style="border-color:var(--hazard);color:var(--hazard)">Roto o perdido</span> queda como merma a cargo de ese equipo (pide confirmar).</li>
+            <li><span class="btn">Consumido</span> solo en reactivos: se gastó en la práctica.</li>
+          </ul>
+        </li>
+        <li>Si todo regresó bien, basta con <span class="btn fill">Todo regresó completo</span>.</li>
+      </ol>
+      <div class="tip"><b>El vale se cierra solo</b>Cuando ya no queda nada pendiente, la app lo marca como cerrado.</div>
+    </div>
+    <figure><img src="../capturas/15-vales.png" alt="" /><figcaption>Lista de vales: el vencido va arriba.</figcaption></figure>
+    <figure><img src="../capturas/20-vale-devolucion.png" alt="" /><figcaption>Botones por artículo y lo que ya pasó.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 10. MOVIMIENTOS ============ -->
+<div class="section">
+  <span class="section-tag">PASO 10</span>
+  <h2>Recepción, merma y ajuste</h2>
+  <p class="lead">Para lo que pasa fuera de un préstamo. Se hace desde la ficha del artículo, en <b>Registrar movimiento</b>.</p>
+  <div class="row">
+    <div>
+      <table>
+        <tr><th>Botón</th><th>Cuándo usarlo</th><th>Qué escribir</th></tr>
+        <tr><td><b>Recepción</b></td><td>Llegó material nuevo (compra o donación).</td><td>Cantidad y una nota (ej. "Compra del plantel").</td></tr>
+        <tr><td><b>Merma</b></td><td>Algo se rompió, se perdió o caducó en el laboratorio.</td><td>Cantidad, motivo y nota.</td></tr>
+        <tr><td><b>Ajuste por conteo</b></td><td>Contaste físicamente y no coincide con la app.</td><td>Lo que <b>contaste</b> y por qué hay diferencia (obligatorio). La app calcula la diferencia sola.</td></tr>
+      </table>
+      <div class="tip"><b>Equipo</b>Un equipo solo tiene <b>Merma</b> (darlo de baja). Se presta con un vale como todo lo demás.</div>
+    </div>
+    <figure><img src="../capturas/08-ficha-movimientos.png" alt="" /><figcaption>Los tres botones en la ficha.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 11. RESPALDO ============ -->
+<div class="section">
+  <span class="section-tag">PASO 11</span>
+  <h2>Respaldo: no perder los datos</h2>
+  <div class="warn"><b>Importante</b>Los datos viven <b>solo en este celular</b>. Si se pierde, se rompe o se borra el navegador, solo un respaldo los recupera. Haz uno <b>cada semana</b>; Inicio te avisa cuando toca.</div>
+  <div class="row two">
+    <div>
+      <h3>Hacer un respaldo</h3>
+      <ol class="steps-big">
+        <li>Toca <span class="path">☰ → Respaldo</span>.</li>
+        <li>Toca <span class="btn">Compartir respaldo</span> y mándalo a tu WhatsApp, correo o Drive. (O <span class="btn fill">Descargar respaldo</span> para guardarlo en el celular.)</li>
+      </ol>
+      <h3>Recuperar los datos</h3>
+      <ol class="steps-big">
+        <li>En el celular nuevo (o después de borrar), abre <span class="path">☰ → Respaldo</span>.</li>
+        <li>Toca <b>Restaurar desde archivo</b> y elige el archivo <i>labqr-respaldo-….json</i>.</li>
+        <li>La app dice qué trae y pide confirmar. Todo regresa tal cual.</li>
+      </ol>
+    </div>
+    <figure><img src="../capturas/21-respaldo.png" alt="" /><figcaption>Respaldo completo.</figcaption></figure>
+    <figure><img src="../capturas/22-respaldo-csv.png" alt="" /><figcaption>Excel e importación.</figcaption></figure>
+  </div>
+  <h3>Excel</h3>
+  <ul>
+    <li><b>Exportar a Excel (CSV):</b> inventario actual, movimientos o vales, para revisar en la computadora o entregar reportes.</li>
+    <li><b>Importar inventario inicial:</b> descarga la plantilla, llénala en Excel, guárdala como CSV y elígela. La app avisa qué renglones tienen errores antes de importar.</li>
+  </ul>
+</div>
+
+<!-- ============ 12. TABLERO ============ -->
+<div class="section">
+  <span class="section-tag">PASO 12</span>
+  <h2>Tablero para TV</h2>
+  <p class="lead">Para exposiciones o para dejarlo a la vista en el laboratorio: muestra todo el inventario de un vistazo, legible a 3 metros.</p>
+  <figure class="wide"><img src="../capturas/24-tablero.png" alt="" /><figcaption>Una fila de probetas por anaquel; a la derecha los vales abiertos y los últimos movimientos.</figcaption></figure>
+  <ol class="steps-big" style="margin-top:10pt">
+    <li>En una laptop conectada a la TV, abre LabQR y toca <span class="path">☰ → Tablero de exposición</span>. Presiona <b>F11</b> para pantalla completa.</li>
+    <li>Arriba eliges el laboratorio.</li>
+    <li>Abre LabQR en <b>otra ventana de la misma laptop</b> y haz préstamos ahí: el tablero cambia solo al momento.</li>
+  </ol>
+  <div class="tip"><b>¿Por qué en la misma laptop?</b>En esta versión cada dispositivo guarda sus propios datos. Si quieres ver en la laptop lo del celular, pásale un respaldo (Paso 11).</div>
+</div>
+
+<!-- ============ 13. PROBLEMAS ============ -->
+<div class="section">
+  <span class="section-tag">PASO 13</span>
+  <h2>Si algo no funciona</h2>
+  <table>
+    <tr><th>Qué pasa</th><th>Qué hacer</th></tr>
+    <tr><td>No aparece una pantalla o función nueva.</td><td>Revisa la <b>versión</b> al pie de Inicio. Con internet, toca <span class="path">☰ → Ajustes → Buscar actualización</span>, o cierra y abre la app dos veces.</td></tr>
+    <tr><td>La cámara no abre.</td><td>Da permiso de cámara (Paso 7) y toca <b>Reintentar</b>. Mientras, escribe el código a mano.</td></tr>
+    <tr><td>La cámara no lee la etiqueta.</td><td>Más luz, etiqueta sin arrugas, a unos 15 cm. O escribe el código.</td></tr>
+    <tr><td>"No existe un artículo con el código…"</td><td>Esa etiqueta es de otro celular o se borraron los datos. Restaura tu respaldo.</td></tr>
+    <tr><td>No me deja confirmar el vale.</td><td>Falta elegir solicitante, o pides más de lo que hay (renglón en rojo).</td></tr>
+    <tr><td>No me deja cambiar la unidad o el código.</td><td>Es a propósito: el código va impreso y la unidad se fija cuando ya hay historial.</td></tr>
+    <tr><td>Me equivoqué al registrar algo.</td><td>El historial no se borra. Corrige con otro movimiento (por ejemplo, Ajuste por conteo con una nota).</td></tr>
+    <tr><td>Cambié de celular.</td><td>En el viejo: Compartir respaldo. En el nuevo: instala la app y Restaurar desde archivo.</td></tr>
+  </table>
+  <div class="tip"><b>Para pedir ayuda</b>Manda la versión (pie de Inicio) y una captura de pantalla de lo que ves.</div>
+</div>
+
+</body>
+</html>
