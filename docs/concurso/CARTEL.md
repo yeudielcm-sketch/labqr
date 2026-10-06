@@ -6,13 +6,13 @@
 
 ## Jerarquía (de lo que se lee a 3 m a lo que se lee de cerca)
 
-1. **Título:** LabQR — Inventario y préstamos de laboratorio con códigos QR
+1. **Título:** C-Lab — Inventario y préstamos de laboratorio con códigos QR
 2. **Frase gancho:** "Escanea, presta y devuelve en menos de un minuto. Sin costo y sin internet."
 3. **Imagen central:** la probeta graduada de la app junto a una etiqueta QR real.
 4. **Tres bloques:**
    - **El problema:** **[dato de la entrevista]**
    - **Cómo funciona:** etiqueta QR → celular → vale → devolución, en 4 pasos con íconos.
-   - **Resultados:** gráfica de barras, antes **[X] s** vs. con LabQR **[Y] s** (5 artículos).
+   - **Resultados:** gráfica de barras, antes **[X] s** vs. con C-Lab **[Y] s** (5 artículos).
 5. **Lo que la hace distinta:**
    - Costo $0.
    - Funciona sin internet.

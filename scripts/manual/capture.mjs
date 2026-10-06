@@ -102,27 +102,42 @@ await shot('14-escanear');
 await go('/vales');
 await shot('15-vales');
 
+// Practices (F6)
+await go('/practicas');
+await shot('25-practicas');
+await page.evaluate(() => [...document.querySelectorAll('.practice-row')].find((a) => a.textContent.includes('Titulación')).click());
+await wait(1000);
+await shot('26-practica-editar');
+
 await go('/vales/nuevo');
+// New student without control number → the app asks for it
 await page.evaluate(() => {
-  const sel = document.querySelector('[name="borrower"]');
-  const opt = [...sel.options].find((o) => o.textContent.includes('Equipo 5'));
-  sel.value = opt.value;
-  sel.dispatchEvent(new Event('change'));
-  const p = document.querySelector('[name="practice"]');
-  p.value = 'Preparación de soluciones';
-  p.dispatchEvent(new Event('input'));
+  document.querySelector('.new-borrower').open = true;
+  const f = document.querySelector('[data-borrower-form]');
+  f.bname.value = 'Ana Torres';
+  f.btype.value = 'student';
+  f.btype.dispatchEvent(new Event('change'));
+  f.bgroup.value = '5° B';
+  f.requestSubmit();
 });
-for (const code of ['QUI-0004', 'QUI-0004', 'QUI-0006', 'QUI-0015', 'QUI-0001']) {
-  await page.evaluate((c) => {
-    const q = document.querySelector('[name="q"]');
-    q.value = c;
-    q.dispatchEvent(new Event('input'));
-  }, code);
-  await wait(200);
-  await page.click('[data-add]');
-  await wait(250);
-}
-await wait(2700); // let toasts fade
+await wait(400);
+await scrollTo('.new-borrower', -10);
+await shot('27-alumno-numero-de-control');
+await page.evaluate(() => {
+  const f = document.querySelector('[data-borrower-form]');
+  f.bsid.value = '21308050123';
+  f.requestSubmit();
+});
+await wait(1200);
+// Fill the loan from a saved practice
+await page.evaluate(() => {
+  const sel = document.querySelector('[name="practiceId"]');
+  sel.value = [...sel.options].find((o) => o.textContent.includes('Titulación')).value;
+  sel.dispatchEvent(new Event('change'));
+});
+await wait(3200); // let the toast fade
+await page.evaluate(() => window.scrollTo(0, 0));
+await wait(200);
 await shot('16-nuevo-vale');
 await scrollTo('[data-lines]', -10);
 await shot('17-nuevo-vale-articulos');
@@ -139,6 +154,32 @@ await shot('19-vale-vencido');
 await scrollTo('.lines', -10);
 await shot('20-vale-devolucion');
 
+// Reagent comes back in one step (open demo loan: onion cells, methylene blue)
+await go('/vales');
+const open = await page.$$eval('.loan-row--open', (rows) => rows.find((a) => a.textContent.includes('cebolla')).getAttribute('href'));
+await page.goto(`${BASE}${open}`, { waitUntil: 'networkidle0' });
+await page.waitForSelector('[data-returned]', { timeout: 10000 });
+await page.evaluate(() => {
+  const input = document.querySelector('[data-returned]');
+  input.value = '5';
+  input.closest('.line').scrollIntoView({ block: 'center' });
+});
+await wait(400);
+await shot('28-reactivo-regreso');
+// Broken item with a note (dialog only; cancelled afterwards)
+await page.evaluate(() => {
+  const btn = [...document.querySelectorAll('[data-act="LOSS"]')].find((b) => b.closest('.line').textContent.includes('Portaobjetos'));
+  btn.click();
+});
+await wait(500);
+await page.evaluate(() => {
+  const d = document.querySelector('dialog[open]');
+  d.querySelector('textarea').value = 'Se rompió al lavarlo';
+});
+await shot('29-roto-con-nota');
+await page.evaluate(() => document.querySelector('dialog[open] button[value=cancel]').click());
+await wait(300);
+
 // 5. Backup
 await go('/respaldo');
 await shot('21-respaldo');
@@ -147,7 +188,9 @@ await shot('22-respaldo-csv');
 
 // 6. Close-up of a printed label
 await page.setViewport({ width: 1000, height: 900, deviceScaleFactor: 3 });
-await page.goto(`${BASE}#/etiquetas?codigos=QUI-0007`, { waitUntil: 'networkidle0' });
+// Same-document hash changes can be skipped after a viewport change: set the hash and reload.
+await page.evaluate(() => { location.hash = '/etiquetas?codigos=QUI-0007'; });
+await page.reload({ waitUntil: 'networkidle0' });
 const label = await page.waitForSelector('.qr-label', { timeout: 10000 });
 await page.addStyleTag({ content: '.topbar, .tabbar, .print-bar { display: none !important; } .sheet { zoom: 1 !important; }' });
 await label.scrollIntoView();

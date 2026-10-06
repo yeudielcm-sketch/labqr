@@ -394,3 +394,15 @@ El auditor, con contexto limpio, revisó solo los cambios de F6 y encontró **6 
   - Una foto de 3000 × 2000 se guardó reducida a 640 px en JPEG.
   - Un respaldo anterior sin prácticas se restauró sin errores, y uno nuevo regresó idéntico, con prácticas y fotos.
 - **Pendiente:** probarlo en el Android, en especial la cámara para fotos.
+
+---
+
+## Manual actualizado a C-Lab 0.7.0 · 6 de octubre de 2026
+
+- `MANUAL-USUARIO.pdf` regenerado: 20 páginas y 29 capturas, con el nombre C-Lab.
+  - Paso nuevo: "Guardar prácticas".
+  - "Prestar" ahora explica la práctica guardada y el número de control del alumno.
+  - "Recibir la devolución" ahora explica el regreso de reactivos y la nota en "Roto o perdido".
+  - Se agregó la foto del artículo.
+- **Lección aplicada** (Xcellence: "documentos que se quedaron atrás"): el manual decía "LabQR" y no tenía F6. Se pasaron a C-Lab también el informe, el cartel, el guion de exposición, el manual de instalación, la hoja de entrevistas y el guion para laboratoristas. Este último incluye ahora 7 preguntas para validar las ideas del equipo antes de seguir programando.
+- **Problema encontrado:** el campo "Cantidad que regresó" usaba el atributo `data-back`, el mismo que el botón de regresar de la barra superior. La app no fallaba, porque busca con el id del artículo, pero el script de capturas tomó el botón equivocado. Se renombró a `data-returned` para quitar la trampa.

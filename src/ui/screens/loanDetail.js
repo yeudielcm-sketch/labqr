@@ -84,7 +84,7 @@ export const loanDetail = {
       const line = lines.find((l) => l.itemId === b.dataset.item);
 
       if (b.dataset.act === 'REAGENT') {
-        const raw = view.querySelector(`[data-back="${line.itemId}"]`).value.trim();
+        const raw = view.querySelector(`[data-returned="${line.itemId}"]`).value.trim();
         if (!raw) return toast(t.loanDetail.reagentEmpty, { danger: true });
         const back = parseQty(raw);
         if (back === null || back > line.pending) return toast(t.loanDetail.badQty, { danger: true });
@@ -167,7 +167,7 @@ function lineHtml(l) {
         ${reagent ? `
         <label class="field-group reagent-back">
           <span>${t.loanDetail.reagentBack} (${u})</span>
-          <input class="field code-input" inputmode="decimal" data-back="${item.id}" placeholder="0" autocomplete="off" />
+          <input class="field code-input" inputmode="decimal" data-returned="${item.id}" placeholder="0" autocomplete="off" />
           <span class="meta">${t.loanDetail.reagentBackHelp}</span>
         </label>` : ''}
         <div class="line__actions">

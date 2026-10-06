@@ -1,4 +1,4 @@
-# Informe del prototipo — LabQR (BORRADOR)
+# Informe del prototipo — C-Lab (BORRADOR)
 
 > **Borrador armado con lo que ya está en el repositorio.** El formato oficial (secciones, extensión, tipografía) lo da la *Guía de Operación, Exhibición, Seguridad y Evaluación*, que todavía no tenemos. Cuando llegue, se reacomoda aquí.
 > Todo lo marcado con **[FALTA]** es un dato que solo se obtiene en el plantel. **No se debe inventar.**
@@ -35,7 +35,7 @@ Los laboratorios del plantel prestan equipo, material de vidrio y reactivos a eq
 Resumen de `RESEARCH.md`:
 - **Soluciones comerciales:** Sortly, GoCodes, Quartzy, Labsistant, LabArchives, QR Inventory, Hector y Snipe-IT. Todas cobran en dólares, están en inglés o necesitan un servidor, y ninguna combina préstamos a equipos de alumnos con reactivos que caducan.
 - **Antecedente académico:** Universidad de La Salle (Colombia), un sistema de préstamo de laboratorio con código de barras y servidor propio.
-- **Hueco que cubre LabQR:**
+- **Hueco que cubre C-Lab:**
   - Costo cero y sin instalación.
   - Flujo de práctica de bachillerato.
   - Tres tipos de artículo (equipo, material y reactivo).

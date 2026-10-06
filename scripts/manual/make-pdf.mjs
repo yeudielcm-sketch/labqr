@@ -16,7 +16,7 @@ await page.pdf({
   preferCSSPageSize: true,
   displayHeaderFooter: true,
   headerTemplate: '<span></span>',
-  footerTemplate: '<div style="width:100%;font-size:8pt;color:#4A525C;padding:0 0.65in;display:flex;justify-content:space-between;font-family:sans-serif"><span>LabQR · Manual de usuario</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
+  footerTemplate: '<div style="width:100%;font-size:8pt;color:#4A525C;padding:0 0.65in;display:flex;justify-content:space-between;font-family:sans-serif"><span>C-Lab · Manual de usuario</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
 });
 console.log({ broken, fonts });
 await browser.close();

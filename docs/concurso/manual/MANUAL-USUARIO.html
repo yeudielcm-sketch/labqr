@@ -2,7 +2,7 @@
 <html lang="es-MX">
 <head>
 <meta charset="utf-8" />
-<title>Manual de usuario — LabQR</title>
+<title>Manual de usuario — C-Lab</title>
 <style>
   @font-face { font-family: 'Barlow'; font-weight: 400; src: url('../../../node_modules/@fontsource/barlow/files/barlow-latin-400-normal.woff2') format('woff2'); }
   @font-face { font-family: 'Barlow'; font-weight: 500; src: url('../../../node_modules/@fontsource/barlow/files/barlow-latin-500-normal.woff2') format('woff2'); }
@@ -72,24 +72,24 @@
 <!-- ============ PORTADA ============ -->
 <div class="cover">
   <div>
-    <span class="brand">LabQR</span>
+    <span class="brand">C-Lab</span>
     <h1>Manual de usuario</h1>
     <p class="sub">Cómo llevar el inventario y los préstamos del laboratorio con el celular y etiquetas QR. Explicado paso a paso, para cualquier persona.</p>
   </div>
   <div class="mid">
     <img class="phone" src="../capturas/04-inicio-con-datos.png" alt="Pantalla de Inicio" />
     <div class="qrbox">
-      <img src="../qr/labqr-app.png" alt="QR para abrir LabQR" />
-      <p><b>Escanea para abrir LabQR</b><br />yeudielcm-sketch.github.io/labqr</p>
+      <img src="../qr/labqr-app.png" alt="QR para abrir C-Lab" />
+      <p><b>Escanea para abrir C-Lab</b><br />yeudielcm-sketch.github.io/labqr</p>
     </div>
   </div>
-  <div class="foot">CBTIS 108 · Prototipo de Desarrollo de Software · CNPyPE 2027 · Versión de la app 0.6.2 · Octubre de 2026</div>
+  <div class="foot">CBTIS 108 · Prototipo de Desarrollo de Software · CNPyPE 2027 · Versión de la app 0.7.0 · Octubre de 2026</div>
 </div>
 
 <!-- ============ ÍNDICE + QUÉ ES ============ -->
 <div class="section">
   <span class="section-tag">ANTES DE EMPEZAR</span>
-  <h2>¿Qué es LabQR?</h2>
+  <h2>¿Qué es C-Lab?</h2>
   <p class="lead">Es una aplicación gratuita para saber <b>qué hay</b> en el laboratorio, <b>dónde está</b> y <b>quién lo tiene prestado</b>. Cada artículo lleva una etiqueta con un código QR; con el celular se escanea para prestar, recibir o consultar.</p>
 
   <table>
@@ -105,6 +105,7 @@
     <tr><td><b>Material</b></td><td>Piezas que se prestan y pueden romperse: vasos, probetas, pinzas. <i>Franja azul claro.</i></td></tr>
     <tr><td><b>Reactivo</b></td><td>Se gasta en la práctica; tiene unidad (ml, g) y caducidad. <i>Franja ámbar.</i></td></tr>
     <tr><td><b>Vale</b></td><td>El papelito de préstamo, pero en el celular: quién se lleva qué y para qué práctica.</td></tr>
+    <tr><td><b>Práctica</b></td><td>La lista de material de una práctica, guardada una vez por el maestro o el encargado para llenar los vales en un toque.</td></tr>
     <tr><td><b>Recepción</b></td><td>Llegó material nuevo.</td></tr>
     <tr><td><b>Merma</b></td><td>Algo se rompió, se perdió o caducó.</td></tr>
     <tr><td><b>Existencia</b></td><td>Cuánto hay. La app lo dibuja como una <b>probeta</b>: el líquido es lo que hay en el laboratorio.</td></tr>
@@ -120,6 +121,7 @@
       <li>Agregar artículos</li>
       <li>Imprimir etiquetas QR</li>
       <li>Escanear</li>
+      <li>Guardar prácticas</li>
       <li>Prestar material (vale)</li>
       <li>Recibir la devolución</li>
       <li>Recepción, merma y ajuste</li>
@@ -165,7 +167,7 @@
         <li><b>Vales:</b> los préstamos.</li>
       </ul>
       <h3>El botón ☰ de arriba</h3>
-      <p>Abre lo que se usa menos: <b>Ajustes</b>, <b>Etiquetas</b>, <b>Respaldo</b> y el <b>Tablero</b> para TV.</p>
+      <p>Abre lo que se usa menos: <b>Ajustes</b>, <b>Prácticas</b>, <b>Etiquetas</b>, <b>Respaldo</b> y el <b>Tablero</b> para TV.</p>
       <h3>La flecha ‹</h3>
       <p>Regresa a la pantalla anterior.</p>
     </div>
@@ -179,7 +181,7 @@
     <tr><td>◇ <b>vale vencido</b> (rojo)</td><td>Ya pasó la hora de devolver y algo no ha regresado.</td></tr>
     <tr><td>◇ <b>bajo mínimo</b> (rojo)</td><td>Queda menos de lo necesario; hay que pedir más.</td></tr>
     <tr><td>● <b>por caducar</b> (ámbar)</td><td>Reactivos que caducan en los próximos 30 días.</td></tr>
-    <tr><td>Aviso de <b>respaldo</b></td><td>Pasaron más de 7 días sin respaldar (ver Paso 11).</td></tr>
+    <tr><td>Aviso de <b>respaldo</b></td><td>Pasaron más de 7 días sin respaldar (ver Paso 12).</td></tr>
   </table>
 </div>
 
@@ -251,6 +253,8 @@
       <div class="tip"><b>El historial no se puede borrar ni editar</b>Así nadie puede cambiar lo que pasó. Si te equivocas, se corrige con un movimiento nuevo (por ejemplo, un ajuste por conteo).</div>
       <h3>Especificaciones</h3>
       <p>Agrega los datos que pida cada maestro (marca, modelo, voltaje, concentración…) con <b>Agregar dato</b>. También sirven para buscar.</p>
+      <h3>Foto</h3>
+      <p>En la ficha, <b>Tomar o elegir foto</b> abre la cámara o la galería. La foto se guarda en tamaño pequeño, aparece en la ficha y en la lista, y viaja en el respaldo.</p>
     </div>
     <figure><img src="../capturas/09-ficha-historial.png" alt="" /><figcaption>La probeta rota queda registrada con su responsable.</figcaption></figure>
   </div>
@@ -322,25 +326,46 @@
   </div>
 </div>
 
-<!-- ============ 8. PRESTAR ============ -->
+<!-- ============ 8. PRÁCTICAS ============ -->
 <div class="section">
   <span class="section-tag">PASO 8</span>
+  <h2>Guardar prácticas</h2>
+  <p class="lead">El maestro o el encargado guarda una sola vez el material de cada práctica. Después, al hacer el vale, se elige la práctica y la lista se llena sola.</p>
+  <div class="row two">
+    <div>
+      <ol class="steps-big">
+        <li>Toca <span class="path">☰ → Prácticas</span> → <span class="btn fill">+ Nueva práctica</span>.</li>
+        <li>Escribe el <b>nombre</b> (por ejemplo "Titulación ácido-base"), el <b>laboratorio</b> y, si quieres, el <b>maestro</b>.</li>
+        <li>Busca cada material por nombre o código y tócalo para agregarlo. Ajusta las cantidades con <b>−</b> y <b>+</b> (en reactivos, escríbela).</li>
+        <li>Toca <span class="btn fill">Guardar</span>.</li>
+      </ol>
+      <div class="tip"><b>Atajo</b>Dentro de una práctica, <b>Hacer vale con esta práctica</b> abre un vale nuevo ya lleno.</div>
+      <p>Una práctica que ya no se usa se <b>archiva</b>: deja de aparecer al hacer vales y los vales anteriores no cambian.</p>
+    </div>
+    <figure><img src="../capturas/25-practicas.png" alt="" /><figcaption>Las prácticas guardadas.</figcaption></figure>
+    <figure><img src="../capturas/26-practica-editar.png" alt="" /><figcaption>El material de una práctica.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 9. PRESTAR ============ -->
+<div class="section">
+  <span class="section-tag">PASO 9</span>
   <h2>Prestar material (vale)</h2>
   <p class="lead">Es lo que más se usa: un equipo de alumnos llega por el material de su práctica.</p>
   <div class="row two">
     <div>
       <ol class="steps-big">
         <li>Toca <span class="btn fill">+ Nuevo vale</span> (en Inicio o en Vales).</li>
-        <li><b>Solicitante:</b> elige quién se lo lleva. Si no está en la lista, toca <b>+ Nuevo solicitante</b> y agrégalo ahí mismo (nombre, tipo, grupo).</li>
-        <li><b>Práctica:</b> escribe cuál es (opcional).</li>
+        <li><b>Solicitante:</b> elige quién se lo lleva. Si no está en la lista, toca <b>+ Nuevo solicitante</b> y agrégalo ahí mismo (nombre, tipo, grupo). Si es <b>alumno</b>, el <b>número de control es obligatorio</b>.</li>
+        <li><b>Práctica:</b> en <b>Usar una práctica guardada</b>, elige la práctica y el material se agrega solo (Paso 8). Si no hay una guardada, escribe cuál es (opcional).</li>
         <li>Toca <b>Escanear artículos</b> y escanea cada etiqueta una tras otra. Cada lectura suma 1 y suena un <b>bip</b>. Escanear dos veces el mismo vaso = 2 vasos.</li>
         <li>Ajusta cantidades con <b>−</b> y <b>+</b>. En reactivos escribe la cantidad (por ejemplo 25.5 ml).</li>
       </ol>
     </div>
-    <figure><img src="../capturas/16-nuevo-vale.png" alt="" /><figcaption>Arriba: solicitante y práctica.</figcaption></figure>
+    <figure><img src="../capturas/16-nuevo-vale.png" alt="" /><figcaption>Arriba: solicitante y práctica guardada; la lista ya se llenó.</figcaption></figure>
     <figure><img src="../capturas/17-nuevo-vale-articulos.png" alt="" /><figcaption>Abajo: lo que se lleva, con cuánto hay.</figcaption></figure>
   </div>
-  <div class="row">
+  <div class="row two">
     <div>
       <ol class="steps-big" start="6" style="counter-reset: s 5;">
         <li>Toca <span class="btn fill">Confirmar préstamo</span>. Es un solo toque.</li>
@@ -349,13 +374,14 @@
       <div class="tip"><b>La app te cuida</b>No deja prestar más de lo que hay en el laboratorio: lo marca en rojo. Si te sales a revisar algo, el vale que estabas armando te espera al regresar; si no lo quieres, toca <b>Descartar</b>.</div>
       <p>La hora de devolución es el mismo día a las 11:59 p.m. (se puede cambiar en Ajustes → Días de préstamo).</p>
     </div>
+    <figure><img src="../capturas/27-alumno-numero-de-control.png" alt="" /><figcaption>Un alumno sin número de control no se puede agregar.</figcaption></figure>
     <figure><img src="../capturas/18-prestamo-confirmado.png" alt="" /><figcaption>Préstamo confirmado.</figcaption></figure>
   </div>
 </div>
 
 <!-- ============ 9. DEVOLUCIÓN ============ -->
 <div class="section">
-  <span class="section-tag">PASO 9</span>
+  <span class="section-tag">PASO 10</span>
   <h2>Recibir la devolución</h2>
   <div class="row two">
     <div>
@@ -365,8 +391,8 @@
         <li>En cada artículo toca lo que pasó:
           <ul>
             <li><span class="btn">Devuelto</span> regresó. Si fue solo una parte, cambia el número antes de tocar.</li>
-            <li><span class="btn" style="border-color:var(--hazard);color:var(--hazard)">Roto o perdido</span> queda como merma a cargo de ese equipo (pide confirmar).</li>
-            <li><span class="btn">Consumido</span> solo en reactivos: se gastó en la práctica.</li>
+            <li><span class="btn" style="border-color:var(--hazard);color:var(--hazard)">Roto o perdido</span> queda como merma a cargo de ese equipo. Pide confirmar y deja escribir <b>qué pasó</b>.</li>
+            <li><b>Reactivos:</b> escribe en <b>Cantidad que regresó</b> cuánto sobró (0 si se gastó todo) y toca <span class="btn">Registrar regreso</span>. Lo demás se registra como consumido.</li>
           </ul>
         </li>
         <li>Si todo regresó bien, basta con <span class="btn fill">Todo regresó completo</span>.</li>
@@ -376,11 +402,21 @@
     <figure><img src="../capturas/15-vales.png" alt="" /><figcaption>Lista de vales: el vencido va arriba.</figcaption></figure>
     <figure><img src="../capturas/20-vale-devolucion.png" alt="" /><figcaption>Botones por artículo y lo que ya pasó.</figcaption></figure>
   </div>
+  <div class="row two">
+    <div>
+      <h3>Reactivos: cuánto regresó</h3>
+      <p>Un reactivo casi nunca regresa completo. Escribe lo que sobró: si se prestaron 20 ml y regresaron 5, la app guarda 5 ml devueltos y 15 ml consumidos, en un solo paso.</p>
+      <h3>Algo se rompió</h3>
+      <p>Al tocar <b>Roto o perdido</b> la app pregunta qué pasó (por ejemplo "Se rompió al lavarlo"). La nota queda en el historial del vale y del artículo. En reactivos también pregunta <b>cuánto</b> se perdió.</p>
+    </div>
+    <figure><img src="../capturas/28-reactivo-regreso.png" alt="" /><figcaption>Reactivo: regresaron 5 ml de 20.</figcaption></figure>
+    <figure><img src="../capturas/29-roto-con-nota.png" alt="" /><figcaption>Roto o perdido, con la nota de qué pasó.</figcaption></figure>
+  </div>
 </div>
 
 <!-- ============ 10. MOVIMIENTOS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 10</span>
+  <span class="section-tag">PASO 11</span>
   <h2>Recepción, merma y ajuste</h2>
   <p class="lead">Para lo que pasa fuera de un préstamo. Se hace desde la ficha del artículo, en <b>Registrar movimiento</b>.</p>
   <div class="row">
@@ -399,7 +435,7 @@
 
 <!-- ============ 11. RESPALDO ============ -->
 <div class="section">
-  <span class="section-tag">PASO 11</span>
+  <span class="section-tag">PASO 12</span>
   <h2>Respaldo: no perder los datos</h2>
   <div class="warn"><b>Importante</b>Los datos viven <b>solo en este celular</b>. Si se pierde, se rompe o se borra el navegador, solo un respaldo los recupera. Haz uno <b>cada semana</b>; Inicio te avisa cuando toca.</div>
   <div class="row two">
@@ -412,7 +448,7 @@
       <h3>Recuperar los datos</h3>
       <ol class="steps-big">
         <li>En el celular nuevo (o después de borrar), abre <span class="path">☰ → Respaldo</span>.</li>
-        <li>Toca <b>Restaurar desde archivo</b> y elige el archivo <i>labqr-respaldo-….json</i>.</li>
+        <li>Toca <b>Restaurar desde archivo</b> y elige el archivo <i>clab-respaldo-….json</i> (los respaldos anteriores, <i>labqr-respaldo-…</i>, también sirven).</li>
         <li>La app dice qué trae y pide confirmar. Todo regresa tal cual.</li>
       </ol>
     </div>
@@ -428,21 +464,21 @@
 
 <!-- ============ 12. TABLERO ============ -->
 <div class="section">
-  <span class="section-tag">PASO 12</span>
+  <span class="section-tag">PASO 13</span>
   <h2>Tablero para TV</h2>
   <p class="lead">Para exposiciones o para dejarlo a la vista en el laboratorio: muestra todo el inventario de un vistazo, legible a 3 metros.</p>
   <figure class="wide"><img src="../capturas/24-tablero.png" alt="" /><figcaption>Una fila de probetas por anaquel; a la derecha los vales abiertos y los últimos movimientos.</figcaption></figure>
   <ol class="steps-big" style="margin-top:10pt">
-    <li>En una laptop conectada a la TV, abre LabQR y toca <span class="path">☰ → Tablero de exposición</span>. Presiona <b>F11</b> para pantalla completa.</li>
+    <li>En una laptop conectada a la TV, abre C-Lab y toca <span class="path">☰ → Tablero de exposición</span>. Presiona <b>F11</b> para pantalla completa.</li>
     <li>Arriba eliges el laboratorio.</li>
-    <li>Abre LabQR en <b>otra ventana de la misma laptop</b> y haz préstamos ahí: el tablero cambia solo al momento.</li>
+    <li>Abre C-Lab en <b>otra ventana de la misma laptop</b> y haz préstamos ahí: el tablero cambia solo al momento.</li>
   </ol>
-  <div class="tip"><b>¿Por qué en la misma laptop?</b>En esta versión cada dispositivo guarda sus propios datos. Si quieres ver en la laptop lo del celular, pásale un respaldo (Paso 11).</div>
+  <div class="tip"><b>¿Por qué en la misma laptop?</b>En esta versión cada dispositivo guarda sus propios datos. Si quieres ver en la laptop lo del celular, pásale un respaldo (Paso 12).</div>
 </div>
 
 <!-- ============ 13. PROBLEMAS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 13</span>
+  <span class="section-tag">PASO 14</span>
   <h2>Si algo no funciona</h2>
   <table>
     <tr><th>Qué pasa</th><th>Qué hacer</th></tr>

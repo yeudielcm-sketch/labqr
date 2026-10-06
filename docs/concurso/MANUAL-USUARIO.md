@@ -1,11 +1,11 @@
-# Manual de usuario — LabQR
+# Manual de usuario — C-Lab
 
-> Se escribe a la par de cada fase. Versión 0.6.2.
-> **Versión con capturas para entregar: [MANUAL-USUARIO.pdf](MANUAL-USUARIO.pdf)** (18 páginas, carta). Su fuente es `manual/MANUAL-USUARIO.html` y las capturas están en `capturas/`.
+> Se escribe a la par de cada fase. Versión 0.7.0 (incluye F6: prácticas, reactivos, notas, número de control y fotos).
+> **Versión con capturas para entregar: [MANUAL-USUARIO.pdf](MANUAL-USUARIO.pdf)** (20 páginas, carta, 29 capturas). Su fuente es `manual/MANUAL-USUARIO.html` y las capturas están en `capturas/`.
 
 ## Pantallas
 
-La barra inferior tiene cuatro pestañas: **Inicio**, **Escanear**, **Artículos** y **Vales**. El botón ☰ de arriba abre **Ajustes**, **Etiquetas**, **Respaldo** y el **Tablero de exposición**.
+La barra inferior tiene cuatro pestañas: **Inicio**, **Escanear**, **Artículos** y **Vales**. El botón ☰ de arriba abre **Ajustes**, **Prácticas**, **Etiquetas**, **Respaldo** y el **Tablero de exposición**.
 
 ## Primeros pasos
 
@@ -53,10 +53,19 @@ Desde la ficha de un artículo, **Imprimir etiqueta** abre la hoja con ese artí
 
 Pestaña **Escanear**: apunta a la etiqueta. Al leerla, el celular vibra y abre la ficha. Si la cámara no funciona, escribe el código en el campo de abajo (sirve "qui 7" para QUI-0007).
 
+## Guardar prácticas
+
+1. **☰ → Prácticas → + Nueva práctica.**
+2. Escribe el nombre, el laboratorio y, si quieres, el maestro.
+3. Busca y agrega el material con sus cantidades.
+4. Toca **Guardar**.
+
+Al hacer un vale, elige la práctica en **Usar una práctica guardada** y la lista se llena sola. Dentro de una práctica, **Hacer vale con esta práctica** abre el vale ya lleno.
+
 ## Prestar material (vale)
 
 1. Toca **+ Nuevo vale** (en Inicio o en Vales).
-2. Elige el **solicitante** o agrégalo ahí mismo (nombre, tipo, grupo). Escribe la **práctica** si quieres.
+2. Elige el **solicitante** o agrégalo ahí mismo (nombre, tipo, grupo). Si es **alumno**, el número de control es obligatorio. Elige una **práctica guardada** o escribe cuál es.
 3. Toca **Escanear artículos** y escanea cada etiqueta: cada lectura suma 1 y se oye un bip. También puedes buscarlos por nombre.
 4. Ajusta cantidades con **−** y **+** (en reactivos escribe la cantidad, por ejemplo 25.5).
 5. Toca **Confirmar préstamo**. Las probetas bajan y la app muestra cuántos segundos tomó.
@@ -68,8 +77,8 @@ La app no deja prestar más de lo que hay en el laboratorio.
 1. Abre el vale en **Vales** (los vencidos aparecen primero, en rojo).
 2. En cada renglón toca:
    - **Devuelto:** puedes cambiar la cantidad si regresó solo una parte.
-   - **Roto o perdido:** queda como merma a cargo del solicitante.
-   - **Consumido:** solo en reactivos.
+   - **Roto o perdido:** queda como merma a cargo del solicitante; la app pregunta qué pasó (y en reactivos, cuánto).
+   - **Reactivos:** escribe en **Cantidad que regresó** cuánto sobró (0 si se gastó todo) y toca **Registrar regreso**; lo demás se registra como consumido.
 3. Si todo regresó bien, toca **Todo regresó completo**.
 
 El vale se cierra solo cuando no queda nada pendiente.

@@ -8,9 +8,9 @@ Fuente: convocatoria local del CBTIS 108 (28 sep 2026) y convocatoria nacional d
 
 | Entregable | Archivo en el repo | Estado | Se alimenta de |
 |---|---|---|---|
-| Bitácora | `docs/BITACORA-DEV.md` | Al día (F0 a F5) | Cada cierre de fase |
+| Bitácora | `docs/BITACORA-DEV.md` | Al día (F0 a F6 y dos auditorías) | Cada cierre de fase |
 | Informe del prototipo | `docs/concurso/INFORME.md` | Borrador (faltan datos de campo y la guía oficial) | RESEARCH (antecedentes), SPEC §10 (factibilidad económica), métricas de SPEC §8 |
-| Manual de usuario | `docs/concurso/MANUAL-USUARIO.pdf` | **Listo en PDF** (18 páginas, 24 capturas) | Pantallas reales, con capturas del celular |
+| Manual de usuario | `docs/concurso/MANUAL-USUARIO.pdf` | **Listo en PDF**, versión C-Lab 0.7.0 (20 páginas, 29 capturas) | Pantallas reales, con capturas del celular |
 | Manual de instalación | `docs/concurso/MANUAL-INSTALACION.md` | Primera versión (F0) | Pasos para instalar la PWA en Android |
 | Guion de demostración y entrevista | `docs/concurso/GUION-DEMO-LABORATORISTAS.md` | Listo para usarse | Base para SPEC-v1 y la metodología del informe |
 | Cartel | `docs/concurso/CARTEL.md` | Contenido listo; falta el formato de la guía y los datos de campo | Probeta, flujo del vale, costo $0 |

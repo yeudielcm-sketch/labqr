@@ -5,7 +5,7 @@
 
 ---
 
-## Hoja de medición: tiempo de entrega **sin** LabQR ("antes")
+## Hoja de medición: tiempo de entrega **sin** C-Lab ("antes")
 
 **Cómo medir:** con el cronómetro del celular, desde que el equipo pide el material hasta que se lo llevan. Mide al menos 5 entregas reales, de preferencia en prácticas distintas.
 
@@ -19,7 +19,7 @@
 
 **Promedio "antes":** ____ s por entrega · ____ s por artículo
 
-## Mediciones **con** LabQR ("después")
+## Mediciones **con** C-Lab ("después")
 
 Salen solas del CSV de vales (☰ → Respaldo → Vales, columna `duracion_segundos`).
 
