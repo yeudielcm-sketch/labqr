@@ -16,8 +16,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
-        name: 'LabQR — Inventario de laboratorio',
-        short_name: 'LabQR',
+        name: 'C-Lab — Inventario de laboratorio',
+        short_name: 'C-Lab',
         description: 'Inventario y préstamos de laboratorio con códigos QR.',
         lang: 'es-MX',
         start_url: base,

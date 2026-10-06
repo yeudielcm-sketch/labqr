@@ -7,10 +7,12 @@ import { replaceQuery } from '../router.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
 import { flagsHtml, statusFlags, stockMini } from '../components/stockView.js';
+import { isPhoto } from '../components/photo.js';
 
 export function itemRow(item, stock, locationName) {
   return `
-    <a class="label label--${item.kind} item-row" href="#/i/${encodeURIComponent(item.code)}">
+    <a class="label label--${item.kind} item-row${isPhoto(item.photo) ? ' item-row--photo' : ''}" href="#/i/${encodeURIComponent(item.code)}">
+      ${isPhoto(item.photo) ? `<img class="item-row__photo" src="${item.photo}" alt="" loading="lazy" />` : ''}
       <span class="item-row__code code">${esc(item.code)}</span>
       <span class="item-row__name">${esc(item.name)}</span>
       <span class="item-row__meta meta">${esc(locationName ?? t.common.none)}</span>

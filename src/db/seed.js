@@ -141,7 +141,18 @@ export function buildDemo() {
   move('probeta', 'RETURN', pz(2), at(5, 110), { loanId: l3.id, borrowerId: l3.borrowerId });
   move('probeta', 'LOSS', pz(1), at(5, 110), { loanId: l3.id, borrowerId: l3.borrowerId, reason: 'Rotura', note: 'Se rompió la base al guardarla' });
 
-  return { labs, locations, items, borrowers, loans: [l1, l2, l3], movements };
+  // Teacher practices (F6): material lists that pre-fill a loan.
+  const practice = (name, prefix, teacher, list) => ({
+    id: id(), name, teacher, labId: labId(prefix), archived: false, createdAt: at(25), updatedAt: at(25),
+    items: list.map(([key, qty]) => ({ itemId: ref[key].id, qty })),
+  });
+  const practices = [
+    practice('Titulación ácido-base', 'QUI', 'Mtra. Laura Méndez', [['bureta', pz(2)], ['vaso250', pz(4)], ['pipeta', pz(2)], ['hcl', 5000], ['naoh', 1000]]),
+    practice('Densidad de líquidos', 'QUI', 'Mtra. Laura Méndez', [['probeta', pz(4)], ['vaso100', pz(3)], ['balanza', pz(1)]]),
+    practice('Observación de células de cebolla', 'BIO', '', [['micro1', pz(1)], ['porta', pz(10)], ['cubre', pz(10)], ['azul', 2000]]),
+  ];
+
+  return { labs, locations, items, borrowers, loans: [l1, l2, l3], movements, practices };
 }
 
 export async function loadDemo() {
@@ -153,6 +164,7 @@ export async function loadDemo() {
     await db.borrowers.bulkAdd(demo.borrowers);
     await db.loans.bulkAdd(demo.loans);
     await db.movements.bulkAdd(demo.movements);
+    await db.practices.bulkAdd(demo.practices);
     await db.settings.put({ key: 'defaultLoanDays', value: 0 });
     await db.settings.put({ key: 'demoLoadedAt', value: new Date().toISOString() });
   });

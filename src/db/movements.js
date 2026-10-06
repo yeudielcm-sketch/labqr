@@ -1,7 +1,7 @@
 // Every quantity change is a new movement (append-only ledger). Loans group LEND/RETURN/LOSS/CONSUME.
 import { db } from './schema.js';
 import { stockOf } from '../domain/stock.js';
-import { adjustmentFor, loanLines, loanStatus, pendingTotal, validateLines } from '../domain/loans.js';
+import { adjustmentFor, borrowerProblems, loanLines, loanStatus, pendingTotal, splitReagentReturn, validateLines } from '../domain/loans.js';
 
 const now = () => new Date().toISOString();
 const newId = () => crypto.randomUUID();
@@ -41,6 +41,7 @@ export async function listBorrowers() {
 }
 
 export async function createBorrower({ name, type, group, studentId }) {
+  if (borrowerProblems({ name, type, studentId })) return null;
   const b = { id: newId(), name, type, group: group || '', studentId: studentId || '', createdAt: now() };
   await db.borrowers.add(b);
   return b;
@@ -50,7 +51,7 @@ export async function createBorrower({ name, type, group, studentId }) {
 
 // Writes the loan and its LEND movements in one transaction. `createdAt` is when the
 // capture started (SPEC §8); confirmedAt is now.
-export async function confirmLoan({ borrowerId, labId, practice, createdAt, dueAt, lines }) {
+export async function confirmLoan({ borrowerId, labId, practice, practiceId = null, createdAt, dueAt, lines }) {
   return db.transaction('rw', db.loans, db.movements, db.borrowers, async () => {
     if (!borrowerId || !(await db.borrowers.get(borrowerId))) return { ok: false, problems: [{ itemId: null, reason: 'borrower' }] };
     const onHand = {};
@@ -58,7 +59,7 @@ export async function confirmLoan({ borrowerId, labId, practice, createdAt, dueA
     const problems = validateLines(lines, onHand);
     if (problems.length) return { ok: false, problems };
     const confirmedAt = now();
-    const loan = { id: newId(), borrowerId, labId, practice: practice || '', createdAt, confirmedAt, dueAt };
+    const loan = { id: newId(), borrowerId, labId, practice: practice || '', practiceId, createdAt, confirmedAt, dueAt };
     await db.loans.add(loan);
     await db.movements.bulkAdd(
       lines.map((l) => ({ id: newId(), itemId: l.itemId, type: 'LEND', qty: l.qty, loanId: loan.id, borrowerId, createdAt: confirmedAt })),
@@ -109,4 +110,22 @@ export async function getLoan(id) {
     lines: lines.map((l, i) => ({ ...l, item: items[i] })).sort((a, b) => a.item.code.localeCompare(b.item.code)),
     movements: movements.sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
   };
+}
+
+// Reagent back from a practice in one step (F6): `returned` goes back to the lab and the rest
+// of what was pending is recorded as consumed, in a single transaction.
+export async function settleReagent(loanId, itemId, returned) {
+  return db.transaction('rw', db.loans, db.movements, async () => {
+    const loan = await db.loans.get(loanId);
+    const line = loanLines(loanId, await db.movements.where('loanId').equals(loanId).toArray()).find((l) => l.itemId === itemId);
+    const split = line && splitReagentReturn(line.pending, returned);
+    if (!loan || !split || line.pending <= 0) return false;
+    const createdAt = now();
+    const base = { itemId, loanId, borrowerId: loan.borrowerId, createdAt };
+    if (split.returned > 0) await db.movements.add({ id: newId(), type: 'RETURN', qty: split.returned, ...base });
+    if (split.consumed > 0) await db.movements.add({ id: newId(), type: 'CONSUME', qty: split.consumed, ...base });
+    const after = loanLines(loanId, await db.movements.where('loanId').equals(loanId).toArray());
+    if (pendingTotal(after) === 0) await db.loans.update(loanId, { closedAt: now() });
+    return split;
+  });
 }

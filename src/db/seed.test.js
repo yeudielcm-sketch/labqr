@@ -35,3 +35,16 @@ describe('buildDemo', () => {
     }
   });
 });
+
+describe('demo practices', () => {
+  it('reference real demo items and pass validation', async () => {
+    const { practiceProblems, linesFromPractice } = await import('../domain/practices.js');
+    const demo = buildDemo();
+    const itemsById = Object.fromEntries(demo.items.map((i) => [i.id, i]));
+    expect(demo.practices).toHaveLength(3);
+    for (const p of demo.practices) {
+      expect(practiceProblems(p)).toBe(null);
+      expect(linesFromPractice(p, itemsById, {}).missing).toEqual([]);
+    }
+  });
+});

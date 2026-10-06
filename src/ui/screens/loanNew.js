@@ -2,9 +2,11 @@
 // continuous scanning, and "Confirmar préstamo" is a single tap.
 import { getSetting, loadCatalog } from '../../db/catalog.js';
 import { confirmLoan, createBorrower, listBorrowers } from '../../db/movements.js';
+import { getPractice, listPractices } from '../../db/practices.js';
+import { linesFromPractice, mergeLines } from '../../domain/practices.js';
 import { filterItems } from '../../domain/catalog.js';
 import { extractCode } from '../../domain/codes.js';
-import { deliverySeconds, dueDate } from '../../domain/loans.js';
+import { borrowerProblems, deliverySeconds, dueDate } from '../../domain/loans.js';
 import { formatQty, formatQtyInput, parseQty } from '../../domain/quantity.js';
 import { EMPTY_STOCK } from '../../domain/stock.js';
 import { beep, cameraSupported, confirmRead, startScanner } from '../../qr/scan.js';
@@ -23,7 +25,7 @@ const STEP = 100; // one piece / one unit, in hundredths
 let draft = null;
 let stopCamera = null;
 
-const newDraft = () => ({ createdAt: new Date().toISOString(), borrowerId: '', practice: '', lines: [] });
+const newDraft = () => ({ createdAt: new Date().toISOString(), borrowerId: '', practice: '', practiceId: '', lines: [] });
 
 export const loanNew = {
   title: t.newLoan.title,
@@ -33,14 +35,15 @@ export const loanNew = {
     stopCamera?.();
     stopCamera = null;
   },
-  async render(view) {
+  async render(view, _params = {}, query = {}) {
     draft ??= newDraft();
-    const [cat, borrowers, loanDays] = await Promise.all([loadCatalog(), listBorrowers(), getSetting('defaultLoanDays', 0)]);
+    const [cat, borrowers, loanDays, practices] = await Promise.all([loadCatalog(), listBorrowers(), getSetting('defaultLoanDays', 0), listPractices()]);
     const itemsById = Object.fromEntries(cat.items.map((i) => [i.id, i]));
     const onHand = (id) => (cat.stocks[id] ?? EMPTY_STOCK).onHand;
     // The draft may point to data that no longer exists ("Borrar todo" or a restored backup).
     draft.lines = draft.lines.filter((l) => itemsById[l.itemId] && !itemsById[l.itemId].archived);
     if (!borrowers.some((b) => b.id === draft.borrowerId)) draft.borrowerId = '';
+    if (draft.practiceId && !practices.some((p) => p.id === draft.practiceId)) draft.practiceId = '';
     const due = dueDate(new Date(), loanDays); // shown as a hint; recalculated when confirming
 
     view.innerHTML = `
@@ -53,7 +56,7 @@ export const loanNew = {
           </select>
           <details class="new-borrower">
             <summary class="link-btn">+ ${t.newLoan.borrowerNew}</summary>
-            <form class="stack" data-borrower-form>
+            <form class="stack" data-borrower-form novalidate>
               <input class="field" name="bname" placeholder="${t.newLoan.borrowerNamePh}" aria-label="${t.newLoan.borrowerName}" required maxlength="60" />
               <div class="row-2">
                 <select class="field" name="btype" aria-label="${t.newLoan.borrowerType}">
@@ -62,9 +65,15 @@ export const loanNew = {
                 <input class="field" name="bgroup" placeholder="${t.newLoan.borrowerGroupPh}" aria-label="${t.newLoan.borrowerGroup}" maxlength="20" />
               </div>
               <input class="field" name="bsid" placeholder="${t.newLoan.borrowerId}" aria-label="${t.newLoan.borrowerId}" maxlength="20" inputmode="numeric" />
+              <p class="form-error" data-borrower-error hidden></p>
               <button class="btn" type="submit">${t.newLoan.borrowerAdd}</button>
             </form>
           </details>
+          ${practices.length ? `
+          <select class="field" name="practiceId" aria-label="${t.newLoan.practicePick}">
+            <option value="">${t.newLoan.practicePick}</option>
+            ${practices.map((p) => `<option value="${p.id}" ${p.id === draft.practiceId ? 'selected' : ''}>${esc(p.name)}${p.teacher ? ` · ${esc(p.teacher)}` : ''}</option>`).join('')}
+          </select>` : ''}
           <input class="field" name="practice" value="${esc(draft.practice)}" placeholder="${t.newLoan.practicePh}" aria-label="${t.newLoan.practice}" maxlength="80" />
         </section>
 
@@ -185,14 +194,50 @@ export const loanNew = {
     $('[data-borrower-form]').addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = e.target;
-      const name = f.bname.value.trim();
       const button = f.querySelector('[type="submit"]');
-      if (!name || button.disabled) return;
+      if (button.disabled) return;
+      const fields = { name: f.bname.value.trim(), type: f.btype.value, group: f.bgroup.value.trim(), studentId: f.bsid.value.trim() };
+      const problem = borrowerProblems(fields);
+      const err = f.querySelector('[data-borrower-error]');
+      if (problem) {
+        err.textContent = problem === 'studentId' ? t.newLoan.errStudentId : t.newLoan.errBorrowerName;
+        err.hidden = false;
+        return;
+      }
       button.disabled = true;
-      const b = await createBorrower({ name, type: f.btype.value, group: f.bgroup.value.trim(), studentId: f.bsid.value.trim() });
+      const b = await createBorrower(fields);
       draft.borrowerId = b.id;
       this.leave();
       this.render(view);
+    });
+
+    // Student → control number is required (F6): the field says so as soon as "Alumno" is chosen.
+    const borrowerForm = $('[data-borrower-form]');
+    borrowerForm.btype.addEventListener('change', (e) => {
+      const student = e.target.value === 'student';
+      borrowerForm.bsid.placeholder = student ? t.newLoan.borrowerIdRequired : t.newLoan.borrowerId;
+      borrowerForm.bsid.required = student;
+    });
+
+    // A saved practice fills the loan with its material (F6). Lines already in the draft stay.
+    const applyPractice = (practice) => {
+      const r = linesFromPractice(practice, itemsById, Object.fromEntries(cat.items.map((i) => [i.id, onHand(i.id)])));
+      draft.lines = mergeLines(draft.lines, r.lines, itemsById);
+      draft.practiceId = practice.id;
+      draft.practice = practice.name;
+      $('[name="practice"]').value = practice.name;
+      drawLines();
+      if (r.short.length) showError(t.newLoan.practiceShort(r.short.map((x) => itemsById[x.itemId].name).join(', ')));
+      else showError('');
+      toast(r.missing.length ? t.newLoan.practiceMissing(r.missing.length) : t.newLoan.practiceFilled(r.lines.length), { danger: r.missing.length > 0 });
+    };
+    $('[name="practiceId"]')?.addEventListener('change', async (e) => {
+      if (!e.target.value) {
+        draft.practiceId = '';
+        return;
+      }
+      const practice = await getPractice(e.target.value);
+      if (practice) applyPractice(practice);
     });
 
     // Continuous scanning: each read adds one; the same code again adds one more.
@@ -255,7 +300,7 @@ export const loanNew = {
       e.target.disabled = true;
       const labId = itemsById[draft.lines[0].itemId].labId;
       const before = Object.fromEntries(draft.lines.map((l) => [l.itemId, cat.stocks[l.itemId] ?? EMPTY_STOCK]));
-      const res = await confirmLoan({ borrowerId: draft.borrowerId, labId, practice: draft.practice.trim(), createdAt: draft.createdAt, dueAt: dueDate(new Date(), loanDays), lines: draft.lines });
+      const res = await confirmLoan({ borrowerId: draft.borrowerId, labId, practice: draft.practice.trim(), practiceId: draft.practiceId || null, createdAt: draft.createdAt, dueAt: dueDate(new Date(), loanDays), lines: draft.lines });
       if (!res.ok) {
         e.target.disabled = false;
         return showError(res.problems.some((p) => p.reason === 'stock') ? t.newLoan.errStock : t.newLoan.errQty);
@@ -267,6 +312,14 @@ export const loanNew = {
     });
 
     drawLines();
+
+    if (query.practica && !draft.lines.length) {
+      const practice = practices.find((p) => p.id === query.practica);
+      if (practice) {
+        $('[name="practiceId"]').value = practice.id;
+        applyPractice(practice);
+      }
+    }
   },
 };
 

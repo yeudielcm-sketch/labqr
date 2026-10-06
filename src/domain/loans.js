@@ -62,3 +62,17 @@ export function validateLines(lines, onHandById) {
 export function adjustmentFor(onHand, counted) {
   return counted - onHand;
 }
+
+// Reagent coming back from a practice (F6): the person says how much came back; the rest of
+// what was pending counts as consumed. Returns null if `returned` is negative or above pending.
+export function splitReagentReturn(pending, returned) {
+  if (!Number.isInteger(returned) || returned < 0 || returned > pending) return null;
+  return { returned, consumed: pending - returned };
+}
+
+// Borrower data check. Students must give their control number (F6, team request).
+export function borrowerProblems({ name, type, studentId }) {
+  if (!name?.trim()) return 'name';
+  if (type === 'student' && !String(studentId ?? '').trim()) return 'studentId';
+  return null;
+}

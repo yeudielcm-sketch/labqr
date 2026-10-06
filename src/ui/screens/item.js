@@ -9,6 +9,7 @@ import { confirmDialog, toast } from '../components/feedback.js';
 import { formatDate, formatDateTime, relativeDays } from '../components/format.js';
 import { flagsHtml, statusFlags, stockPanel } from '../components/stockView.js';
 import { bindItemMoves, itemMovesHtml } from '../components/itemMoves.js';
+import { fileToPhoto, isPhoto } from '../components/photo.js';
 
 export const itemByCode = {
   title: t.itemCard.title,
@@ -37,6 +38,12 @@ export const itemByCode = {
           <p class="meta">${t.kinds[item.kind]} · ${esc(lab?.name ?? '')}</p>
           <div class="item-head__flags">${flagsHtml(statusFlags(item, stock))}</div>
         </header>
+
+        ${isPhoto(item.photo) ? `<img class="item-photo" src="${item.photo}" alt="${t.itemCard.photo}: ${esc(item.name)}" />` : ''}
+        <div class="photo-actions">
+          <label class="btn btn--sm file-btn">${isPhoto(item.photo) ? t.itemCard.photoChange : t.itemCard.photoAdd}<input type="file" accept="image/*" capture="environment" data-photo hidden /></label>
+          ${isPhoto(item.photo) ? `<button type="button" class="btn btn--sm" data-photo-remove>${t.itemCard.photoRemove}</button>` : ''}
+        </div>
 
         ${stockPanel(item, stock, holder)}
 
@@ -88,6 +95,23 @@ export const itemByCode = {
 
     const rerender = () => this.render(view, { code: item.code });
     bindItemMoves(view, item, rerender);
+
+    view.querySelector('[data-photo]').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        await updateItem(item.id, { photo: await fileToPhoto(file) });
+        toast(t.itemCard.photoSaved);
+        rerender();
+      } catch {
+        toast(t.itemCard.photoError, { danger: true });
+      }
+    });
+    view.querySelector('[data-photo-remove]')?.addEventListener('click', async () => {
+      await updateItem(item.id, { photo: null });
+      toast(t.itemCard.photoRemoved);
+      rerender();
+    });
 
     view.querySelector('[data-extra-form]').addEventListener('submit', async (e) => {
       e.preventDefault();

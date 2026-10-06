@@ -93,7 +93,7 @@ export const board = {
 
       root.innerHTML = `
         <header class="board__head">
-          <div class="board__brand"><span class="board__logo">LabQR</span><span>${t.board.lab(esc(lab.name))}</span></div>
+          <div class="board__brand"><span class="board__logo">${t.appName}</span><span>${t.board.lab(esc(lab.name))}</span></div>
           <div class="board__labs">${data.labs.length > 1 ? data.labs.map((l) => `<a class="chip" aria-pressed="${l.id === labId}" href="#/tablero?lab=${l.id}">${esc(l.name)}</a>`).join('') : ''}</div>
           <time class="board__clock" data-clock></time>
         </header>

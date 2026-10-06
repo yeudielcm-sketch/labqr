@@ -20,6 +20,7 @@ import { loanNew } from './ui/screens/loanNew.js';
 import { loanDetail } from './ui/screens/loanDetail.js';
 import { backup } from './ui/screens/backup.js';
 import { board } from './ui/screens/board.js';
+import { practiceList, practiceNew, practiceEdit } from './ui/screens/practices.js';
 import { notFound } from './ui/screens/simple.js';
 import { requestPersistence } from './db/backupStore.js';
 
@@ -36,6 +37,9 @@ const routes = [
   { path: '/etiquetas', screen: labels },
   { path: '/respaldo', screen: backup },
   { path: '/tablero', screen: board },
+  { path: '/practicas', screen: practiceList },
+  { path: '/practicas/nueva', screen: practiceNew },
+  { path: '/practicas/:id', screen: practiceEdit },
   { path: '/i/:code', screen: itemByCode },
   { path: '/i/:code/editar', screen: editItem },
 ];

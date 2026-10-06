@@ -13,3 +13,8 @@ db.version(1).stores({
   movements: 'id, itemId, loanId, type, createdAt',
   settings: 'key',
 });
+
+// v2 (F6): practices = a teacher's material list that pre-fills a loan.
+db.version(2).stores({
+  practices: 'id, labId, name, archived',
+});

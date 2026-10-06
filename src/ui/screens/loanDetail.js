@@ -1,10 +1,11 @@
-// Vale detail (#/vales/<id>): return by line — all or partial, broken/lost, or consumed (reagents).
-import { getLoan, settleLine } from '../../db/movements.js';
+// Vale detail (#/vales/<id>): return by line — all or partial, or broken/lost (with a note).
+// Reagents come back in one step: how much came back; the rest counts as consumed (F6).
+import { getLoan, settleLine, settleReagent } from '../../db/movements.js';
 import { deliverySeconds } from '../../domain/loans.js';
 import { formatQty, formatQtyInput, parseQty } from '../../domain/quantity.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
-import { confirmDialog, toast } from '../components/feedback.js';
+import { confirmDialog, confirmWithNote, toast } from '../components/feedback.js';
 import { formatDateTime } from '../components/format.js';
 import { borrowerLabel, statusBadge } from './loans.js';
 
@@ -53,6 +54,7 @@ export const loanDetail = {
                 <span class="history__type">${m.type === 'LOSS' ? '<span class="hazard" aria-hidden="true"></span>' : ''}${t.movementTypes[m.type]}</span>
                 <span class="history__qty code">${formatQty(m.qty)} ${item?.unit ?? ''}</span>
                 <span class="history__when meta">${esc(item?.name ?? '')} · ${formatDateTime(m.createdAt)}</span>
+                ${m.note ? `<span class="history__detail meta">${esc(m.note)}</span>` : ''}
               </li>`;
             }).join('')}
           </ol>
@@ -61,8 +63,8 @@ export const loanDetail = {
 
     const rerender = () => this.render(view, { id });
 
-    const settle = async (itemId, type, qty) => {
-      const extra = type === 'LOSS' ? { reason: t.loanDetail.lossReason } : {};
+    const settle = async (itemId, type, qty, note = '') => {
+      const extra = type === 'LOSS' ? { reason: t.loanDetail.lossReason, ...(note ? { note } : {}) } : {};
       const ok = await settleLine(loan.id, itemId, type, qty, extra);
       if (!ok) return toast(t.loanDetail.badQty, { danger: true });
       const after = await getLoan(loan.id);
@@ -80,19 +82,36 @@ export const loanDetail = {
       const b = e.target.closest('[data-act]');
       if (!b || busy) return;
       const line = lines.find((l) => l.itemId === b.dataset.item);
+
+      if (b.dataset.act === 'REAGENT') {
+        const back = parseQty(view.querySelector(`[data-back="${line.itemId}"]`).value || '0');
+        if (back === null || back > line.pending) return toast(t.loanDetail.badQty, { danger: true });
+        busy = true;
+        lockButtons(true);
+        const split = await settleReagent(loan.id, line.itemId, back);
+        if (!split) toast(t.loanDetail.badQty, { danger: true });
+        else toast(t.loanDetail.savedReagent(`${formatQty(split.returned)} ${line.item.unit}`, `${formatQty(split.consumed)} ${line.item.unit}`));
+        busy = false;
+        return rerender();
+      }
+
       const input = view.querySelector(`[data-qty="${line.itemId}"]`);
       const qty = input ? parseQty(input.value) : line.pending;
       if (!(qty > 0) || qty > line.pending) return toast(t.loanDetail.badQty, { danger: true });
       busy = true;
       lockButtons(true);
+      let note = '';
       if (b.dataset.act === 'LOSS') {
-        const ok = await confirmDialog(t.loanDetail.lossQ(`${formatQty(qty)} ${line.item.unit} de ${line.item.name}`, who), { confirmLabel: t.loanDetail.lossBtn, danger: true });
-        if (!ok) {
+        const answer = await confirmWithNote(t.loanDetail.lossQ(`${formatQty(qty)} ${line.item.unit} de ${line.item.name}`, who), {
+          confirmLabel: t.loanDetail.lossBtn, danger: true, noteLabel: t.loanDetail.lossNote, notePlaceholder: t.loanDetail.lossNotePh,
+        });
+        if (!answer.ok) {
           busy = false;
           return lockButtons(false);
         }
+        note = answer.note;
       }
-      await settle(line.itemId, b.dataset.act, qty);
+      await settle(line.itemId, b.dataset.act, qty, note);
       busy = false;
       lockButtons(false);
     });
@@ -125,6 +144,7 @@ function lineHtml(l) {
     l.consumed ? `${t.loanDetail.consumed} ${formatQty(l.consumed)}` : '',
   ].filter(Boolean).join(' · ');
   const single = item.kind === 'equipment' || (l.pending === 100 && item.unit === 'pz');
+  const reagent = item.kind === 'reagent';
   return `
     <li class="line label label--${item.kind}${l.pending > 0 ? '' : ' line--done'}">
       <div class="line__head">
@@ -135,11 +155,18 @@ function lineHtml(l) {
       ${l.pending > 0 ? `
         <div class="line__pending">
           <span><strong class="code">${formatQty(l.pending)}</strong> ${u} ${t.loanDetail.pending.toLowerCase()}</span>
-          ${single ? '' : `<input class="field field--num code-input" inputmode="decimal" data-qty="${item.id}" value="${formatQtyInput(l.pending)}" aria-label="${t.moves.qty}" />`}
+          ${single || reagent ? '' : `<input class="field field--num code-input" inputmode="decimal" data-qty="${item.id}" value="${formatQtyInput(l.pending)}" aria-label="${t.moves.qty}" />`}
         </div>
+        ${reagent ? `
+        <label class="field-group reagent-back">
+          <span>${t.loanDetail.reagentBack} (${u})</span>
+          <input class="field code-input" inputmode="decimal" data-back="${item.id}" placeholder="0" autocomplete="off" />
+          <span class="meta">${t.loanDetail.reagentBackHelp}</span>
+        </label>` : ''}
         <div class="line__actions">
-          <button type="button" class="btn btn--sm" data-act="RETURN" data-item="${item.id}">${t.loanDetail.returnBtn}</button>
-          ${item.kind === 'reagent' ? `<button type="button" class="btn btn--sm" data-act="CONSUME" data-item="${item.id}">${t.loanDetail.consumeBtn}</button>` : ''}
+          ${reagent
+            ? `<button type="button" class="btn btn--sm" data-act="REAGENT" data-item="${item.id}">${t.loanDetail.reagentBtn}</button>`
+            : `<button type="button" class="btn btn--sm" data-act="RETURN" data-item="${item.id}">${t.loanDetail.returnBtn}</button>`}
           <button type="button" class="btn btn--sm btn--danger-outline" data-act="LOSS" data-item="${item.id}">${t.loanDetail.lossBtn}</button>
         </div>` : ''}
     </li>`;

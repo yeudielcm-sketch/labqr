@@ -28,7 +28,9 @@ describe('JSON backup', () => {
     const dup = demoTables();
     dup.items.push({ ...dup.items[0] });
     expect(validateBackup(buildBackup(dup))).toBe('badRows');
-    expect(TABLES).toHaveLength(7);
+    expect(TABLES).toHaveLength(8);
+    const old = demoTables();
+    expect(validateBackup(buildBackup(old))).toBe(null); // backups from before F6 have no practices table
   });
 
   it('asks for a backup after 7 days, or if there has never been one', () => {
