@@ -1,4 +1,6 @@
-# SPEC.md — LabQR (nombre provisional)
+# SPEC.md — C-Lab (antes LabQR)
+
+> **Nombre definitivo: C-Lab** (decisión de los autores, 6 oct 2026). La dirección web sigue siendo `…/labqr/` porque va dentro de los QR ya impresos; el identificador interno de los respaldos sigue siendo "LabQR" para que los archivos anteriores se puedan restaurar.
 
 ## 1. Qué es
 
@@ -46,11 +48,13 @@ Si la entrevista revela que capturan varias personas desde varios dispositivos, 
 labs       { id, name, prefix, createdAt }   // prefix: 2–5 letras, base de los códigos
 locations  { id, labId, name, createdAt }
 items      { id, code, name, kind, unit, labId, locationId,
-             minStock, expiresAt?, serial?, notes?,
+             minStock, expiresAt?, serial?, notes?, photo?,   // photo: JPEG reducido (F6)
              extra: { [key: string]: string },  // campos libres que pidan los maestros
              archived: boolean, createdAt, updatedAt }
 borrowers  { id, name, type: 'student'|'team'|'teacher', group?, studentId?, createdAt }
-loans      { id, borrowerId, labId, practice?, createdAt, confirmedAt?, dueAt, closedAt?, notes? }
+                                       // studentId (número de control) obligatorio si type = 'student' (F6)
+loans      { id, borrowerId, labId, practice?, practiceId?, createdAt, confirmedAt?, dueAt, closedAt?, notes? }
+practices  { id, name, teacher?, labId, items: [{ itemId, qty }], archived, createdAt, updatedAt }   // F6
 movements  { id, itemId, type, qty, loanId?, borrowerId?, reason?, note?, createdAt }
 settings   { key, value }  // lastBackupAt, labelLayout, etc.
 ```
@@ -143,3 +147,14 @@ Mitigaciones que se implementan en v1:
 ## 11. Fuera de alcance en v0
 
 Login y roles, sincronización multidispositivo, notificaciones push, credenciales QR para alumnos, compras a proveedores, reportes gráficos, multi-plantel.
+
+## 12. Cambios de F6 (6 oct 2026, sesión con el equipo)
+
+Origen: lista del equipo en `docs/CAMBIOS-PROPUESTOS.md`. Pendiente de validar con laboratoristas.
+
+- **Prácticas:** el maestro o el encargado guarda el material de cada práctica; al hacer un vale se elige la práctica y la lista se llena sola. Si falta existencia, el renglón queda en rojo y el encargado decide. Se archivan, no se borran.
+- **Reactivo en un paso:** al recibir un reactivo se escribe cuánto regresó; lo demás se registra como consumo (dos movimientos en una transacción).
+- **Nota en merma de préstamo:** "Roto o perdido" pide qué pasó (opcional) y lo guarda en el movimiento.
+- **Alumno = número de control obligatorio.**
+- **Foto del artículo:** se reduce a 640 px en JPEG antes de guardarse; viaja en el respaldo.
+- **Fuera de v0, para v1:** cuentas por rol (Químicos, Encargados, Alumnos) y foto de credencial. Requieren servidor, sincronización y aviso de privacidad.

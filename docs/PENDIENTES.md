@@ -21,7 +21,7 @@ Si algo no aparece: **manda primero la versión** (pie de Inicio o de Ajustes) y
   - A) En la exposición, la laptop muestra el tablero y la demo se hace en otra ventana de esa laptop. Costo $0, ya funciona.
   - B) Adelantar la sincronización de v1 con Neon (plan gratis). Es más trabajo y conviene decidirlo después de la entrevista.
 - [ ] **Tamaño de etiqueta:** ¿grande (10 por hoja) o chica (24 por hoja)? ¿Hay hojas de etiquetas adhesivas en el plantel?
-- [ ] **Nombre definitivo** de la app (hoy "LabQR" es provisional según el SPEC).
+- [x] **Nombre definitivo:** **C-Lab** (decidido el 6 oct 2026). La dirección web no cambia porque va en los QR impresos.
 
 ## 3. Entrevista con laboratoristas
 

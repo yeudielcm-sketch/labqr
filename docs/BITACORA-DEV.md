@@ -342,3 +342,55 @@ Sin esta auditoría, las 12 fallas se habrían publicado. Queda como regla: **au
 - **Problemas:**
   - Git Bash volvió a alterar la ruta `/labqr/` del servidor (mismo problema de F0); se resolvió sirviendo desde PowerShell.
   - En la primera versión del PDF, las viñetas dentro del paso 3 de "Recibir la devolución" tomaron números y la portada tenía un fondo recortado. Ambas cosas se corrigieron tras revisar las 18 páginas.
+
+---
+
+## F6 — Cambios de la sesión con el equipo · 6 de octubre de 2026
+
+### De dónde salió
+Los dos autores trajeron una lista de 13 ideas. Se clasificaron por tamaño en `docs/CAMBIOS-PROPUESTOS.md` y el equipo dio el "va" a esta recomendación:
+- Hacer ahora lo chico, más "Prácticas" y fotos.
+- Dejar para v1 las cuentas por rol y la foto de credencial.
+- Esperar respuestas para el resto.
+
+**Pendiente:** confirmar con laboratoristas cuáles de estas ideas vienen de una necesidad real.
+
+### Qué se hizo
+- **Nombre C-Lab** en la app, el ícono instalado y el tablero. La dirección web (`…/labqr/`) no cambió, porque va dentro de los QR ya impresos. El identificador interno de los respaldos sigue siendo "LabQR" para que los archivos anteriores se puedan restaurar.
+- **Prácticas** (☰ → Prácticas):
+  - El maestro o el encargado guarda la lista de material de cada práctica.
+  - En "Nuevo vale" se elige la práctica y la lista se llena sola. También se puede hacer desde la práctica con "Hacer vale con esta práctica".
+  - Si no alcanza la existencia, el renglón queda en rojo.
+  - La demo trae 3 prácticas.
+- **Reactivo en un paso:** al recibirlo se escribe cuánto regresó; lo demás se registra como consumo, con ambos movimientos en una sola transacción.
+- **Nota en "Roto o perdido":** se escribe qué pasó y queda en el historial. En reactivos además se indica cuánto se perdió.
+- **Alumno = número de control obligatorio**, tanto en la pantalla como en la base de datos.
+- **Fotos de artículos:** desde la ficha, con la cámara o la galería. Se reducen a 640 px en JPEG antes de guardarse, se ven en la ficha y en la lista, y viajan en el respaldo.
+- **Base de datos:** versión 2, con la tabla `practices`. La actualización en el celular es automática y conserva los datos.
+- **Versión de la app:** 0.7.0.
+
+### Auditoría independiente (segunda)
+El auditor, con contexto limpio, revisó solo los cambios de F6 y encontró **6 fallas**, todas corregidas:
+
+| # | Severidad | Falla | Arreglo |
+|---|---|---|---|
+| 1 | Media | En un reactivo, "Roto o perdido" registraba siempre todo lo pendiente; ya no se podía registrar una pérdida parcial | La ventana pregunta cuánto se perdió (sugiere lo pendiente) |
+| 2 | Media | Tocar "Registrar regreso" con el campo vacío registraba todo como consumido y cerraba el vale | Pide escribir la cantidad (0 si no regresó nada) |
+| 3 | Media | Un respaldo manipulado podía inyectar código en la página a través del id de una práctica | Al restaurar, los ids deben tener forma de identificador; además se escapan en pantalla |
+| 4 | Baja | Una práctica mal formada en un respaldo dejaba sin funcionar "Nuevo vale" | El respaldo valida las prácticas; la lista tolera nombres faltantes |
+| 5 | Baja | Elegir dos veces la misma práctica duplicaba las cantidades | Una práctica se aplica una sola vez por vale, con aviso |
+| 6 | Baja | "Hacer vale con esta práctica" no hacía nada si había un vale a medias | Se agrega al vale en curso |
+
+### Cómo se probó
+- **56 pruebas automáticas:** 9 nuevas de prácticas, reactivo y número de control, y 3 de la auditoría (ids inseguros y prácticas mal formadas en respaldos).
+- **En el navegador, con vista de celular:**
+  - La base de datos anterior, con 38 artículos, se actualizó a la versión 2 sin perder nada.
+  - "Hacer vale con esta práctica" (Titulación) llenó 5 renglones. Al elegirla otra vez, no los duplicó.
+  - Una alumna sin número de control no se pudo agregar; con número de control, sí.
+  - El vale se confirmó con la práctica ligada.
+  - Ácido clorhídrico: se escribió "regresaron 12 ml de 50" y se registraron 12 ml devueltos y 38 ml consumidos. Con el campo vacío, la app pidió la cantidad y no registró nada.
+  - Una pérdida parcial de 10 ml con la nota "Se derramó" dejó 40 ml pendientes.
+  - Un vaso roto quedó con la nota "Se cayó al lavarlo" en el historial.
+  - Una foto de 3000 × 2000 se guardó reducida a 640 px en JPEG.
+  - Un respaldo anterior sin prácticas se restauró sin errores, y uno nuevo regresó idéntico, con prácticas y fotos.
+- **Pendiente:** probarlo en el Android, en especial la cámara para fotos.

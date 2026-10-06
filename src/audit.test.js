@@ -59,3 +59,36 @@ describe('audit 9: CSV import', () => {
     expect(errors.map((e) => e.line)).toEqual([2, 3]);
   });
 });
+
+// Second audit (6 oct 2026, F6): restored backups must not carry unsafe ids or malformed practices.
+import { buildBackup, validateBackup } from './io/backup.js';
+import { buildDemo } from './db/seed.js';
+
+describe('audit F6-3/4: backup ids and practices are validated', () => {
+  const tables = () => {
+    const d = buildDemo();
+    return { labs: d.labs, locations: d.locations, items: d.items, borrowers: d.borrowers, loans: d.loans, movements: d.movements, settings: [], practices: d.practices };
+  };
+
+  it('rejects ids that could break out of an HTML attribute', () => {
+    const t = tables();
+    t.practices.push({ id: '"><img src=x onerror=alert(1)>', name: 'X', items: [{ itemId: t.items[0].id, qty: 100 }] });
+    expect(validateBackup(buildBackup(t))).toBe('badRows');
+    const t2 = tables();
+    t2.items[0].id = 'a"b';
+    expect(validateBackup(buildBackup(t2))).toBe('badRows');
+  });
+
+  it('rejects practices without a name or with malformed items', () => {
+    const t = tables();
+    t.practices.push({ id: 'p2', items: [] });
+    expect(validateBackup(buildBackup(t))).toBe('badRows');
+    const t2 = tables();
+    t2.practices[0].items = [{ itemId: 'x', qty: -5 }];
+    expect(validateBackup(buildBackup(t2))).toBe('badRows');
+  });
+
+  it('still accepts the demo as it is', () => {
+    expect(validateBackup(buildBackup(tables()))).toBe(null);
+  });
+});

@@ -84,7 +84,9 @@ export const loanDetail = {
       const line = lines.find((l) => l.itemId === b.dataset.item);
 
       if (b.dataset.act === 'REAGENT') {
-        const back = parseQty(view.querySelector(`[data-back="${line.itemId}"]`).value || '0');
+        const raw = view.querySelector(`[data-back="${line.itemId}"]`).value.trim();
+        if (!raw) return toast(t.loanDetail.reagentEmpty, { danger: true });
+        const back = parseQty(raw);
         if (back === null || back > line.pending) return toast(t.loanDetail.badQty, { danger: true });
         busy = true;
         lockButtons(true);
@@ -96,16 +98,21 @@ export const loanDetail = {
       }
 
       const input = view.querySelector(`[data-qty="${line.itemId}"]`);
-      const qty = input ? parseQty(input.value) : line.pending;
-      if (!(qty > 0) || qty > line.pending) return toast(t.loanDetail.badQty, { danger: true });
+      let qty = input ? parseQty(input.value) : line.pending;
+      const isReagent = line.item.kind === 'reagent';
+      if (!isReagent && (!(qty > 0) || qty > line.pending)) return toast(t.loanDetail.badQty, { danger: true });
       busy = true;
       lockButtons(true);
       let note = '';
       if (b.dataset.act === 'LOSS') {
-        const answer = await confirmWithNote(t.loanDetail.lossQ(`${formatQty(qty)} ${line.item.unit} de ${line.item.name}`, who), {
+        const what = isReagent ? `${line.item.name} (${t.loanDetail.lossQtyHint})` : `${formatQty(qty)} ${line.item.unit} de ${line.item.name}`;
+        const answer = await confirmWithNote(t.loanDetail.lossQ(what, who), {
           confirmLabel: t.loanDetail.lossBtn, danger: true, noteLabel: t.loanDetail.lossNote, notePlaceholder: t.loanDetail.lossNotePh,
+          ...(isReagent ? { qtyLabel: `${t.loanDetail.lossQty} (${line.item.unit})`, qtyValue: formatQtyInput(line.pending) } : {}),
         });
-        if (!answer.ok) {
+        if (isReagent && answer.ok) qty = parseQty(answer.qty ?? '');
+        if (!answer.ok || !(qty > 0) || qty > line.pending) {
+          if (answer.ok) toast(t.loanDetail.badQty, { danger: true });
           busy = false;
           return lockButtons(false);
         }

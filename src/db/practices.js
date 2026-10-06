@@ -8,7 +8,7 @@ export async function listPractices({ includeArchived = false } = {}) {
   const all = await db.practices.toArray();
   return all
     .filter((p) => includeArchived || !p.archived)
-    .sort((a, b) => a.name.localeCompare(b.name, 'es', { numeric: true }));
+    .sort((a, b) => String(a.name ?? '').localeCompare(String(b.name ?? ''), 'es', { numeric: true }));
 }
 
 export function getPractice(id) {

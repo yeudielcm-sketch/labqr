@@ -24,18 +24,19 @@ export function confirmDialog(message, options = {}) {
   return openDialog(message, options).then((r) => r.ok);
 }
 
-// Same confirmation plus an optional text field (e.g. what happened when something broke).
-// Resolves { ok, note }.
-export function confirmWithNote(message, { noteLabel, notePlaceholder = '', ...options } = {}) {
-  return openDialog(message, { ...options, noteLabel, notePlaceholder }).then((r) => ({ ok: r.ok, note: r.note }));
+// Same confirmation plus an optional note (what happened) and an optional quantity field.
+// Resolves { ok, note, qty } — qty is the raw text typed, or null if there was no field.
+export function confirmWithNote(message, { noteLabel, notePlaceholder = '', qtyLabel = null, qtyValue = '', ...options } = {}) {
+  return openDialog(message, { ...options, noteLabel, notePlaceholder, qtyLabel, qtyValue });
 }
 
-function openDialog(message, { confirmLabel = t.common.confirm, danger = false, noteLabel = null, notePlaceholder = '' } = {}) {
+function openDialog(message, { confirmLabel = t.common.confirm, danger = false, noteLabel = null, notePlaceholder = '', qtyLabel = null, qtyValue = '' } = {}) {
   return new Promise((resolve) => {
     const dlg = document.createElement('dialog');
     dlg.className = 'dialog';
     dlg.innerHTML = `
       <p>${esc(message)}</p>
+      ${qtyLabel ? `<label class="field-group dialog__note"><span>${esc(qtyLabel)}</span><input class="field code-input" inputmode="decimal" data-dialog-qty value="${esc(qtyValue)}" /></label>` : ''}
       ${noteLabel ? `<label class="field-group dialog__note"><span>${esc(noteLabel)}</span><textarea class="field" rows="2" maxlength="200" placeholder="${esc(notePlaceholder)}"></textarea></label>` : ''}
       <div class="dialog__actions">
         <button type="button" class="btn" value="cancel">${t.common.cancel}</button>
@@ -45,9 +46,10 @@ function openDialog(message, { confirmLabel = t.common.confirm, danger = false, 
     // is ever left in the page waiting for a 'close' event.
     const finish = (ok) => {
       const note = dlg.querySelector('textarea')?.value.trim() ?? '';
+      const qty = dlg.querySelector('[data-dialog-qty]')?.value.trim() ?? null;
       if (dlg.open) dlg.close();
       dlg.remove();
-      resolve({ ok, note });
+      resolve({ ok, note, qty });
     };
     dlg.addEventListener('click', (e) => {
       const b = e.target.closest('button');

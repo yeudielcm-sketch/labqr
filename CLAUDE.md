@@ -1,4 +1,4 @@
-# CLAUDE.md — Reglas para trabajar en LabQR
+# CLAUDE.md — Reglas para trabajar en C-Lab (antes LabQR)
 
 Lee `SPEC.md` antes de cualquier tarea y `DESIGN.md` antes de tocar cualquier UI. Si tienes disponible el skill `frontend-design`, úsalo junto con `DESIGN.md`, pero `DESIGN.md` manda. `RESEARCH.md` es contexto: no lo implementes, solo explica por qué existen ciertas funciones.
 

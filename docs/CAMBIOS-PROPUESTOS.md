@@ -1,7 +1,7 @@
 # Cambios propuestos por el equipo · 6 de octubre de 2026
 
 > Lista que trajeron los autores a la sesión de trabajo, tal cual, clasificada por tamaño y riesgo.
-> Nada de esto está programado todavía. Regla del proyecto: plan corto y "va" antes de escribir código.
+> **Estado (6 oct 2026, F6):** el equipo dio el "va" a la recomendación. Programado y probado: 1, 3, 8, 11a, 2 (fotos) y "Prácticas". En espera de respuestas: 4, 5, 6, 7, 9, 10. Para v1: 12 y 11b.
 > **Pendiente de saber:** ¿cada idea salió de un laboratorista o maestro, o de los autores? Lo que venga de usuarios reales pesa más en el informe (requisitos validados).
 
 ## A. Cambios chicos que caben en v0 (antes del 4 de diciembre)

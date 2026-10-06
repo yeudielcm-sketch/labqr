@@ -25,7 +25,7 @@ const STEP = 100; // one piece / one unit, in hundredths
 let draft = null;
 let stopCamera = null;
 
-const newDraft = () => ({ createdAt: new Date().toISOString(), borrowerId: '', practice: '', practiceId: '', lines: [] });
+const newDraft = () => ({ createdAt: new Date().toISOString(), borrowerId: '', practice: '', practiceId: '', appliedPractices: [], lines: [] });
 
 export const loanNew = {
   title: t.newLoan.title,
@@ -72,7 +72,7 @@ export const loanNew = {
           ${practices.length ? `
           <select class="field" name="practiceId" aria-label="${t.newLoan.practicePick}">
             <option value="">${t.newLoan.practicePick}</option>
-            ${practices.map((p) => `<option value="${p.id}" ${p.id === draft.practiceId ? 'selected' : ''}>${esc(p.name)}${p.teacher ? ` · ${esc(p.teacher)}` : ''}</option>`).join('')}
+            ${practices.map((p) => `<option value="${esc(p.id)}" ${p.id === draft.practiceId ? 'selected' : ''}>${esc(p.name)}${p.teacher ? ` · ${esc(p.teacher)}` : ''}</option>`).join('')}
           </select>` : ''}
           <input class="field" name="practice" value="${esc(draft.practice)}" placeholder="${t.newLoan.practicePh}" aria-label="${t.newLoan.practice}" maxlength="80" />
         </section>
@@ -221,6 +221,12 @@ export const loanNew = {
 
     // A saved practice fills the loan with its material (F6). Lines already in the draft stay.
     const applyPractice = (practice) => {
+      draft.appliedPractices ??= [];
+      if (draft.appliedPractices.includes(practice.id)) {
+        draft.practiceId = practice.id;
+        return toast(t.newLoan.practiceAlready);
+      }
+      draft.appliedPractices.push(practice.id);
       const r = linesFromPractice(practice, itemsById, Object.fromEntries(cat.items.map((i) => [i.id, onHand(i.id)])));
       draft.lines = mergeLines(draft.lines, r.lines, itemsById);
       draft.practiceId = practice.id;
@@ -313,7 +319,7 @@ export const loanNew = {
 
     drawLines();
 
-    if (query.practica && !draft.lines.length) {
+    if (query.practica) {
       const practice = practices.find((p) => p.id === query.practica);
       if (practice) {
         $('[name="practiceId"]').value = practice.id;

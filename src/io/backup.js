@@ -31,11 +31,23 @@ export function validateBackup(data) {
   const ids = new Set();
   for (const name of TABLES.filter((n) => n !== 'settings')) {
     for (const row of data.tables[name] ?? []) {
-      if (!row?.id || ids.has(`${name}:${row.id}`)) return 'badRows';
+      // Ids end up in HTML attributes: only accept the shape this app generates (UUID-like).
+      if (!SAFE_ID.test(row?.id ?? '') || ids.has(`${name}:${row.id}`)) return 'badRows';
       ids.add(`${name}:${row.id}`);
     }
   }
+  for (const p of data.tables.practices ?? []) {
+    if (!practiceIsWellFormed(p)) return 'badRows';
+  }
   return null;
+}
+
+const SAFE_ID = /^[A-Za-z0-9_-]{1,64}$/;
+
+function practiceIsWellFormed(p) {
+  return typeof p.name === 'string' && p.name.trim() !== ''
+    && Array.isArray(p.items)
+    && p.items.every((i) => typeof i?.itemId === 'string' && Number.isInteger(i.qty) && i.qty > 0);
 }
 
 export function backupSummary(data) {

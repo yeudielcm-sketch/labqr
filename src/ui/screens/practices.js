@@ -24,10 +24,10 @@ export const practiceList = {
         <a class="btn btn--primary btn--block" href="#/practicas/nueva">+ ${t.practices.add}</a>
         ${practices.length
           ? `<div class="list">${practices.map((p) => `
-              <a class="label practice-row" href="#/practicas/${p.id}">
+              <a class="label practice-row" href="#/practicas/${esc(p.id)}">
                 <span class="practice-row__name">${esc(p.name)}</span>
                 <span class="meta">${esc([labName[p.labId], p.teacher].filter(Boolean).join(' · '))}</span>
-                <span class="meta">${t.practices.count(p.items.length)}</span>
+                <span class="meta">${t.practices.count(p.items?.length ?? 0)}</span>
               </a>`).join('')}</div>`
           : `<div class="empty"><p>${t.practices.empty}</p></div>`}
       </section>`;
@@ -79,7 +79,7 @@ function formScreen(mode) {
             <button class="btn btn--primary" type="submit">${t.common.save}</button>
           </div>
           ${existing ? `
-            <a class="btn btn--block" href="#/vales/nuevo?practica=${existing.id}">${t.practices.useInLoan}</a>
+            <a class="btn btn--block" href="#/vales/nuevo?practica=${esc(existing.id)}">${t.practices.useInLoan}</a>
             <button type="button" class="btn btn--block btn--danger-outline" data-archive>${t.practices.archive}</button>` : ''}
         </form>`;
 
