@@ -406,4 +406,5 @@ El auditor, con contexto limpio, revisó solo los cambios de F6 y encontró **6 
   - Se agregó la foto del artículo.
 - **Lección aplicada** (Xcellence: "documentos que se quedaron atrás"): el manual decía "LabQR" y no tenía F6. Se pasaron a C-Lab también el informe, el cartel, el guion de exposición, el manual de instalación, la hoja de entrevistas y el guion para laboratoristas. Este último incluye ahora 7 preguntas para validar las ideas del equipo antes de seguir programando.
 - **Problema encontrado:** el campo "Cantidad que regresó" usaba el atributo `data-back`, el mismo que el botón de regresar de la barra superior. La app no fallaba, porque busca con el id del artículo, pero el script de capturas tomó el botón equivocado. Se renombró a `data-returned` para quitar la trampa.
-- 6 oct 2026: el autor abrió la app en su Android y confirmó la versión 0.7.0 (F6 llegó al celular). Pendiente: probar ahí prácticas, regreso de reactivo y foto.
+- 6 oct 2026: el autor abrió la app en su Android y confirmó la versión 0.7.0 (F6 llegó al celular).
+- 6 oct 2026: el autor probó en su Android un vale hecho desde una práctica, el regreso de un reactivo y una foto real de un artículo. **F6 cerrada** en el celular. Sigue pendiente validar con laboratoristas si estas funciones les sirven.
