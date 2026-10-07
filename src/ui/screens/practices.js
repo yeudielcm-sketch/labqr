@@ -8,6 +8,7 @@ import { go } from '../router.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
 import { confirmDialog, toast } from '../components/feedback.js';
+import { allowed } from '../session.js';
 
 const STEP = 100;
 
@@ -79,6 +80,7 @@ function formScreen(mode) {
             <button class="btn btn--primary" type="submit">${t.common.save}</button>
           </div>
           ${existing ? `
+            ${allowed('tasks') ? `<a class="btn btn--block" href="#/tareas/nueva?practica=${esc(existing.id)}">${t.practices.assign}</a>` : ''}
             <a class="btn btn--block" href="#/vales/nuevo?practica=${esc(existing.id)}">${t.practices.useInLoan}</a>
             <button type="button" class="btn btn--block btn--danger-outline" data-archive>${t.practices.archive}</button>` : ''}
         </form>`;

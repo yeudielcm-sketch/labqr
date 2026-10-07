@@ -18,3 +18,11 @@ db.version(1).stores({
 db.version(2).stores({
   practices: 'id, labId, name, archived',
 });
+
+// v3 (F7): tasks = a practice assigned to a group for a date; requests = a student's
+// request for that material, which the lab staff approves (→ loan) or rejects.
+// Only new tables: devices already on v2 keep all their data when they upgrade.
+db.version(3).stores({
+  tasks: 'id, practiceId, date, archived',
+  requests: 'id, taskId, status, createdAt',
+});

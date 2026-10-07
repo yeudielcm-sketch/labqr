@@ -9,6 +9,7 @@ import { t } from '../strings.js';
 import { esc } from '../components/html.js';
 import { confirmDialog, toast } from '../components/feedback.js';
 import { versionFooter } from '../components/version.js';
+import { allowed, loadRole } from '../session.js';
 
 const PREFIX_RE = /^[A-Z]{2,5}$/;
 
@@ -30,8 +31,11 @@ export const settings = {
     const empty = await isEmpty();
     const offline = navigator.serviceWorker?.controller ? t.settings.offlineReady : t.settings.offlinePending;
 
+    // Only the lab staff sees the demo, labs, loan days and "Borrar todo" (F7).
+    const admin = allowed('admin');
     view.innerHTML = `
       <section class="screen stack settings">
+        ${admin ? `
         <section class="block">
           <h3>${t.settings.demo}</h3>
           <p class="meta">${empty ? t.settings.demoHelp : t.settings.demoOnlyEmpty}</p>
@@ -79,7 +83,7 @@ export const settings = {
             <button class="btn" type="submit">${t.common.save}</button>
           </form>
           <p class="meta">${t.settings.loanDaysHelp}</p>
-        </section>
+        </section>` : ''}
 
         <section class="block">
           <h3>${t.settings.storage}</h3>
@@ -89,6 +93,7 @@ export const settings = {
           <p class="meta">${t.settings.updateHelp}</p>
         </section>
 
+        ${admin ? `
         <section class="block danger-zone">
           <h3>${t.settings.wipe}</h3>
           <p class="meta">${t.settings.wipeHelp}</p>
@@ -96,7 +101,7 @@ export const settings = {
             <input class="field code-input" name="word" placeholder="${t.settings.wipeType}" autocomplete="off" autocapitalize="characters" aria-label="${t.settings.wipeType}" />
             <button class="btn btn--block btn--danger-outline" type="submit" disabled>${t.settings.wipeConfirm}</button>
           </form>
-        </section>
+        </section>` : ''}
 
         ${versionFooter()}
       </section>`;
@@ -150,7 +155,9 @@ export const settings = {
         if (!(await confirmDialog(t.settings.wipeQ, { confirmLabel: t.settings.wipeConfirm, danger: true }))) return;
         await wipeAll();
         toast(t.settings.wipeDone);
-        return rerender();
+        // "Borrar todo" also forgets the role: the next screen asks "¿Quién eres?" again.
+        await loadRole();
+        return go('/');
       }
     });
 
@@ -172,7 +179,7 @@ export const settings = {
       }, 2500);
     });
 
-    view.querySelector('[data-wipe]').addEventListener('input', (e) => {
+    view.querySelector('[data-wipe]')?.addEventListener('input', (e) => {
       const form = e.currentTarget;
       form.querySelector('button').disabled = form.word.value.trim().toUpperCase() !== t.settings.wipeWord;
     });

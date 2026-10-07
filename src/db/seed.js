@@ -2,6 +2,7 @@
 // Built on the same ledger rules as real data: quantities only through movements.
 import { db } from './schema.js';
 import { formatCode } from '../domain/codes.js';
+import { localDate } from '../domain/tasks.js';
 
 const DAY = 24 * 60 * 60 * 1000;
 const at = (daysAgo, minutes = 0) => new Date(Date.now() - daysAgo * DAY + minutes * 60 * 1000).toISOString();
@@ -152,7 +153,23 @@ export function buildDemo() {
     practice('Observación de células de cebolla', 'BIO', '', [['micro1', pz(1)], ['porta', pz(10)], ['cubre', pz(10)], ['azul', 2000]]),
   ];
 
-  return { labs, locations, items, borrowers, loans: [l1, l2, l3], movements, practices };
+  // Teacher tasks (F7): a practice for a group on a date. Synthetic names and control numbers.
+  const day = (n) => localDate(new Date(Date.now() + n * DAY));
+  const task = (practiceIdx, group, date, notes = '') => ({
+    id: id(), practiceId: practices[practiceIdx].id, group, date, notes, archived: false, createdAt: at(2), updatedAt: at(2),
+  });
+  const tasks = [
+    task(0, '4° A', day(1), 'Traer bata y lentes de seguridad.'),
+    task(1, '4° A', day(3)),
+    task(2, '4° B', day(0)),
+  ];
+  const requests = [{
+    id: id(), taskId: tasks[0].id, practiceId: practices[0].id, practice: practices[0].name, labId: practices[0].labId,
+    name: 'Sofía Ramírez', group: '4° A', studentId: '26108000123',
+    lines: practices[0].items.map((i) => ({ ...i })), status: 'pending', createdAt: at(0, -12),
+  }];
+
+  return { labs, locations, items, borrowers, loans: [l1, l2, l3], movements, practices, tasks, requests };
 }
 
 export async function loadDemo() {
@@ -165,6 +182,8 @@ export async function loadDemo() {
     await db.loans.bulkAdd(demo.loans);
     await db.movements.bulkAdd(demo.movements);
     await db.practices.bulkAdd(demo.practices);
+    await db.tasks.bulkAdd(demo.tasks);
+    await db.requests.bulkAdd(demo.requests);
     await db.settings.put({ key: 'defaultLoanDays', value: 0 });
     await db.settings.put({ key: 'demoLoadedAt', value: new Date().toISOString() });
   });

@@ -385,3 +385,80 @@ textarea.field { padding: var(--space-3); min-height: 80px; resize: vertical; }
 .photo-actions { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2); }
 .item-row--photo { grid-template-columns: 56px 1fr auto; grid-template-areas: 'photo name code' 'photo meta meta' 'photo stock stock'; column-gap: var(--space-3); }
 .item-row__photo { grid-area: photo; width: 56px; height: 56px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--rule); align-self: start; }
+
+/* ---------- F7: roles, tasks, requests ---------- */
+.app--no-role { padding-bottom: 0; }
+.app--no-role .tabbar { display: none; }
+
+.welcome__title { font-family: var(--font-label); font-size: var(--fs-40); line-height: 1.05; }
+.welcome > .meta { margin: 0; font-size: var(--fs-16); }
+.role-cards { display: grid; gap: var(--space-3); }
+.role-card {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-areas: 'icon name' 'icon help';
+  column-gap: var(--space-4);
+  align-items: center;
+  min-height: 88px;
+  text-align: left;
+  color: var(--graphite);
+  cursor: pointer;
+  font: inherit;
+}
+.role-card:active { background: var(--tile); }
+.role-card[aria-current='true'] { border-color: var(--cobalt); box-shadow: inset 0 0 0 1px var(--cobalt); }
+.role-card--teacher { --stripe-color: var(--amber); }
+.role-card--labTech { --stripe-color: var(--cobalt); }
+.role-card--student { --stripe-color: var(--glass-edge); }
+.role-card__icon { grid-area: icon; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--tile); color: var(--cobalt); }
+.role-card__icon svg { width: 28px; height: 28px; }
+.role-card__name { grid-area: name; font-family: var(--font-label); font-size: var(--fs-28); font-weight: 600; line-height: 1.1; }
+.role-card .meta { grid-area: help; }
+
+.role-line { display: flex; align-items: center; gap: var(--space-2); margin: 0; color: var(--ink-soft); font-size: var(--fs-14); }
+.role-line__icon { display: grid; color: var(--cobalt); }
+.role-line__icon svg { width: 20px; height: 20px; }
+.role-line a { margin-left: auto; min-height: var(--tap); display: inline-flex; align-items: center; padding: 0 var(--space-2); font-weight: 600; }
+
+.list--flat { padding-bottom: 0; }
+
+.task-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'day name' 'day meta' 'day counts';
+  column-gap: var(--space-4);
+  color: var(--graphite);
+  text-decoration: none;
+  --stripe-color: var(--cobalt);
+}
+.task-row--past { --stripe-color: var(--rule); color: var(--ink-soft); }
+.task-row__day { grid-area: day; align-self: center; min-width: 4.5em; font-size: var(--fs-20); color: var(--cobalt); text-transform: capitalize; }
+.task-row--past .task-row__day { color: var(--ink-soft); }
+.task-row__name { grid-area: name; font-weight: 600; }
+.task-row > .meta { grid-area: meta; }
+.task-row__counts { grid-area: counts; }
+
+.task-head { display: grid; gap: var(--space-1); --stripe-color: var(--cobalt); }
+.task-head__day { font-size: var(--fs-20); color: var(--cobalt); text-transform: capitalize; }
+.task-head__name { font-family: var(--font-label); font-size: var(--fs-28); line-height: 1.1; }
+.task-head p { margin: 0; }
+.task-head__notes { padding-top: var(--space-2); }
+.task-head__top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.task-head__top .flag { margin-left: 0; }
+
+.request-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: 'who when' 'practice practice' 'state state';
+  gap: 2px var(--space-3);
+  color: var(--graphite);
+  text-decoration: none;
+  --stripe-color: var(--cobalt);
+}
+.request-row--approved { --stripe-color: var(--rule); color: var(--ink-soft); }
+.request-row--rejected { --stripe-color: var(--hazard); }
+.request-row__who { grid-area: who; font-weight: 600; }
+.request-row__when { grid-area: when; }
+.request-row__practice { grid-area: practice; }
+.request-row__state { grid-area: state; }
+.request-row__state .flag { margin-left: 0; }

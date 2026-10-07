@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { backupIsDue, buildBackup, TABLES, validateBackup } from './backup.js';
+import { backupIsDue, buildBackup, labSettings, mergeSettingsOnRestore, TABLES, validateBackup } from './backup.js';
 import { inventoryCSV, loansCSV, parseCSV, parseInventoryCSV, templateCSV, toCSV } from './csv.js';
 import { buildDemo } from '../db/seed.js';
 import { stockByItem } from '../domain/stock.js';
@@ -28,9 +28,32 @@ describe('JSON backup', () => {
     const dup = demoTables();
     dup.items.push({ ...dup.items[0] });
     expect(validateBackup(buildBackup(dup))).toBe('badRows');
-    expect(TABLES).toHaveLength(8);
+    expect(TABLES).toHaveLength(10);
     const old = demoTables();
-    expect(validateBackup(buildBackup(old))).toBe(null); // backups from before F6 have no practices table
+    expect(validateBackup(buildBackup(old))).toBe(null); // backups from before F6/F7 have no practices, tasks or requests
+  });
+
+  it('checks tasks and requests in the file (F7)', () => {
+    const d = buildDemo();
+    const tables = { ...demoTables(), practices: d.practices, tasks: d.tasks, requests: d.requests };
+    expect(validateBackup(buildBackup(tables))).toBe(null);
+    const badStatus = { ...tables, requests: [{ ...d.requests[0], status: 'maybe' }] };
+    expect(validateBackup(buildBackup(badStatus))).toBe('badRows');
+    const badLines = { ...tables, requests: [{ ...d.requests[0], lines: [{ itemId: 'x', qty: -1 }] }] };
+    expect(validateBackup(buildBackup(badLines))).toBe('badRows');
+    const noDate = { ...tables, requests: [{ ...d.requests[0], createdAt: undefined }] };
+    expect(validateBackup(buildBackup(noDate))).toBe('badRows');
+  });
+
+  it('never carries the role of one device to another (F7)', () => {
+    const device = [{ key: 'role', value: 'labTech' }, { key: 'studentId', value: '1' }, { key: 'lastBackupAt', value: 'x' }];
+    expect(labSettings(device)).toEqual([{ key: 'lastBackupAt', value: 'x' }]);
+    const fromFile = [{ key: 'role', value: 'student' }, { key: 'defaultLoanDays', value: 2 }];
+    expect(mergeSettingsOnRestore(fromFile, device)).toEqual([
+      { key: 'defaultLoanDays', value: 2 },
+      { key: 'role', value: 'labTech' },
+      { key: 'studentId', value: '1' },
+    ]);
   });
 
   it('asks for a backup after 7 days, or if there has never been one', () => {

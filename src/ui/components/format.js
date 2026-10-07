@@ -8,6 +8,11 @@ export function formatDate(iso) {
   return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+// Calendar day with weekday, for task dates: "jue 8 oct".
+export function formatDay(isoDate) {
+  return new Date(`${isoDate}T12:00:00`).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 export function formatDateTime(iso) {
   return new Date(iso).toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
 }

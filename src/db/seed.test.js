@@ -36,6 +36,23 @@ describe('buildDemo', () => {
   });
 });
 
+describe('demo tasks and requests (F7)', () => {
+  it('point to demo practices and pass validation', async () => {
+    const { taskProblems, visibleTasks } = await import('../domain/tasks.js');
+    const { requestProblems } = await import('../domain/requests.js');
+    const demo = buildDemo();
+    const practiceIds = new Set(demo.practices.map((p) => p.id));
+    expect(demo.tasks).toHaveLength(3);
+    for (const task of demo.tasks) {
+      expect(taskProblems(task)).toBe(null);
+      expect(practiceIds.has(task.practiceId)).toBe(true);
+    }
+    expect(visibleTasks(demo.tasks, { group: '4A' })).toHaveLength(2);
+    expect(demo.requests.map((r) => r.status)).toEqual(['pending']);
+    expect(requestProblems(demo.requests[0])).toBe(null);
+  });
+});
+
 describe('demo practices', () => {
   it('reference real demo items and pass validation', async () => {
     const { practiceProblems, linesFromPractice } = await import('../domain/practices.js');

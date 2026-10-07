@@ -10,6 +10,7 @@ import { formatDate, formatDateTime, relativeDays } from '../components/format.j
 import { flagsHtml, statusFlags, stockPanel } from '../components/stockView.js';
 import { bindItemMoves, itemMovesHtml } from '../components/itemMoves.js';
 import { fileToPhoto, isPhoto } from '../components/photo.js';
+import { allowed } from '../session.js';
 
 export const itemByCode = {
   title: t.itemCard.title,
@@ -29,6 +30,9 @@ export const itemByCode = {
     const holder = stock.lentOut > 0 && lastLend ? borrowers[lastLend.borrowerId]?.name : null;
 
     const extraRows = Object.entries(item.extra ?? {});
+    // Teachers and students consult the card; only the lab staff edits it or moves stock (F7).
+    const edit = allowed('editItem');
+    const move = allowed('moveStock');
     view.innerHTML = `
       <section class="screen stack item-card">
         ${item.archived ? `<p class="notice">${t.itemCard.archivedNote}</p>` : ''}
@@ -40,10 +44,11 @@ export const itemByCode = {
         </header>
 
         ${isPhoto(item.photo) ? `<img class="item-photo" src="${item.photo}" alt="${t.itemCard.photo}: ${esc(item.name)}" />` : ''}
+        ${edit ? `
         <div class="photo-actions">
           <label class="btn btn--sm file-btn">${isPhoto(item.photo) ? t.itemCard.photoChange : t.itemCard.photoAdd}<input type="file" accept="image/*" capture="environment" data-photo hidden /></label>
           ${isPhoto(item.photo) ? `<button type="button" class="btn btn--sm" data-photo-remove>${t.itemCard.photoRemove}</button>` : ''}
-        </div>
+        </div>` : ''}
 
         ${stockPanel(item, stock, holder)}
 
@@ -56,12 +61,14 @@ export const itemByCode = {
             ${item.expiresAt ? `<div><dt>${t.itemCard.expires}</dt><dd>${formatDate(item.expiresAt)} <span class="meta">(${relativeDays(item.expiresAt)})</span></dd></div>` : ''}
             ${item.notes ? `<div><dt>${t.itemCard.notes}</dt><dd>${esc(item.notes)}</dd></div>` : ''}
           </dl>
+          ${edit ? `
           <div class="row-2">
             <a class="btn" href="#/i/${encodeURIComponent(item.code)}/editar">${t.common.edit}</a>
             <a class="btn" href="#/etiquetas?codigos=${encodeURIComponent(item.code)}">${t.itemCard.printLabel}</a>
-          </div>
+          </div>` : ''}
         </section>
 
+        ${edit || extraRows.length ? `
         <section class="block">
           <h3>${t.itemCard.extra}</h3>
           ${extraRows.length ? '' : `<p class="meta">${t.itemCard.extraEmpty}</p>`}
@@ -69,34 +76,36 @@ export const itemByCode = {
             ${extraRows.map(([k, v]) => `
               <div class="kv__row">
                 <dt>${esc(k)}</dt><dd>${esc(v)}</dd>
-                <button type="button" class="icon-btn icon-btn--sm" data-remove="${esc(k)}" aria-label="${t.common.delete} ${esc(k)}">×</button>
+                ${edit ? `<button type="button" class="icon-btn icon-btn--sm" data-remove="${esc(k)}" aria-label="${t.common.delete} ${esc(k)}">×</button>` : ''}
               </div>`).join('')}
           </dl>
+          ${edit ? `
           <form class="extra-form" data-extra-form>
             <input class="field" name="k" placeholder="${t.itemCard.extraKey}" required maxlength="40" />
             <input class="field" name="v" placeholder="${t.itemCard.extraValue}" required maxlength="120" />
             <button class="btn" type="submit">${t.itemCard.extraAdd}</button>
-          </form>
-        </section>
+          </form>` : ''}
+        </section>` : ''}
 
-        ${item.archived ? '' : itemMovesHtml(item, stock)}
+        ${item.archived || !move ? '' : itemMovesHtml(item, stock)}
 
         <section class="block">
           <h3>${t.itemCard.history}</h3>
           ${movements.length ? `<ol class="history">${movements.map((m) => historyRow(m, item, loans, borrowers)).join('')}</ol>` : `<p class="meta">${t.itemCard.historyEmpty}</p>`}
         </section>
 
+        ${edit ? `
         <div class="danger-zone">
           ${movements.length
             ? `<button type="button" class="btn btn--block" data-archive>${item.archived ? t.itemCard.unarchive : t.itemCard.archive}</button>`
             : `<button type="button" class="btn btn--block btn--danger-outline" data-delete>${t.common.delete}</button>`}
-        </div>
+        </div>` : ''}
       </section>`;
 
     const rerender = () => this.render(view, { code: item.code });
-    bindItemMoves(view, item, rerender);
+    if (move && !item.archived) bindItemMoves(view, item, rerender);
 
-    view.querySelector('[data-photo]').addEventListener('change', async (e) => {
+    view.querySelector('[data-photo]')?.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       try {
@@ -113,7 +122,7 @@ export const itemByCode = {
       rerender();
     });
 
-    view.querySelector('[data-extra-form]').addEventListener('submit', async (e) => {
+    view.querySelector('[data-extra-form]')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const key = e.target.k.value.trim();
       const value = e.target.v.value.trim();
@@ -123,7 +132,7 @@ export const itemByCode = {
       rerender();
     });
 
-    view.querySelector('[data-extra]').addEventListener('click', async (e) => {
+    view.querySelector('[data-extra]')?.addEventListener('click', async (e) => {
       const key = e.target.closest('[data-remove]')?.dataset.remove;
       if (!key) return;
       const { [key]: _removed, ...rest } = item.extra;

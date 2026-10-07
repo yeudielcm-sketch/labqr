@@ -20,12 +20,20 @@
 | 6 oct 2026 | Nombre definitivo: **C-Lab**. La dirección web `…/labqr/` no cambia | Autores | Los QR ya impresos llevan esa dirección |
 | 6 oct 2026 | El identificador interno de los respaldos sigue siendo "LabQR" | Claude | Que los respaldos anteriores se puedan restaurar |
 | 6 oct 2026 | F6: Prácticas, reactivo en un paso, nota en merma, número de control para alumnos, fotos | Autores ("hazlo") | Lista del equipo, `CAMBIOS-PROPUESTOS.md` |
+| 7 oct 2026 | F7: **3 roles sin cuentas** (Químico, Laboratorista, Alumno). Al entrar se elige cualquiera, sin contraseña. No reemplaza lo descartado del 6 oct: siguen sin existir cuentas, servidor ni login | Autor ("va") | Cada quien ve solo lo suyo y se puede enseñar ya; el rol solo ordena la pantalla, no protege datos |
+| 7 oct 2026 | El químico deja **tareas** (práctica + grupo + fecha); el alumno pide el material desde la tarea y su pedido queda como **solicitud** hasta que el laboratorista la aprueba | Autor | "De ahí sale lo que tiene que pedir en el vale"; la solicitud no mueve existencias |
+| 7 oct 2026 | Aprobar una solicitud abre el vale ya lleno; confirmar el préstamo la marca como entregada en la misma operación | Claude | Un solo toque para confirmar (CLAUDE.md) y nunca un vale sin su solicitud |
+| 7 oct 2026 | El estado de una solicitud (por aprobar → entregada/rechazada) sí se actualiza en su renglón | Claude | No es un movimiento de existencias; el registro de movimientos sigue sin editarse |
+| 7 oct 2026 | El rol y los datos del alumno del dispositivo **no viajan en el respaldo** y se conservan al restaurar | Claude | Restaurar el respaldo del maestro no debe volver "Químico" el celular del laboratorista |
+| 7 oct 2026 | Las solicitudes solo llegan si se hacen en el mismo dispositivo del laboratorista (p. ej. una tablet en la ventanilla) | Claude, informado al autor | Sin servidor no hay otra forma a $0; propuesta pendiente: pasar tareas y solicitudes por QR |
+| 7 oct 2026 | Ilustraciones propias para los artículos (no fotos de internet), se irán agregando | Autor | Derechos de autor; el concurso pide desarrollo original |
 
 ## En espera (necesitan respuesta de los autores)
 
 - Tamaño de etiqueta: grande (10 por hoja) o chica (24 por hoja).
 - Vales de microscopio distintos (idea 4), reglamento (5), campos del vale de papel (6), "1 día antes" (7), sustitución de reactivos (9), caducidades (10).
 - Línea de investigación: se propone "Desarrollo tecnológico" (confirmar con el asesor).
+- Pasar tareas y solicitudes entre celulares con QR (sin servidor, $0): ¿se agrega a F7?
 
 ## Descartado — no volver a proponer sin releer esto
 

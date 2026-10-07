@@ -408,3 +408,53 @@ El auditor, con contexto limpio, revisó solo los cambios de F6 y encontró **6 
 - **Problema encontrado:** el campo "Cantidad que regresó" usaba el atributo `data-back`, el mismo que el botón de regresar de la barra superior. La app no fallaba, porque busca con el id del artículo, pero el script de capturas tomó el botón equivocado. Se renombró a `data-returned` para quitar la trampa.
 - 6 oct 2026: el autor abrió la app en su Android y confirmó la versión 0.7.0 (F6 llegó al celular).
 - 6 oct 2026: el autor probó en su Android un vale hecho desde una práctica, el regreso de un reactivo y una foto real de un artículo. **F6 cerrada** en el celular. Sigue pendiente validar con laboratoristas si estas funciones les sirven.
+
+---
+
+## F7 · Roles sin cuentas, tareas y solicitudes · 7 de octubre de 2026
+
+### Qué se hizo
+- **Entrada "¿Quién eres?":** tres tarjetas (Químico, Laboratorista, Alumno). No hay contraseña: se elige cualquiera y se cambia desde Inicio ("Entraste como… · Cambiar") o desde el Menú.
+- **Cada rol ve lo suyo:** pestañas, Inicio, Menú y Ajustes cambian según el rol. Si alguien escribe a mano la dirección de una pantalla que no es de su rol, la app se lo dice y le ofrece cambiar de rol.
+- **Tareas del químico:** una práctica guardada + un grupo + una fecha, con indicaciones. Desde cada práctica hay un botón "Dejar como tarea a un grupo".
+- **Solicitudes del alumno:** el alumno escribe su grupo una vez y en su Inicio ve sus tareas. Desde la tarea, "Pedir el material" trae la lista ya llena. Escribe nombre y número de control y la envía.
+- **Aprobación:** el laboratorista ve "N solicitudes por aprobar" en Inicio. "Atender y entregar" abre el vale ya lleno, y "Confirmar préstamo" crea el vale y marca la solicitud como entregada en la misma operación. También puede rechazarla con un motivo que lee el alumno.
+- **Base de datos:** versión 3, con dos tablas nuevas (`tasks` y `requests`). La actualización solo agrega tablas.
+- **Respaldo:** lleva tareas y solicitudes, pero no el rol del dispositivo. Al restaurar, cada celular conserva su rol.
+- **Demo:** 3 tareas (dos de 4° A y una de 4° B) y una solicitud por aprobar.
+- **Versión de la app:** 0.8.0.
+
+### Decisiones y por qué
+- **Roles sin cuentas:** lo que se descartó el 6 oct fueron las *cuentas* (servidor, contraseñas, aviso de privacidad). Elegir un rol sin contraseña no necesita nada de eso y se puede enseñar ya. El rol ordena la pantalla, no protege datos: cualquiera puede cambiarlo.
+- **La solicitud no mueve existencias.** Solo el vale lo hace, igual que antes. Así el registro de movimientos sigue sin editarse y el tiempo de entrega se sigue midiendo en el vale.
+- **El rol no viaja en el respaldo**, para que restaurar el respaldo del maestro no convierta en "Químico" el celular del laboratorista.
+
+### Problemas encontrados
+- **Límite real:** sin servidor, la solicitud solo llega al laboratorista si se hace en su mismo dispositivo. Se le explicó al autor y queda propuesta una salida a $0: pasar tareas y solicitudes de un celular a otro con QR.
+- Un `await` suelto al inicio de `main.js` no compila con la configuración de Vite del proyecto. Se cambió por una promesa que arranca el enrutador después de leer el rol.
+
+### Auditoría independiente (tercera)
+El auditor, con contexto limpio, revisó solo F7. No encontró inyección de código, saltos de rol ni pérdida de datos al actualizar. Encontró **9 fallas**; se corrigieron 9:
+
+| # | Severidad | Falla | Arreglo |
+|---|---|---|---|
+| 1 | Media | "Atender y entregar" borraba sin avisar un vale que el laboratorista llevaba a medias | Pregunta antes de descartarlo |
+| 2 | Media | Si se dejaba a medias el vale de una solicitud, el siguiente "Nuevo vale" podía aprobarla con el préstamo de otra persona | Mientras el vale está ligado a una solicitud, el solicitante no se puede cambiar; si la solicitud se decidió mientras tanto, el vale se desliga |
+| 3 | Media-baja | El alumno se buscaba solo por número de control: con un número mal escrito, el vale se le cargaba a otro | Se busca por número de control **y** nombre; si no coinciden, se registra como alumno nuevo |
+| 4 | Media-baja | En un dispositivo compartido, un alumno veía las solicitudes (y números de control) de los demás | El alumno ve solo las de su número de control |
+| 5 | Baja | Un respaldo dañado con una solicitud sin fecha rompía el Inicio de todos los roles | El respaldo lo rechaza y el orden tolera la falta de fecha |
+| 6 | Baja | Si fallaba el envío, el botón se quedaba trabado; además se podía mandar la misma solicitud varias veces | Se libera siempre; una segunda solicitud de la misma tarea, aún por aprobar, se rechaza con aviso |
+| 7 | Baja | Editar una tarea que ya no existía "se guardaba" sin guardar nada | Avisa que la tarea ya no existe |
+| 8 | Baja | Si un artículo de la solicitud se archivó, desaparecía del vale sin aviso | Aviso con cuántos artículos ya no están disponibles |
+| 9 | Baja | El químico podía aprobar una solicitud escribiendo la dirección a mano | Solo el rol Laboratorista abre un vale desde una solicitud |
+
+### Cómo se probó
+- **73 pruebas automáticas** (eran 56): 14 de roles, tareas y solicitudes (3 de ellas de la auditoría), 2 del respaldo (tablas nuevas y rol que no viaja, más solicitud sin fecha) y 1 de la demo.
+- **Arreglos de la auditoría, en el navegador:** con un vale a medias (matraz), "Atender" preguntó antes de descartarlo; al cancelar, el matraz siguió ahí. Al atender, el solicitante quedó fijo. Al rechazar la solicitud por fuera, el vale se desligó. Como alumna, solo se vio su propia solicitud y la de otro alumno dijo "Esa solicitud no existe".
+- **En el navegador, con vista de celular (375 px):**
+  - Una base anterior (versión 2, 33 artículos, 67 movimientos) se actualizó a la versión 3 sin perder nada y pidió elegir rol.
+  - El químico creó la tarea "Titulación ácido-base · 4° A · hoy".
+  - Una alumna escribió su grupo como "4a" y vio la tarea de "4° A". Pidió el material: llegaron las 5 líneas ya llenas y la solicitud quedó por aprobar.
+  - El laboratorista vio "1 solicitud por aprobar". "Atender y entregar" abrió el vale con la alumna, la práctica y las 5 líneas. Al confirmar, la solicitud quedó entregada y ligada a su vale.
+  - Como alumno, abrir `#/vales/nuevo` a mano mostró "Esta pantalla no es para el rol Alumno", y Ajustes no mostró "Borrar todo".
+- **Pendiente:** probar en el Android del autor.

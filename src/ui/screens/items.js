@@ -8,6 +8,7 @@ import { t } from '../strings.js';
 import { esc } from '../components/html.js';
 import { flagsHtml, statusFlags, stockMini } from '../components/stockView.js';
 import { isPhoto } from '../components/photo.js';
+import { allowed } from '../session.js';
 
 export function itemRow(item, stock, locationName) {
   return `
@@ -39,8 +40,9 @@ export const items = {
       view.innerHTML = `
         <section class="screen"><div class="empty">
           <p>${t.items.empty}</p>
+          ${allowed('editItem') ? `
           <a class="btn btn--primary" href="#/ajustes">${t.home.loadDemo}</a>
-          <a class="btn" href="#/articulos/nuevo">${t.items.add}</a>
+          <a class="btn" href="#/articulos/nuevo">${t.items.add}</a>` : ''}
         </div></section>`;
       return;
     }
@@ -62,7 +64,7 @@ export const items = {
         </div>
         <div class="list-head"><p class="meta" data-count></p><button type="button" class="link-btn" data-clear hidden>${t.items.clear}</button></div>
         <div class="list" data-list></div>
-        <a class="fab btn btn--primary" href="#/articulos/nuevo">+ ${t.items.add}</a>
+        ${allowed('editItem') ? `<a class="fab btn btn--primary" href="#/articulos/nuevo">+ ${t.items.add}</a>` : ''}
       </section>`;
 
     const $ = (sel) => view.querySelector(sel);

@@ -9,4 +9,10 @@ export const icons = {
   loans: svg('<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>'),
   menu: svg('<path d="M4 6h16M4 12h16M4 18h16"/>'),
   back: svg('<path d="M15 5l-7 7 7 7"/>'),
+  tasks: svg('<rect x="5" y="4" width="14" height="17" rx="1"/><path d="M9 4V3h6v1M9 10l1.5 1.5L13 9M9 16h6"/>'),
+  requests: svg('<path d="M4 13l3-8h10l3 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/>'),
+  // Roles (F7)
+  teacher: svg('<path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11v5c3 2 7 2 10 0v-5"/><path d="M21 9v6"/>'),
+  labTech: svg('<path d="M4 20h16M6 20V9h12v11M6 9l2-5h8l2 5"/><path d="M10 13h4"/>'),
+  student: svg('<circle cx="12" cy="7" r="3.5"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/>'),
 };

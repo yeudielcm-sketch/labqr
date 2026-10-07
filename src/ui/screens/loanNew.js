@@ -3,6 +3,9 @@
 import { getSetting, loadCatalog } from '../../db/catalog.js';
 import { confirmLoan, createBorrower, listBorrowers } from '../../db/movements.js';
 import { getPractice, listPractices } from '../../db/practices.js';
+import { borrowerForRequest, getRequest } from '../../db/requests.js';
+import { canDecide } from '../../domain/requests.js';
+import { allowed } from '../session.js';
 import { linesFromPractice, mergeLines } from '../../domain/practices.js';
 import { filterItems } from '../../domain/catalog.js';
 import { extractCode } from '../../domain/codes.js';
@@ -39,18 +42,54 @@ export const loanNew = {
     draft ??= newDraft();
     const [cat, borrowers, loanDays, practices] = await Promise.all([loadCatalog(), listBorrowers(), getSetting('defaultLoanDays', 0), listPractices()]);
     const itemsById = Object.fromEntries(cat.items.map((i) => [i.id, i]));
+
+    // A draft linked to a request that was decided meanwhile goes back to being a plain loan,
+    // so it can never approve that request with someone else's loan.
+    if (draft.requestId && !canDecide(await getRequest(draft.requestId))) {
+      draft.requestId = null;
+      draft.requestName = '';
+    }
+
+    // Attending a student's request (F7): the loan starts filled with what they asked for.
+    // Only the lab staff decides requests, also when the address is typed by hand.
+    if (query.solicitud && allowed('decideRequest') && draft.requestId !== query.solicitud) {
+      const request = await getRequest(query.solicitud);
+      if (!canDecide(request)) {
+        toast(t.requests.alreadyDecided, { danger: true });
+        return go(request ? `/solicitudes/${request.id}` : '/solicitudes');
+      }
+      // Never drop a loan in progress without asking.
+      if (draft.lines.length && !(await confirmDialog(t.newLoan.replaceDraftQ, { confirmLabel: t.requests.attend }))) {
+        return go(`/solicitudes/${request.id}`);
+      }
+      const student = await borrowerForRequest(request);
+      if (!borrowers.some((b) => b.id === student.id)) borrowers.push(student);
+      draft = {
+        ...newDraft(),
+        requestId: request.id,
+        requestName: request.name,
+        borrowerId: student?.id ?? '',
+        practice: request.practice ?? '',
+        practiceId: request.practiceId ?? '',
+        appliedPractices: request.practiceId ? [request.practiceId] : [],
+        lines: request.lines.map((l) => ({ ...l })),
+      };
+    }
     const onHand = (id) => (cat.stocks[id] ?? EMPTY_STOCK).onHand;
     // The draft may point to data that no longer exists ("Borrar todo" or a restored backup).
+    const before = draft.lines.length;
     draft.lines = draft.lines.filter((l) => itemsById[l.itemId] && !itemsById[l.itemId].archived);
+    if (draft.lines.length < before) toast(t.newLoan.linesGone(before - draft.lines.length), { danger: true });
     if (!borrowers.some((b) => b.id === draft.borrowerId)) draft.borrowerId = '';
     if (draft.practiceId && !practices.some((p) => p.id === draft.practiceId)) draft.practiceId = '';
     const due = dueDate(new Date(), loanDays); // shown as a hint; recalculated when confirming
 
     view.innerHTML = `
       <section class="screen stack loan-new">
+        ${draft.requestId ? `<p class="notice">${t.newLoan.fromRequest(esc(draft.requestName))}</p>` : ''}
         <section class="block block--first">
           <h3>${t.newLoan.borrower}</h3>
-          <select class="field" name="borrower" aria-label="${t.newLoan.borrowerPick}">
+          <select class="field" name="borrower" aria-label="${t.newLoan.borrowerPick}" ${draft.requestId ? 'disabled' : ''}>
             <option value="">${t.newLoan.borrowerPick}</option>
             ${borrowers.map((b) => `<option value="${b.id}" ${b.id === draft.borrowerId ? 'selected' : ''}>${esc(borrowerLabel(b))}</option>`).join('')}
           </select>
@@ -295,8 +334,9 @@ export const loanNew = {
 
     $('[data-discard]').addEventListener('click', async () => {
       if (draft.lines.length && !(await confirmDialog(t.newLoan.discardQ, { confirmLabel: t.newLoan.discard, danger: true }))) return;
+      const requestId = draft.requestId;
       draft = null;
-      go('/vales');
+      go(requestId ? `/solicitudes/${requestId}` : '/vales');
     });
 
     $('[data-confirm]').addEventListener('click', async (e) => {
@@ -306,10 +346,11 @@ export const loanNew = {
       e.target.disabled = true;
       const labId = itemsById[draft.lines[0].itemId].labId;
       const before = Object.fromEntries(draft.lines.map((l) => [l.itemId, cat.stocks[l.itemId] ?? EMPTY_STOCK]));
-      const res = await confirmLoan({ borrowerId: draft.borrowerId, labId, practice: draft.practice.trim(), practiceId: draft.practiceId || null, createdAt: draft.createdAt, dueAt: dueDate(new Date(), loanDays), lines: draft.lines });
+      const res = await confirmLoan({ borrowerId: draft.borrowerId, labId, practice: draft.practice.trim(), practiceId: draft.practiceId || null, requestId: draft.requestId ?? null, createdAt: draft.createdAt, dueAt: dueDate(new Date(), loanDays), lines: draft.lines });
       if (!res.ok) {
         e.target.disabled = false;
-        return showError(res.problems.some((p) => p.reason === 'stock') ? t.newLoan.errStock : t.newLoan.errQty);
+        const reason = res.problems.map((p) => p.reason);
+        return showError(reason.includes('request') ? t.requests.alreadyDecided : reason.includes('stock') ? t.newLoan.errStock : t.newLoan.errQty);
       }
       this.leave();
       const lent = draft.lines;

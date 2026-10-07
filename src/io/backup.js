@@ -1,17 +1,32 @@
 // Full JSON backup (SPEC §5.7). The file is the whole database, table by table, so restoring
 // it gives back exactly the same data (F4 criterion).
 
+import { REQUEST_STATUS } from '../domain/requests.js';
+
 // The internal id stays 'LabQR' after the rename to C-Lab, so earlier backup files still restore.
 export const BACKUP_APP = 'LabQR';
 export const BACKUP_VERSION = 1;
-export const TABLES = ['labs', 'locations', 'items', 'borrowers', 'loans', 'movements', 'settings', 'practices'];
+export const TABLES = ['labs', 'locations', 'items', 'borrowers', 'loans', 'movements', 'settings', 'practices', 'tasks', 'requests'];
 // Tables added after the first release: older backups may not have them (restored as empty).
-const OPTIONAL_TABLES = ['practices'];
+const OPTIONAL_TABLES = ['practices', 'tasks', 'requests'];
+
+// Settings that describe this device and its user (F7), not the lab: they are not exported,
+// and a restore keeps the ones already on the device.
+export const DEVICE_SETTINGS = ['role', 'studentName', 'studentGroup', 'studentId'];
 
 export function withOptionalTables(tables) {
   const out = { ...tables };
   for (const name of OPTIONAL_TABLES) out[name] ??= [];
   return out;
+}
+
+export function labSettings(rows) {
+  return rows.filter((r) => !DEVICE_SETTINGS.includes(r?.key));
+}
+
+// Settings to write on restore: the backup's lab settings plus this device's own.
+export function mergeSettingsOnRestore(backupRows, currentRows) {
+  return [...labSettings(backupRows), ...currentRows.filter((r) => DEVICE_SETTINGS.includes(r.key))];
 }
 
 export function buildBackup(tables, exportedAt = new Date().toISOString()) {
@@ -39,15 +54,23 @@ export function validateBackup(data) {
   for (const p of data.tables.practices ?? []) {
     if (!practiceIsWellFormed(p)) return 'badRows';
   }
+  for (const task of data.tables.tasks ?? []) {
+    if (typeof task.practiceId !== 'string' || typeof task.date !== 'string') return 'badRows';
+  }
+  for (const r of data.tables.requests ?? []) {
+    if (!REQUEST_STATUS.includes(r.status) || !linesAreWellFormed(r.lines)) return 'badRows';
+    if (![r.createdAt, r.name, r.studentId].every((v) => typeof v === 'string')) return 'badRows';
+  }
   return null;
 }
 
 const SAFE_ID = /^[A-Za-z0-9_-]{1,64}$/;
 
+const linesAreWellFormed = (lines) =>
+  Array.isArray(lines) && lines.every((i) => typeof i?.itemId === 'string' && Number.isInteger(i.qty) && i.qty > 0);
+
 function practiceIsWellFormed(p) {
-  return typeof p.name === 'string' && p.name.trim() !== ''
-    && Array.isArray(p.items)
-    && p.items.every((i) => typeof i?.itemId === 'string' && Number.isInteger(i.qty) && i.qty > 0);
+  return typeof p.name === 'string' && p.name.trim() !== '' && linesAreWellFormed(p.items);
 }
 
 export function backupSummary(data) {

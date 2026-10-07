@@ -1,17 +1,21 @@
 // Reads and replaces the whole database for backups, and writes the CSV inventory import.
 import { db } from './schema.js';
 import { nextCode } from '../domain/codes.js';
-import { TABLES, withOptionalTables } from '../io/backup.js';
+import { labSettings, mergeSettingsOnRestore, TABLES, withOptionalTables } from '../io/backup.js';
 
 export async function readAllTables() {
   const entries = await Promise.all(TABLES.map(async (name) => [name, await db.table(name).toArray()]));
-  return Object.fromEntries(entries);
+  const tables = Object.fromEntries(entries);
+  tables.settings = labSettings(tables.settings);
+  return tables;
 }
 
 // Replaces everything in one transaction: if anything fails, nothing changes.
+// This device's role and student data stay (F7).
 export async function replaceAllTables(input) {
   const tables = withOptionalTables(input);
   await db.transaction('rw', db.tables, async () => {
+    tables.settings = mergeSettingsOnRestore(tables.settings, await db.settings.toArray());
     for (const name of TABLES) {
       await db.table(name).clear();
       await db.table(name).bulkAdd(tables[name]);

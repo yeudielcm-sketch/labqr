@@ -158,3 +158,30 @@ Origen: lista del equipo en `docs/CAMBIOS-PROPUESTOS.md`. Pendiente de validar c
 - **Alumno = número de control obligatorio.**
 - **Foto del artículo:** se reduce a 640 px en JPEG antes de guardarse; viaja en el respaldo.
 - **Fuera de v0, para v1:** cuentas por rol (Químicos, Encargados, Alumnos) y foto de credencial. Requieren servidor, sincronización y aviso de privacidad.
+
+## 13. Cambios de F7 (7 oct 2026): roles sin cuentas, tareas y solicitudes
+
+Origen: petición del autor. Ajusta el supuesto §2.1 ("sin login"): **sigue sin haber login**, pero cada dispositivo dice quién lo usa.
+
+- **Entrada "¿Quién eres?"** (`#/entrar`): Químico (maestro), Laboratorista o Alumno. Cualquiera puede elegir cualquiera, sin contraseña, y cambiarlo cuando quiera. Se guarda en `settings.role` del dispositivo.
+- **Qué ve cada rol** (`src/domain/roles.js`):
+
+| | Químico (maestro) | Laboratorista | Alumno |
+|---|---|---|---|
+| Pestañas | Inicio · Tareas · Artículos · Vales | Inicio · Escanear · Artículos · Vales | Inicio · Escanear · Artículos · Solicitudes |
+| Inicio | Tareas próximas y cómo van sus solicitudes | Lo de siempre + "N solicitudes por aprobar" | Tareas de su grupo y sus solicitudes |
+| Puede | Prácticas, tareas, hacer vales; consultar artículos | Todo | Consultar artículos y tareas; pedir material |
+
+- **Tarea** (`tasks`): una práctica guardada + un grupo + una fecha, con indicaciones opcionales. El grupo se compara sin espacios, puntos ni "°" ("4a" = "4° A"). Se archiva, no se borra.
+- **Solicitud** (`requests`): el alumno abre la tarea → "Pedir el material" → la lista de la práctica ya viene llena → nombre y número de control (obligatorio) → "Enviar solicitud". Queda **por aprobar**. No mueve existencias.
+- **Aprobar:** el laboratorista toca "Atender y entregar" y se abre el vale ya lleno. "Confirmar préstamo" crea el vale y marca la solicitud como **entregada** en la misma transacción. También puede **rechazarla** con un motivo que ve el alumno.
+- **Respaldo:** incluye `tasks` y `requests`. El rol y los datos del alumno del dispositivo no se exportan y se conservan al restaurar.
+- **Límite conocido (v0):** sin servidor, la solicitud solo llega al laboratorista si se hace en su mismo dispositivo.
+
+```
+tasks     { id, practiceId, group, date: 'YYYY-MM-DD', notes?, archived, createdAt, updatedAt }
+requests  { id, taskId?, practiceId?, practice, labId, name, group, studentId,
+            lines: [{ itemId, qty }], status: 'pending'|'approved'|'rejected',
+            reason?, loanId?, createdAt, decidedAt? }
+loans     + requestId?   // el vale que salió de una solicitud
+```

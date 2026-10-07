@@ -2,6 +2,7 @@
 import { db } from './schema.js';
 import { stockOf } from '../domain/stock.js';
 import { adjustmentFor, borrowerProblems, loanLines, loanStatus, pendingTotal, splitReagentReturn, validateLines } from '../domain/loans.js';
+import { canDecide } from '../domain/requests.js';
 
 const now = () => new Date().toISOString();
 const newId = () => crypto.randomUUID();
@@ -50,20 +51,24 @@ export async function createBorrower({ name, type, group, studentId }) {
 // ---- Loans ----
 
 // Writes the loan and its LEND movements in one transaction. `createdAt` is when the
-// capture started (SPEC §8); confirmedAt is now.
-export async function confirmLoan({ borrowerId, labId, practice, practiceId = null, createdAt, dueAt, lines }) {
-  return db.transaction('rw', db.loans, db.movements, db.borrowers, async () => {
+// capture started (SPEC §8); confirmedAt is now. With `requestId` (F7), the student's request
+// is approved in the same transaction, so there is never a loan without its request or the reverse.
+export async function confirmLoan({ borrowerId, labId, practice, practiceId = null, requestId = null, createdAt, dueAt, lines }) {
+  return db.transaction('rw', db.loans, db.movements, db.borrowers, db.requests, async () => {
     if (!borrowerId || !(await db.borrowers.get(borrowerId))) return { ok: false, problems: [{ itemId: null, reason: 'borrower' }] };
+    if (requestId && !canDecide(await db.requests.get(requestId))) return { ok: false, problems: [{ itemId: null, reason: 'request' }] };
     const onHand = {};
     for (const l of lines) onHand[l.itemId] = await onHandOf(l.itemId);
     const problems = validateLines(lines, onHand);
     if (problems.length) return { ok: false, problems };
     const confirmedAt = now();
     const loan = { id: newId(), borrowerId, labId, practice: practice || '', practiceId, createdAt, confirmedAt, dueAt };
+    if (requestId) loan.requestId = requestId;
     await db.loans.add(loan);
     await db.movements.bulkAdd(
       lines.map((l) => ({ id: newId(), itemId: l.itemId, type: 'LEND', qty: l.qty, loanId: loan.id, borrowerId, createdAt: confirmedAt })),
     );
+    if (requestId) await db.requests.update(requestId, { status: 'approved', loanId: loan.id, decidedAt: confirmedAt });
     return { ok: true, loan };
   });
 }
