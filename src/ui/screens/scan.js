@@ -1,6 +1,7 @@
 // Escanear (outside a loan): reading a QR opens the item card. Manual entry if the camera fails.
 import { db } from '../../db/schema.js';
 import { extractCode } from '../../domain/codes.js';
+import { findShare } from '../../domain/share.js';
 import { cameraSupported, confirmRead, startScanner } from '../../qr/scan.js';
 import { go } from '../router.js';
 import { t } from '../strings.js';
@@ -39,6 +40,9 @@ export const scan = {
     };
 
     const openCode = async (raw) => {
+      // A task or request shown on another phone (F7) opens its own screen.
+      const shared = findShare(raw);
+      if (shared) return go(`/${shared.kind}/${shared.data}`);
       const code = extractCode(raw);
       if (!code) return say(t.scan.notCode, true);
       const exists = await db.items.where('code').equals(code).count();
@@ -49,7 +53,7 @@ export const scan = {
     view.querySelector('[data-manual]').addEventListener('submit', (e) => {
       e.preventDefault();
       const value = e.target.code.value.trim();
-      if (!extractCode(value)) return say(t.scan.badInput, true);
+      if (!findShare(value) && !extractCode(value)) return say(t.scan.badInput, true);
       openCode(value);
     });
 

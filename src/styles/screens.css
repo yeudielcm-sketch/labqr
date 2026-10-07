@@ -432,14 +432,15 @@ textarea.field { padding: var(--space-3); min-height: 80px; resize: vertical; }
   --stripe-color: var(--cobalt);
 }
 .task-row--past { --stripe-color: var(--rule); color: var(--ink-soft); }
-.task-row__day { grid-area: day; align-self: center; min-width: 4.5em; font-size: var(--fs-20); color: var(--cobalt); text-transform: capitalize; }
+.task-row__day { grid-area: day; align-self: center; min-width: 4.5em; font-size: var(--fs-20); color: var(--cobalt); }
+.task-row__day::first-letter, .task-head__day::first-letter { text-transform: uppercase; }
 .task-row--past .task-row__day { color: var(--ink-soft); }
 .task-row__name { grid-area: name; font-weight: 600; }
 .task-row > .meta { grid-area: meta; }
 .task-row__counts { grid-area: counts; }
 
 .task-head { display: grid; gap: var(--space-1); --stripe-color: var(--cobalt); }
-.task-head__day { font-size: var(--fs-20); color: var(--cobalt); text-transform: capitalize; }
+.task-head__day { font-size: var(--fs-20); color: var(--cobalt); }
 .task-head__name { font-family: var(--font-label); font-size: var(--fs-28); line-height: 1.1; }
 .task-head p { margin: 0; }
 .task-head__notes { padding-top: var(--space-2); }
@@ -462,3 +463,9 @@ textarea.field { padding: var(--space-3); min-height: 80px; resize: vertical; }
 .request-row__practice { grid-area: practice; }
 .request-row__state { grid-area: state; }
 .request-row__state .flag { margin-left: 0; }
+
+/* F7: task and request QR shown on a screen for another phone */
+.share-qr { margin: 0; display: grid; gap: var(--space-3); justify-items: center; padding: var(--space-4); background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius); }
+.share-qr__code { width: min(100%, 320px); }
+.share-qr__code svg { width: 100%; height: auto; display: block; }
+.share-qr figcaption { text-align: center; max-width: 32ch; }

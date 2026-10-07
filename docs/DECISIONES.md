@@ -26,6 +26,8 @@
 | 7 oct 2026 | El estado de una solicitud (por aprobar → entregada/rechazada) sí se actualiza en su renglón | Claude | No es un movimiento de existencias; el registro de movimientos sigue sin editarse |
 | 7 oct 2026 | El rol y los datos del alumno del dispositivo **no viajan en el respaldo** y se conservan al restaurar | Claude | Restaurar el respaldo del maestro no debe volver "Químico" el celular del laboratorista |
 | 7 oct 2026 | Las solicitudes solo llegan si se hacen en el mismo dispositivo del laboratorista (p. ej. una tablet en la ventanilla) | Claude, informado al autor | Sin servidor no hay otra forma a $0; propuesta pendiente: pasar tareas y solicitudes por QR |
+| 7 oct 2026 | Tareas y solicitudes pasan de un celular a otro **por QR** (o por enlace de WhatsApp), con todo el contenido dentro: sin servidor y sin internet | Autor ("agrega lo del QR") | La app ya está en varios dispositivos; sigue costando $0 |
+| 7 oct 2026 | En el QR los artículos van por su código impreso; si un código no existe en el celular del laboratorista, se avisa y no se adivina | Claude | El código es lo único igual en todos los dispositivos con el mismo catálogo |
 | 7 oct 2026 | Ilustraciones propias para los artículos (no fotos de internet), se irán agregando | Autor | Derechos de autor; el concurso pide desarrollo original |
 
 ## En espera (necesitan respuesta de los autores)
@@ -33,7 +35,6 @@
 - Tamaño de etiqueta: grande (10 por hoja) o chica (24 por hoja).
 - Vales de microscopio distintos (idea 4), reglamento (5), campos del vale de papel (6), "1 día antes" (7), sustitución de reactivos (9), caducidades (10).
 - Línea de investigación: se propone "Desarrollo tecnológico" (confirmar con el asesor).
-- Pasar tareas y solicitudes entre celulares con QR (sin servidor, $0): ¿se agrega a F7?
 
 ## Descartado — no volver a proponer sin releer esto
 

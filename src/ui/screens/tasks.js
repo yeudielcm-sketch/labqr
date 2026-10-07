@@ -12,6 +12,9 @@ import { confirmDialog, toast } from '../components/feedback.js';
 import { formatDay } from '../components/format.js';
 import { materialList } from '../components/materialList.js';
 import { allowed } from '../session.js';
+import { encodeShare, taskToShare } from '../../domain/share.js';
+import { shareUrl } from '../../qr/generate.js';
+import { bindShareButtons, shareQrBlock } from './shared.js';
 
 // One task as a row: day, practice, group and (for the teacher) how its requests are going.
 export function taskRow(task, practice, counts = null) {
@@ -72,6 +75,9 @@ export const taskDetail = {
           <h3>${t.tasks.material}</h3>
           ${materialList(practice?.items ?? [], itemsById, cat.stocks)}
         </section>
+        ${allowed('tasks') && !task.archived && practice ? `
+        <button type="button" class="btn btn--block" data-qr aria-expanded="false">${t.share.showTaskQr}</button>
+        <div data-qr-block hidden>${shareQrBlock(shareUrl('t', encodeShare(taskToShare(task, practice, itemsById))), t.share.taskQrHelp)}</div>` : ''}
         ${allowed('tasks') ? `
         <section class="block">
           <h3>${t.requests.title}</h3>
@@ -83,6 +89,14 @@ export const taskDetail = {
           ${task.archived ? '' : `<button type="button" class="btn btn--block btn--danger-outline" data-archive>${t.tasks.archive}</button>`}
         </section>` : ''}
       </section>`;
+
+    bindShareButtons(view.firstElementChild);
+    view.querySelector('[data-qr]')?.addEventListener('click', (e) => {
+      const block = view.querySelector('[data-qr-block]');
+      block.hidden = !block.hidden;
+      e.target.textContent = block.hidden ? t.share.showTaskQr : t.share.hideQr;
+      e.target.setAttribute('aria-expanded', String(!block.hidden));
+    });
 
     view.querySelector('[data-archive]')?.addEventListener('click', async () => {
       if (!(await confirmDialog(t.tasks.archiveQ, { confirmLabel: t.tasks.archive, danger: true }))) return;

@@ -1,7 +1,8 @@
 // Tasks and requests (F7). A request holds only what was asked for; stock moves when the
 // lab staff confirms the loan that the request turns into.
 import { db } from './schema.js';
-import { taskProblems } from '../domain/tasks.js';
+import { groupKey, taskProblems } from '../domain/tasks.js';
+import { linesByCode } from '../domain/share.js';
 import { canDecide, hasPendingFor, requestProblems, sameStudent, sortRequests } from '../domain/requests.js';
 
 const now = () => new Date().toISOString();
@@ -53,6 +54,32 @@ export async function createRequest({ taskId = null, practiceId = null, practice
   const request = { id: crypto.randomUUID(), taskId, practiceId, practice, labId, ...fields, status: 'pending', createdAt: now() };
   await db.requests.add(request);
   return { request };
+}
+
+// A request that arrived by QR from a student's phone (F7). The id comes from that phone, so
+// scanning the same QR twice opens the same request instead of creating another one.
+// Returns { request, missing } or { problem }.
+export async function importSharedRequest(shared, items) {
+  const { lines, missing } = linesByCode(shared.lines, items);
+  const labId = items.find((i) => i.id === lines[0]?.itemId)?.labId ?? null;
+  return db.transaction('rw', db.requests, db.tasks, db.practices, async () => {
+    const existing = await db.requests.get(shared.id);
+    if (existing) return { request: existing, missing: [] };
+    const fields = { name: shared.name, group: shared.group, studentId: shared.studentId, lines };
+    const problem = requestProblems(fields);
+    if (problem) return { problem };
+    // Link it to this device's task when there is one for the same practice, group and day.
+    const practices = await db.practices.toArray();
+    const practice = practices.find((p) => p.name === shared.practice && !p.archived);
+    const task = practice && (await db.tasks.where('practiceId').equals(practice.id).toArray())
+      .find((x) => x.date === shared.date && groupKey(x.group) === groupKey(shared.taskGroup));
+    const request = {
+      id: shared.id, taskId: task?.id ?? null, practiceId: practice?.id ?? null, practice: shared.practice, labId,
+      ...fields, status: 'pending', source: 'qr', createdAt: now(),
+    };
+    await db.requests.add(request);
+    return { request, missing };
+  });
 }
 
 // The borrower for an approved request: the same student (by control number) if already

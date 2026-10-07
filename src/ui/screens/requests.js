@@ -176,7 +176,7 @@ export const requestDetail = {
       <section class="screen stack request-detail">
         ${query.enviada ? `<p class="notice">${t.requests.sentHelp}</p>` : ''}
         <header class="label task-head">
-          <div class="task-head__top">${requestFlag(r.status)}<span class="meta">${formatDateTime(r.createdAt)}</span></div>
+          <div class="task-head__top">${requestFlag(r.status)}<span class="meta">${r.source === 'qr' ? `${t.share.viaQr} · ` : ''}${formatDateTime(r.createdAt)}</span></div>
           <h2 class="task-head__name">${esc(r.name)}</h2>
           <p class="meta">${esc([r.group, r.studentId && `${t.requests.studentId} ${r.studentId}`].filter(Boolean).join(' · '))}</p>
           <p>${t.requests.fromTask(esc(r.practice || '—'))}</p>

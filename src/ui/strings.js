@@ -350,6 +350,28 @@ export const t = {
     assign: 'Dejar como tarea a un grupo',
   },
 
+  share: {
+    showTaskQr: 'Mostrar QR para el grupo',
+    hideQr: 'Ocultar QR',
+    taskQrHelp: 'Los alumnos lo escanean con C-Lab o con la cámara del celular. Les llega la tarea con su material, aunque su celular no tenga datos.',
+    taskTitle: 'Tarea recibida',
+    badQr: 'Ese QR no es una tarea ni una solicitud de C-Lab, o está incompleto. Pide que lo muestren de nuevo.',
+    makeRequest: 'Pedir el material',
+    requestQr: 'Generar QR de solicitud',
+    requestTitle: 'Tu solicitud',
+    requestQrHelp: 'Muéstrale este QR al laboratorista. Él lo escanea con C-Lab, lo aprueba y te entrega el material.',
+    requestQrSave: 'Si no estás en el laboratorio, toma captura de pantalla para mostrarlo después.',
+    receivedTitle: 'Solicitud recibida',
+    forLabOnly: 'Este QR es una solicitud para el laboratorista. Ábrelo con el rol Laboratorista para aprobarla.',
+    imported: 'Solicitud recibida por QR',
+    missing: (codes) => `No están en este dispositivo: ${codes}. Revisa esos artículos a mano.`,
+    nothingKnown: 'Ninguno de los artículos de esta solicitud existe en este dispositivo. Revisa que el catálogo sea el mismo (restaura el respaldo del laboratorio).',
+    viaQr: 'Llegó por QR',
+    sendLink: 'Compartir enlace (WhatsApp…)',
+    copied: 'Enlace copiado',
+    copyFailed: 'No se pudo compartir. Muestra el QR en pantalla.',
+  },
+
   moves: {
     title: 'Registrar movimiento',
     receive: 'Recepción',

@@ -176,7 +176,12 @@ Origen: petición del autor. Ajusta el supuesto §2.1 ("sin login"): **sigue sin
 - **Solicitud** (`requests`): el alumno abre la tarea → "Pedir el material" → la lista de la práctica ya viene llena → nombre y número de control (obligatorio) → "Enviar solicitud". Queda **por aprobar**. No mueve existencias.
 - **Aprobar:** el laboratorista toca "Atender y entregar" y se abre el vale ya lleno. "Confirmar préstamo" crea el vale y marca la solicitud como **entregada** en la misma transacción. También puede **rechazarla** con un motivo que ve el alumno.
 - **Respaldo:** incluye `tasks` y `requests`. El rol y los datos del alumno del dispositivo no se exportan y se conservan al restaurar.
-- **Límite conocido (v0):** sin servidor, la solicitud solo llega al laboratorista si se hace en su mismo dispositivo.
+- **Entre celulares, por QR (sin servidor):** todo el contenido viaja dentro del QR (JSON compacto en base64url, `src/domain/share.js`), así que el celular que lo lee no necesita datos.
+  - **Tarea → alumno:** "Mostrar QR para el grupo" en la tarea. Lleva `#/t/<datos>` con práctica, grupo, fecha, indicaciones y material (código, cantidad, nombre y unidad; máx. 25 renglones). Se abre con C-Lab o con la cámara normal.
+  - **Solicitud → laboratorista:** desde la tarea recibida, el alumno escribe sus datos y su celular muestra un QR `#/r/<datos>` (id, alumno, número de control, grupo y material por código). El laboratorista lo escanea y la solicitud entra **por aprobar**, ligada a su tarea si hay una con la misma práctica, grupo y fecha. El id viene del celular del alumno: escanear dos veces no la duplica.
+  - Los artículos se reconocen por su **código impreso**; uno que no exista en el celular del laboratorista se avisa y no se adivina.
+  - Junto a cada QR, "Compartir enlace" manda lo mismo por WhatsApp.
+- **Límite conocido (v0):** sin QR ni enlace, la solicitud solo llega al laboratorista si se hace en su mismo dispositivo.
 
 ```
 tasks     { id, practiceId, group, date: 'YYYY-MM-DD', notes?, archived, createdAt, updatedAt }

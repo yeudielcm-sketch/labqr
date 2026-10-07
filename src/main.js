@@ -25,6 +25,7 @@ import { notAllowed, notFound } from './ui/screens/simple.js';
 import { welcome } from './ui/screens/welcome.js';
 import { taskDetail, taskEdit, taskList, taskNew } from './ui/screens/tasks.js';
 import { requestDetail, requestList, requestNew } from './ui/screens/requests.js';
+import { sharedRequest, sharedTask } from './ui/screens/shared.js';
 import { requestPersistence } from './db/backupStore.js';
 import { go } from './ui/router.js';
 import { allowed, currentRole, loadRole } from './ui/session.js';
@@ -54,6 +55,8 @@ const routes = [
   { path: '/practicas', screen: practiceList, allow: 'practices' },
   { path: '/practicas/nueva', screen: practiceNew, allow: 'practices' },
   { path: '/practicas/:id', screen: practiceEdit, allow: 'practices' },
+  { path: '/t/:data', screen: sharedTask },
+  { path: '/r/:data', screen: sharedRequest },
   { path: '/i/:code', screen: itemByCode },
   { path: '/i/:code/editar', screen: editItem, allow: 'editItem' },
 ];
