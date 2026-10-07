@@ -458,3 +458,36 @@ El auditor, con contexto limpio, revisó solo F7. No encontró inyección de có
   - El laboratorista vio "1 solicitud por aprobar". "Atender y entregar" abrió el vale con la alumna, la práctica y las 5 líneas. Al confirmar, la solicitud quedó entregada y ligada a su vale.
   - Como alumno, abrir `#/vales/nuevo` a mano mostró "Esta pantalla no es para el rol Alumno", y Ajustes no mostró "Borrar todo".
 - **Pendiente:** probar en el Android del autor.
+- 7 oct 2026: publicado en la rama `dev` (0.8.0).
+
+---
+
+## F7 (parte 2) · Tareas y solicitudes entre celulares por QR · 7 de octubre de 2026
+
+### Qué se hizo
+- **El problema:** la app ya está en varios celulares, y sin servidor una tarea creada en el celular del maestro no llegaba al del alumno.
+- **Tarea → alumno:** en la tarea, "Mostrar QR para el grupo". El QR trae todo: práctica, grupo, fecha, indicaciones y material con nombres. El alumno lo escanea con C-Lab o con la cámara normal y ve la tarea **aunque su celular no tenga datos**.
+- **Solicitud → laboratorista:** el alumno escribe nombre y número de control, ajusta cantidades y su celular muestra un **QR de solicitud**. El laboratorista lo escanea y la solicitud entra "por aprobar · Llegó por QR", lista para "Atender y entregar".
+- **Compartir enlace:** junto a cada QR, el mismo contenido se puede mandar por WhatsApp.
+- El escáner de C-Lab reconoce estos QR además de las etiquetas, y el campo manual acepta pegar el enlace.
+- **Versión de la app:** 0.8.1.
+
+### Decisiones y por qué
+- **Todo dentro del QR** (JSON compacto en base64url): no hace falta servidor ni internet, y sigue costando $0.
+- **Los artículos van por su código impreso** (QUI-0009), lo único igual en todos los celulares con el mismo catálogo. Si un código no existe en el celular del laboratorista, se avisa y no se adivina.
+- **El id de la solicitud lo pone el celular del alumno:** escanear el mismo QR dos veces abre la misma solicitud y no crea otra.
+- **QR con corrección de errores L** (las etiquetas impresas siguen en M): se lee de una pantalla iluminada y así cabe más sin volverse muy denso.
+
+### Problemas encontrados
+- El campo manual del escáner solo aceptaba códigos de artículo y rechazaba el enlace pegado. Se corrigió.
+- Las fechas decían "Mié 7 **De** Oct": `text-transform: capitalize` pone mayúscula en cada palabra. Ahora solo va en la primera letra.
+
+### Cómo se probó
+- **79 pruebas automáticas** (eran 73): 6 del QR. Cubren acentos y ñ, la búsqueda en un enlace, la tarea completa, la solicitud mapeada por código con un código desconocido, QR falsos o dañados (cantidades negativas, códigos con `<script>`, más de 25 renglones, id con HTML) y el tamaño del enlace (menos de 700 caracteres).
+- **En el navegador, simulando dos celulares** (`localhost` con los datos del laboratorio y `alumno.localhost` vacío, cada uno con su propia base de datos):
+  - El maestro generó el QR de "Titulación ácido-base · 4° A".
+  - En el celular vacío, el enlace pidió el rol, y como alumna mostró la tarea con sus 5 artículos.
+  - La alumna cambió una cantidad y generó su QR de solicitud. **Se decodificó el QR dibujado** con el mismo lector de respaldo de la app (zxing) y devolvió exactamente el enlace esperado.
+  - El laboratorista pegó el enlace en el escáner y la solicitud entró por aprobar, ligada a la tarea del maestro. Al abrir el mismo QR otra vez no se duplicó.
+- **Pendiente:** escanear con la cámara de dos celulares reales (el panel de pruebas no tiene cámara).
+- 7 oct 2026: publicado en la rama `dev` (0.8.1).
