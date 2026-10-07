@@ -491,3 +491,4 @@ El auditor, con contexto limpio, revisó solo F7. No encontró inyección de có
   - El laboratorista pegó el enlace en el escáner y la solicitud entró por aprobar, ligada a la tarea del maestro. Al abrir el mismo QR otra vez no se duplicó.
 - **Pendiente:** escanear con la cámara de dos celulares reales (el panel de pruebas no tiene cámara).
 - 7 oct 2026: publicado en la rama `dev` (0.8.1).
+- 7 oct 2026: pasado a `main` y publicado en GitHub Pages. Se comprobó en el sitio real (no solo en GitHub) que sirve la 0.8.1 con "¿Quién eres?" y "Mostrar QR para el grupo". Pendiente: prueba en los celulares.
