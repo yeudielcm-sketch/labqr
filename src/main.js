@@ -78,7 +78,7 @@ loadRole().catch(() => null).then(() => startRouter(routes, async (match) => {
   if (match?.route.allow && !allowed(match.route.allow)) screen = notAllowed;
   current?.leave?.();
   current = screen;
-  shell.setChrome({ title: screen.title, tab: screen.tab, back: screen.back, bare: screen.bare, role: currentRole() });
+  shell.setChrome({ title: screen.title, tab: screen.tab, back: screen.back, bare: screen.bare, brand: screen.brand, role: currentRole() });
   await screen.render(shell.view, match?.params ?? {}, match?.query ?? {});
   if (path !== lastPath) window.scrollTo(0, 0);
   lastPath = path;

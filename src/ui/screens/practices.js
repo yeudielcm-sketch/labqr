@@ -6,6 +6,7 @@ import { filterItems } from '../../domain/catalog.js';
 import { formatQty, formatQtyInput, parseQty } from '../../domain/quantity.js';
 import { go } from '../router.js';
 import { t } from '../strings.js';
+import { lineThumb } from '../components/illustrations.js';
 import { esc } from '../components/html.js';
 import { confirmDialog, toast } from '../components/feedback.js';
 import { allowed } from '../session.js';
@@ -102,7 +103,7 @@ function formScreen(mode) {
                    </div>`
                 : `<div class="qty-unit"><input class="field code-input" inputmode="decimal" data-qty="${l.itemId}" value="${formatQtyInput(l.qty)}" aria-label="${t.moves.qty}" /><span>${item.unit}</span></div>`;
             return `
-              <li class="line label label--${item.kind}${l.qty > 0 ? '' : ' line--bad'}">
+              <li class="line line--thumb label label--${item.kind}${l.qty > 0 ? '' : ' line--bad'}">${lineThumb(item)}
                 <div class="line__head"><span class="line__name">${esc(item.name)}</span><span class="code line__code">${esc(item.code)}</span></div>
                 <div class="line__body"><span></span>${control}
                   <button type="button" class="icon-btn icon-btn--sm" data-remove="${l.itemId}" aria-label="${t.newLoan.remove} ${esc(item.name)}">×</button></div>

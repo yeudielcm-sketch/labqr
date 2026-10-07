@@ -469,3 +469,65 @@ textarea.field { padding: var(--space-3); min-height: 80px; resize: vertical; }
 .share-qr__code { width: min(100%, 320px); }
 .share-qr__code svg { width: 100%; height: auto; display: block; }
 .share-qr figcaption { text-align: center; max-width: 32ch; }
+
+/* ---------- F8: item illustrations and thumbnails ---------- */
+.ill { width: 100%; height: 100%; display: block; overflow: visible; }
+.ill-line { fill: var(--paper); stroke: var(--graphite); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.ill-thin { fill: none; stroke: var(--graphite); stroke-width: 1; stroke-linecap: round; }
+.ill-bold { stroke-width: 2.4; }
+.ill-liquid { fill: var(--glass); stroke: none; }
+.ill-soft { opacity: 0.6; }
+.ill-metal { fill: var(--rule); stroke: var(--graphite); stroke-width: 1.2; }
+.ill-paper { fill: var(--paper); stroke: var(--graphite); stroke-width: 0.8; }
+.ill-amber { fill: var(--amber); }
+.ill-amber-fill { fill: var(--amber); stroke: none; }
+.ill-amber-glass { fill: color-mix(in srgb, var(--amber) 22%, var(--paper)); stroke: none; }
+.ill-cap { fill: var(--graphite); }
+/* Shapes drawn over a liquid stay transparent so the liquid shows through. */
+.ill .ill-line:not(:first-child) { fill: none; }
+
+.thumb { display: grid; place-items: center; flex: none; background: var(--tile); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; }
+.thumb svg { padding: 12%; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb--sm { width: 48px; height: 48px; }
+.thumb--md { width: 56px; height: 56px; }
+.thumb--lg { width: 100%; height: 200px; background: var(--paper); }
+.thumb--lg svg { width: 200px; height: 200px; max-width: 100%; padding: var(--space-5); }
+.thumb--lg.thumb--photo img { object-fit: contain; }
+
+/* The picture sits beside the name only; quantities below keep the full width. */
+.line--thumb .line__head { min-height: 48px; padding-left: calc(48px + var(--space-3)); align-items: center; }
+.line__thumb { position: absolute; left: calc(var(--stripe) + var(--space-4)); top: var(--space-3); }
+
+.item-row { grid-template-columns: 56px 1fr auto; grid-template-areas: 'photo name code' 'photo meta meta' 'photo stock stock'; column-gap: var(--space-3); }
+.item-row > .thumb { grid-area: photo; align-self: start; }
+
+/* ---------- F8: brand, role chip, compact reminder, menu ---------- */
+.brand { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--cobalt); }
+.brand svg { width: 28px; height: 28px; }
+.brand span { color: var(--graphite); letter-spacing: 0.01em; }
+
+.role-chip {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  min-height: var(--tap); min-width: var(--tap); padding: 0 var(--space-3);
+  border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper);
+  color: var(--cobalt); text-decoration: none; font-weight: 600; font-size: var(--fs-14);
+  justify-content: center; flex: none;
+}
+.role-chip svg { width: 20px; height: 20px; }
+.role-chip span { color: var(--graphite); padding-right: 2px; }
+.role-chip:active { background: var(--tile); }
+
+/* One line: amber dot, short text, "Respaldar ›". The whole row is the link. */
+a.backup-reminder { padding: var(--space-2) var(--space-3); min-height: var(--tap); text-decoration: none; color: var(--graphite); font-size: var(--fs-14); }
+.backup-reminder__go { color: var(--cobalt); font-weight: 600; white-space: nowrap; }
+
+.menu-item {
+  display: grid; grid-template-columns: 40px 1fr; grid-template-areas: 'icon label' 'icon help';
+  column-gap: var(--space-3); align-items: center; min-height: 64px;
+  color: var(--graphite); text-decoration: none;
+}
+.menu-list .menu-item { display: grid; }
+.menu-item__icon { grid-area: icon; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--tile); color: var(--cobalt); }
+.menu-item__label { grid-area: label; font-size: var(--fs-20); font-weight: 500; line-height: 1.2; }
+.menu-item__help { grid-area: help; }

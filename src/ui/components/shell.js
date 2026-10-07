@@ -17,6 +17,7 @@ export function renderShell(root) {
       <header class="topbar">
         <a class="icon-btn" data-back href="#/" aria-label="Regresar" hidden>${icons.back}</a>
         <h1 class="topbar__title" data-title></h1>
+        <a class="role-chip" data-role-chip href="#/entrar" hidden></a>
         <a class="icon-btn" data-menu href="#/menu" aria-label="${t.menu.open}">${icons.menu}</a>
       </header>
       <main data-view></main>
@@ -26,7 +27,7 @@ export function renderShell(root) {
   let tabsFor = null;
   return {
     view: root.querySelector('[data-view]'),
-    setChrome({ title, tab, back, bare, role }) {
+    setChrome({ title, tab, back, bare, role, brand }) {
       root.querySelector('.app').classList.toggle('app--bare', Boolean(bare));
       // Without a role (welcome screen) there is nothing to navigate to yet.
       root.querySelector('.app').classList.toggle('app--no-role', !role);
@@ -37,7 +38,18 @@ export function renderShell(root) {
           .join('');
         tabsFor = role;
       }
-      root.querySelector('[data-title]').textContent = title;
+      // Inicio shows the C-Lab mark; every other screen its own title (F8).
+      const titleEl = root.querySelector('[data-title]');
+      if (brand) titleEl.innerHTML = `<span class="brand">${icons.items}<span>${t.appName}</span></span>`;
+      else titleEl.textContent = title;
+      // The role is always visible and one tap from changing (F8). Named in full on Inicio,
+      // icon only elsewhere so long titles keep their room.
+      const chip = root.querySelector('[data-role-chip]');
+      chip.hidden = !role;
+      if (role) {
+        chip.innerHTML = `${icons[role]}${brand ? `<span>${t.roles.short[role]}</span>` : ''}`;
+        chip.setAttribute('aria-label', t.roles.chipLabel(t.roles.names[role]));
+      }
       const backEl = root.querySelector('[data-back]');
       backEl.hidden = !back;
       if (back) backEl.setAttribute('href', `#${back}`);

@@ -4,6 +4,7 @@ import { formatQty } from '../../domain/quantity.js';
 import { EMPTY_STOCK } from '../../domain/stock.js';
 import { t } from '../strings.js';
 import { esc } from './html.js';
+import { lineThumb } from './illustrations.js';
 
 export function materialList(lines, itemsById, stocks) {
   const rows = lines.filter((l) => itemsById[l.itemId]);
@@ -15,7 +16,7 @@ export function materialList(lines, itemsById, stocks) {
     const onHand = (stocks[item.id] ?? EMPTY_STOCK).onHand;
     const short = l.qty > onHand;
     return `
-      <li class="line label label--${item.kind}${short ? ' line--bad' : ''}">
+      <li class="line line--thumb label label--${item.kind}${short ? ' line--bad' : ''}">${lineThumb(item)}
         <div class="line__head"><span class="line__name">${esc(item.name)}</span><span class="code line__code">${esc(item.code)}</span></div>
         <div class="line__body">
           <span class="meta${short ? ' text-hazard' : ''}">${t.newLoan.available(`${formatQty(onHand)} ${item.unit}`)}</span>

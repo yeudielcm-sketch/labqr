@@ -18,6 +18,15 @@ La existencia de cada artículo no se muestra como número suelto. Se dibuja com
 
 Toda la audacia visual se gasta aquí. El resto de la interfaz es sobria y disciplinada.
 
+## Ilustraciones de artículos (F8)
+
+Cada artículo se ve con su **foto real** si la tiene; si no, con una **ilustración propia** (`src/ui/components/illustrations.js`), nunca con fotos de internet.
+
+- Mismo lenguaje que la probeta: contorno grafito, líquido `glass`, frascos de reactivo en ámbar con su etiqueta de franja ámbar.
+- Se eligen por el nombre del artículo (vaso, matraz, bureta, microscopio…, sin importar acentos). Si ninguna coincide, se usa una genérica por tipo: equipo, material, reactivo líquido (frasco) o reactivo sólido (bote).
+- Aparecen en la lista de artículos, la ficha, los vales, las prácticas, las tareas y las solicitudes.
+- Se irán agregando más: basta dibujarla en el mismo archivo y agregar su palabra clave.
+
 ## Tokens
 
 ### Color

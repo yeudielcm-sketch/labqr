@@ -492,3 +492,43 @@ El auditor, con contexto limpio, revisó solo F7. No encontró inyección de có
 - **Pendiente:** escanear con la cámara de dos celulares reales (el panel de pruebas no tiene cámara).
 - 7 oct 2026: publicado en la rama `dev` (0.8.1).
 - 7 oct 2026: pasado a `main` y publicado en GitHub Pages. Se comprobó en el sitio real (no solo en GitHub) que sirve la 0.8.1 con "¿Quién eres?" y "Mostrar QR para el grupo". Pendiente: prueba en los celulares.
+- 7 oct 2026: el autor probó la 0.8.1 en celulares reales y confirmó que funciona: roles, tarea por QR, solicitud por QR y aprobación. **F7 cerrada** en el celular. Sigue pendiente que la usen maestros, laboratoristas y alumnos de verdad.
+
+---
+
+## F8 · Actualización visual · 7 de octubre de 2026
+
+### Qué se hizo
+- **22 ilustraciones propias** de material de laboratorio, en el estilo de la probeta: vaso, matraz, probeta, pipeta, bureta, tubo de ensayo, pinzas, mechero, embudo, mortero, balanza, parrilla, potenciómetro, microscopio, estereoscópico, portaobjetos, caja de Petri, disección, frasco y bote de reactivo, piseta y equipo genérico.
+  - Cada artículo muestra su foto real si la tiene; si no, su ilustración. Los 33 artículos de la demo tienen la suya.
+  - Aparecen en la lista de artículos, la ficha (en grande), los vales, las prácticas, las tareas, las solicitudes y lo que llega por QR.
+- **Barra de arriba:** el Inicio muestra la marca **C-Lab**, y el **rol** queda siempre visible a la derecha; un toque lleva a cambiarlo.
+- **Inicio del laboratorista:**
+  - "Nuevo vale" pasa a ser lo primero de la pantalla. Antes quedaba abajo del pliegue en un celular de 375 px.
+  - El aviso de respaldo ocupa una sola línea.
+  - Las tarjetas van de más a menos urgente: solicitudes, vencidos, caducados, bajo mínimo, por caducar, vales abiertos.
+- **Menú:** cada opción lleva ícono y una línea que explica para qué sirve. Ajustes se explica distinto según el rol.
+- **Versión de la app:** 0.9.0.
+
+### Decisiones y por qué
+- **Ilustraciones propias, no fotos de internet:** las fotos tienen derechos de autor y el concurso pide desarrollo original. Los autores irán agregando más.
+- **"Bajo mínimo" sigue en rojo**, porque así lo define DESIGN.md. La lección de Claude Notes ("un color, un significado; atenuar lo que está bien") se aplicó ordenando por urgencia y dejando tenue lo que está en cero.
+- **Lecciones de Claude Notes aplicadas:**
+  - "¿Es obvio sin manual?" (Raichu): el Menú explica cada opción y el vale va primero.
+  - Marca visible (Branding).
+  - Todo lo tocable de 48 px o más.
+
+### Problemas encontrados
+- **Se repitió la lección de Xcellence** ("escribir con el editor, no con comandos de texto"). Al insertar las miniaturas con `sed`, el patrón cortó en el `>` de `${l.pending > 0 …}` y rompió tres pantallas. La compilación lo detectó antes de publicar y se corrigió a mano.
+- **En la ficha, la ilustración grande salía recortada:** el SVG tomaba un ancho automático. Se fijó a un cuadrado de 200 px.
+- **En los vales, la miniatura angostaba la columna de cantidades** ("hay / 90 / pz" en tres líneas). Ahora la imagen va solo junto al nombre y las cantidades usan todo el ancho.
+- **Las pinzas no se entendían** (parecían un gancho). Se redibujaron en forma de X con su perno.
+- **El chip de rol medía 40 px.** Se subió a 48 px, como pide CLAUDE.md.
+
+### Cómo se probó
+- **82 pruebas automáticas** (eran 79): 3 de ilustraciones. Comprueban que el nombre se reconozca con o sin acentos, la imagen genérica por tipo, y que los 33 artículos de la demo tengan dibujo.
+- **En el navegador, con vista de celular (375 px):**
+  - Se revisaron las 22 ilustraciones juntas en grande.
+  - Se revisaron Inicio, lista de artículos, ficha, nuevo vale, práctica, Menú e Inicio del alumno.
+  - En 9 pantallas, nada se sale a lo ancho, y la consola no tiene errores.
+- **Pendiente:** verlo en el Android del autor.

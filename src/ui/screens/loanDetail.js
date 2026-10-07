@@ -4,6 +4,7 @@ import { getLoan, settleLine, settleReagent } from '../../db/movements.js';
 import { deliverySeconds } from '../../domain/loans.js';
 import { formatQty, formatQtyInput, parseQty } from '../../domain/quantity.js';
 import { t } from '../strings.js';
+import { lineThumb } from '../components/illustrations.js';
 import { esc } from '../components/html.js';
 import { confirmDialog, confirmWithNote, toast } from '../components/feedback.js';
 import { formatDateTime } from '../components/format.js';
@@ -153,7 +154,7 @@ function lineHtml(l) {
   const single = item.kind === 'equipment' || (l.pending === 100 && item.unit === 'pz');
   const reagent = item.kind === 'reagent';
   return `
-    <li class="line label label--${item.kind}${l.pending > 0 ? '' : ' line--done'}">
+    <li class="line line--thumb label label--${item.kind}${l.pending > 0 ? '' : ' line--done'}">${lineThumb(item)}
       <div class="line__head">
         <a class="line__name" href="#/i/${encodeURIComponent(item.code)}">${esc(item.name)}</a>
         <span class="code line__code">${esc(item.code)}</span>

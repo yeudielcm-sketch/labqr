@@ -12,6 +12,7 @@ import { esc } from '../components/html.js';
 import { toast } from '../components/feedback.js';
 import { formatDay } from '../components/format.js';
 import { allowed } from '../session.js';
+import { lineThumb } from '../components/illustrations.js';
 
 const badQr = (view) => {
   view.innerHTML = `<section class="screen"><div class="empty"><p>${t.share.badQr}</p><a class="btn btn--primary" href="#/">${t.roles.goHome}</a></div></section>`;
@@ -27,7 +28,7 @@ const taskHead = (task) => `
 
 const sharedLines = (lines) => `
   <ul class="lines">${lines.map((l) => `
-    <li class="line label label--material">
+    <li class="line line--thumb label label--material">${lineThumb({ name: l.name, unit: l.unit, kind: l.unit === 'pz' ? 'material' : 'reagent' })}
       <div class="line__head"><span class="line__name">${esc(l.name)}</span><span class="code line__code">${esc(l.code)}</span></div>
       <div class="line__body"><span></span><span class="qty-fixed code">${formatQty(l.qty)} ${esc(l.unit)}</span></div>
     </li>`).join('')}</ul>`;
@@ -93,7 +94,7 @@ async function requestForm(view, task) {
         <h3>${t.requests.material}</h3>
         <p class="meta">${t.requests.materialHelp}</p>
         <ul class="lines">${lines.map((l, i) => `
-          <li class="line label label--material">
+          <li class="line line--thumb label label--material">${lineThumb({ name: l.name, unit: l.unit, kind: l.unit === 'pz' ? 'material' : 'reagent' })}
             <div class="line__head"><span class="line__name">${esc(l.name)}</span><span class="code line__code">${esc(l.code)}</span></div>
             <div class="line__body"><span></span>
               <div class="qty-unit"><input class="field code-input" inputmode="decimal" data-i="${i}" value="${formatQtyInput(l.qty)}" aria-label="${t.moves.qty} ${esc(l.name)}" /><span>${esc(l.unit)}</span></div>

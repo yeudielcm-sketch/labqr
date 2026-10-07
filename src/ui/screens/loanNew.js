@@ -15,6 +15,7 @@ import { EMPTY_STOCK } from '../../domain/stock.js';
 import { beep, cameraSupported, confirmRead, startScanner } from '../../qr/scan.js';
 import { go } from '../router.js';
 import { t } from '../strings.js';
+import { lineThumb } from '../components/illustrations.js';
 import { esc } from '../components/html.js';
 import { confirmDialog, toast } from '../components/feedback.js';
 import { animateCylinders, cylinderSvg } from '../components/cylinder.js';
@@ -164,7 +165,7 @@ export const loanNew = {
                  </div>`
               : `<div class="qty-unit"><input class="field code-input" inputmode="decimal" data-qty="${l.itemId}" value="${formatQtyInput(l.qty)}" aria-label="${t.moves.qty}" /><span>${item.unit}</span></div>`;
           return `
-            <li class="line label label--${item.kind}${bad ? ' line--bad' : ''}">
+            <li class="line line--thumb label label--${item.kind}${bad ? ' line--bad' : ''}">${lineThumb(item)}
               <div class="line__head">
                 <span class="line__name">${esc(item.name)}</span>
                 <span class="code line__code">${esc(item.code)}</span>

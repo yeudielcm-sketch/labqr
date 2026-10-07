@@ -8,22 +8,16 @@ import { requestCountsByTask } from '../../domain/requests.js';
 import { groupKey, visibleTasks } from '../../domain/tasks.js';
 import { t } from '../strings.js';
 import { esc } from '../components/html.js';
-import { icons } from '../components/icons.js';
 import { cylinderSvg } from '../components/cylinder.js';
 import { versionFooter } from '../components/version.js';
 import { currentRole } from '../session.js';
 import { taskRow } from './tasks.js';
 import { requestFlag } from './requests.js';
 
-// "Entraste como … · Cambiar": the role is always visible and one tap away (F7).
-function roleLine() {
-  const role = currentRole();
-  return `<p class="role-line"><span class="role-line__icon">${icons[role]}</span><span>${t.roles.chosen(t.roles.short[role])}</span><a href="#/entrar">${t.roles.change}</a></p>`;
-}
-
 export const home = {
   title: t.home.title,
   tab: '/',
+  brand: true,
   async render(view, params, query) {
     if (currentRole() === 'teacher') return teacherHome(view);
     if (currentRole() === 'student') return studentHome(view);
@@ -36,7 +30,6 @@ async function labHome(view, query) {
   if (cat.items.length === 0) {
     view.innerHTML = `
       <section class="screen">
-        ${roleLine()}
         <div class="empty">
           ${cylinderSvg({ onHand: 0, title: 'Probeta vacía' })}
           <p>${t.home.empty}</p>
@@ -65,15 +58,16 @@ async function labHome(view, query) {
   const onHand = items.reduce((s, i) => s + (i.unit === 'pz' ? stockOf(i).onHand : 0), 0);
   const lentOut = items.reduce((s, i) => s + (i.unit === 'pz' ? stockOf(i).lentOut : 0), 0);
 
+  // Critical path first (CLAUDE.md): "Nuevo vale" is the first thing under the thumb (F8).
   view.innerHTML = `
     <section class="screen stack home">
-      ${roleLine()}
+      <a class="btn btn--primary btn--block btn--big" href="#/vales/nuevo">+ ${t.home.newLoan}</a>
       ${backupIsDue(lastBackupAt, cat.items.length > 0) ? `
-      <div class="backup-reminder" role="status">
+      <a class="backup-reminder" href="#/respaldo" role="status">
         <span class="amber-dot" aria-hidden="true"></span>
-        <span>${lastBackupAt ? t.backup.reminder : t.backup.reminderNever}</span>
-        <a class="btn btn--sm" href="#/respaldo">${t.backup.reminderBtn}</a>
-      </div>` : ''}
+        <span>${lastBackupAt ? t.backup.reminderShort : t.backup.reminderNeverShort}</span>
+        <span class="backup-reminder__go">${t.backup.reminderBtn} ›</span>
+      </a>` : ''}
       <select class="field lab-select" aria-label="${t.items.filterLab}">
         <option value="">${t.home.allLabs}</option>
         ${cat.labs.map((l) => `<option value="${l.id}" ${l.id === labId ? 'selected' : ''}>Laboratorio ${esc(l.name)}</option>`).join('')}
@@ -90,14 +84,12 @@ async function labHome(view, query) {
 
       <nav class="status-cards">
         ${pendingRequests.length ? card('#/solicitudes', t.requests.pendingCount(pendingRequests.length), pendingRequests.length, 'open') : ''}
-        ${card('#/vales', t.home.openLoans(openLoans.length), openLoans.length, 'open')}
         ${overdue.length ? card('#/vales?estado=vencidos', t.home.overdueLoans(overdue.length), overdue.length, 'hazard') : ''}
+        ${expired.length ? card(`#/articulos?caduca=1${labQ}`, t.home.expired(expired.length), expired.length, 'hazard') : ''}
         ${card(`#/articulos?bajo=1${labQ}`, t.home.low(low.length), low.length, 'hazard')}
         ${card(`#/articulos?caduca=1${labQ}`, t.home.expiring(expiring.length), expiring.length, 'amber')}
-        ${expired.length ? card(`#/articulos?caduca=1${labQ}`, t.home.expired(expired.length), expired.length, 'hazard') : ''}
+        ${card('#/vales', t.home.openLoans(openLoans.length), openLoans.length, 'open')}
       </nav>
-
-      <a class="btn btn--primary btn--block btn--big" href="#/vales/nuevo">+ ${t.home.newLoan}</a>
 
       ${versionFooter()}
     </section>`;
@@ -115,7 +107,6 @@ async function teacherHome(view) {
   const upcoming = visibleTasks(tasks, { keepDays: 1 }).slice(0, 5);
   view.innerHTML = `
     <section class="screen stack home">
-      ${roleLine()}
       <a class="btn btn--primary btn--block btn--big" href="#/tareas/nueva">+ ${t.tasks.add}</a>
       <section class="block block--first">
         <h3>${t.tasks.upcoming}</h3>
@@ -147,12 +138,11 @@ async function studentHome(view) {
     </form>`;
 
   if (!groupKey(group)) {
-    view.innerHTML = `<section class="screen stack home">${roleLine()}${groupForm}${versionFooter()}</section>`;
+    view.innerHTML = `<section class="screen stack home">${groupForm}${versionFooter()}</section>`;
   } else {
     const mineTasks = visibleTasks(tasks, { group, keepDays: 2 });
     view.innerHTML = `
       <section class="screen stack home">
-        ${roleLine()}
         <section class="block block--first">
           <div class="list-head"><h3>${t.tasks.yourTasks(esc(group))}</h3><button type="button" class="link-btn" data-change-group>${t.tasks.changeGroup}</button></div>
           ${mineTasks.length
@@ -171,7 +161,7 @@ async function studentHome(view) {
         ${versionFooter()}
       </section>`;
     view.querySelector('[data-change-group]').addEventListener('click', () => {
-      view.querySelector('.home').innerHTML = `${roleLine()}${groupForm}`;
+      view.querySelector('.home').innerHTML = groupForm;
       bindGroupForm(view);
     });
   }

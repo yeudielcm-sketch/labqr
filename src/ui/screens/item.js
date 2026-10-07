@@ -11,6 +11,7 @@ import { flagsHtml, statusFlags, stockPanel } from '../components/stockView.js';
 import { bindItemMoves, itemMovesHtml } from '../components/itemMoves.js';
 import { fileToPhoto, isPhoto } from '../components/photo.js';
 import { allowed } from '../session.js';
+import { itemVisual } from '../components/illustrations.js';
 
 export const itemByCode = {
   title: t.itemCard.title,
@@ -43,7 +44,7 @@ export const itemByCode = {
           <div class="item-head__flags">${flagsHtml(statusFlags(item, stock))}</div>
         </header>
 
-        ${isPhoto(item.photo) ? `<img class="item-photo" src="${item.photo}" alt="${t.itemCard.photo}: ${esc(item.name)}" />` : ''}
+        ${itemVisual(item, 'lg')}
         ${edit ? `
         <div class="photo-actions">
           <label class="btn btn--sm file-btn">${isPhoto(item.photo) ? t.itemCard.photoChange : t.itemCard.photoAdd}<input type="file" accept="image/*" capture="environment" data-photo hidden /></label>

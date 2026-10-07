@@ -28,6 +28,8 @@
 | 7 oct 2026 | Las solicitudes solo llegan si se hacen en el mismo dispositivo del laboratorista (p. ej. una tablet en la ventanilla) | Claude, informado al autor | Sin servidor no hay otra forma a $0; propuesta pendiente: pasar tareas y solicitudes por QR |
 | 7 oct 2026 | Tareas y solicitudes pasan de un celular a otro **por QR** (o por enlace de WhatsApp), con todo el contenido dentro: sin servidor y sin internet | Autor ("agrega lo del QR") | La app ya está en varios dispositivos; sigue costando $0 |
 | 7 oct 2026 | En el QR los artículos van por su código impreso; si un código no existe en el celular del laboratorista, se avisa y no se adivina | Claude | El código es lo único igual en todos los dispositivos con el mismo catálogo |
+| 7 oct 2026 | F8: "bajo mínimo" **sigue en rojo**. En vez de cambiar colores, el Inicio ordena de más a menos urgente y deja tenue lo que está en cero | Claude | DESIGN.md define el rojo para vencido, merma y bajo mínimo, y DESIGN.md manda |
+| 7 oct 2026 | F8: el rol va en la barra de arriba (con nombre en Inicio, solo ícono en las demás pantallas) y sustituye a la línea "Entraste como…" | Claude | Siempre visible sin quitarle espacio a los títulos largos |
 | 7 oct 2026 | Ilustraciones propias para los artículos (no fotos de internet), se irán agregando | Autor | Derechos de autor; el concurso pide desarrollo original |
 
 ## En espera (necesitan respuesta de los autores)

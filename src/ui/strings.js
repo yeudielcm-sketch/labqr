@@ -21,7 +21,18 @@ export const t = {
     practices: 'Prácticas',
     tasks: 'Tareas',
     requests: 'Solicitudes',
-    role: (name) => `Cambiar de rol · ahora: ${name}`,
+    role: (name) => `Ahora: ${name}`,
+    roleTitle: 'Cambiar de rol',
+    help: {
+      practices: 'El material de cada práctica, guardado una vez',
+      tasks: 'Prácticas que le tocan a cada grupo',
+      requests: 'Lo que piden los alumnos, por aprobar',
+      labels: 'Imprimir etiquetas con QR',
+      backup: 'Guardar o restaurar todos los datos',
+      board: 'Pantalla grande para la exposición',
+      settings: 'Laboratorios, demo y actualización',
+      settingsBasic: 'Versión de la app y buscar actualización',
+    },
   },
 
   roles: {
@@ -35,6 +46,7 @@ export const t = {
       student: 'Ves las tareas de tu grupo y pides el material de la práctica.',
     },
     chosen: (name) => `Entraste como ${name}`,
+    chipLabel: (name) => `Rol: ${name}. Toca para cambiar`,
     change: 'Cambiar',
     notAllowed: (name) => `Esta pantalla no es para el rol ${name}.`,
     notAllowedHelp: 'Si te toca otra tarea, cambia de rol.',
@@ -592,6 +604,8 @@ export const t = {
     reminder: 'Haz un respaldo: tu último fue hace más de 7 días.',
     reminderNever: 'Aún no hay respaldo de estos datos. Haz uno para no perderlos.',
     reminderBtn: 'Respaldar',
+    reminderShort: 'Último respaldo: hace más de 7 días',
+    reminderNeverShort: 'Aún no hay respaldo',
   },
 
   pending: {
