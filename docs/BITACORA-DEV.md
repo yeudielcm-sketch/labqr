@@ -532,3 +532,4 @@ El auditor, con contexto limpio, revisó solo F7. No encontró inyección de có
   - Se revisaron Inicio, lista de artículos, ficha, nuevo vale, práctica, Menú e Inicio del alumno.
   - En 9 pantallas, nada se sale a lo ancho, y la consola no tiene errores.
 - **Pendiente:** verlo en el Android del autor.
+- 7 oct 2026: pasado a `main` y publicado. Se comprobó en el sitio real que sirve la 0.9.0 (con los textos nuevos del Menú y del chip de rol).
