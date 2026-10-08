@@ -17,6 +17,7 @@ Los laboratorios del plantel prestan equipo, material de vidrio y reactivos a eq
 - Saber qué hay, dónde está y quién lo tiene, sin depender de la memoria del laboratorista.
 - Ligar cada rotura o pérdida a quien tenía el material (merma con responsable).
 - Detectar a tiempo reactivos por caducar y material bajo mínimo.
+- Conectar a las tres personas que intervienen en una práctica: el **maestro** que la planea, el **alumno** que pide el material y el **laboratorista** que lo entrega.
 - Costo cero para el plantel: no requiere licencias, servidor ni internet en el laboratorio.
 
 ## 3. Objetivos
@@ -29,6 +30,8 @@ Los laboratorios del plantel prestan equipo, material de vidrio y reactivos a eq
 3. Calcular la existencia a partir de un historial de movimientos que no se puede editar ni borrar.
 4. Avisar de material bajo mínimo, reactivos por caducar y vales vencidos.
 5. Permitir respaldo, restauración y exportación a Excel.
+6. Ofrecer una vista para cada rol (químico, laboratorista y alumno): el maestro deja tareas a cada grupo, el alumno pide el material y el laboratorista aprueba la solicitud.
+7. Pasar tareas y solicitudes de un celular a otro con un código QR, sin servidor ni internet.
 
 ## 4. Antecedentes / estado del arte
 
@@ -41,12 +44,25 @@ Resumen de `RESEARCH.md`:
   - Tres tipos de artículo (equipo, material y reactivo).
   - Lenguaje de almacén en español, del módulo "Controla el flujo de mercancías en almacén".
   - El QR funciona con la cámara normal del celular.
+  - El maestro, el alumno y el laboratorista se conectan sin cuentas ni servidor: la tarea y la solicitud viajan dentro de un QR.
 
 ## 5. Metodología
 
-- **Desarrollo por fases con criterio de "listo" medible** (SPEC §9), documentado en la bitácora (`docs/BITACORA-DEV.md`).
-- **Prototipo para descubrir requisitos:** se muestra a laboratoristas con datos de demostración y se corrige (`GUION-DEMO-LABORATORISTAS.md`). **[FALTA: fecha y resultados de la entrevista.]**
-- **Pruebas automáticas** de la lógica (41 al cierre de F5) y pruebas manuales en celular.
+- **Desarrollo por fases con criterio de "listo" medible** (SPEC §9), documentado en la bitácora (`docs/BITACORA-DEV.md`). Nueve fases al 7 de octubre de 2026:
+  - F0: esqueleto.
+  - F1: catálogo.
+  - F2: QR.
+  - F3: préstamos.
+  - F4: respaldo.
+  - F5: tablero.
+  - F6: prácticas, reactivos y fotos.
+  - F7: roles, tareas, solicitudes y QR entre celulares.
+  - F8: actualización visual.
+
+  Cada fase se probó en un celular Android real antes de pasar a la siguiente.
+- **Prototipo para descubrir requisitos:** se muestra a laboratoristas y maestros con datos de demostración y se corrige (`GUION-DEMO-LABORATORISTAS.md`). El guion incluye que el laboratorista haga **solo y sin ayuda** un vale de 5 artículos, para medir si la app se entiende sin manual. **[FALTA: fecha y resultados de la entrevista.]**
+- **Pruebas automáticas** de la lógica (82 al cierre de F8) y pruebas manuales en celular.
+- **Auditorías de código independientes** antes de publicar los cambios grandes, hechas por un revisor que no conocía el proyecto: 12, 6 y 9 fallas encontradas y corregidas (F2 a F5, F6 y F7).
 - **Métrica:** tiempo de entrega de material antes (medición manual) y después (columna `duracion_segundos` del CSV de vales). **[FALTA: medición "antes" y promedio "después" con usuarios reales.]**
 
 ## 6. Desarrollo técnico
@@ -58,7 +74,14 @@ Resumen de `RESEARCH.md`:
   - Existencia derivada.
   - Cantidades en centésimas, para no tener errores de redondeo.
   - Códigos inmutables.
-- **Diseño visual:** concepto "etiqueta de frasco". La existencia se dibuja como una probeta graduada.
+- **Diseño visual:** concepto "etiqueta de frasco". La existencia se dibuja como una probeta graduada, y cada artículo se ilustra con un dibujo propio del material (22 ilustraciones originales) o con su foto.
+- **Roles sin cuentas:** al abrir la app se elige químico, laboratorista o alumno. Cada rol ve solo sus pantallas y acciones; el alumno, por ejemplo, no puede borrar datos ni registrar movimientos. No hay contraseñas, así que tampoco hay datos de acceso que proteger.
+- **Tareas y solicitudes:** una tarea es una práctica asignada a un grupo para una fecha. El alumno pide el material desde la tarea y su solicitud queda **por aprobar**. Al aprobarla, el laboratorista confirma el préstamo y la solicitud queda entregada **en la misma operación**: nunca queda un préstamo sin su solicitud ni al revés. La solicitud por sí sola no mueve existencias.
+- **QR entre celulares:** la tarea y la solicitud se codifican completas dentro de un QR (JSON compacto en base64url, menos de 700 caracteres).
+  - El celular que lo lee no necesita datos ni internet.
+  - Los artículos se identifican por su código impreso (QUI-0007), igual en todos los dispositivos con el mismo catálogo.
+  - Escanear dos veces la misma solicitud no la duplica.
+  - Se comprobó leyendo el QR dibujado con el mismo lector de la app y en dos celulares reales.
 
 ## 7. Factibilidad económica
 
@@ -75,7 +98,8 @@ Resumen de `RESEARCH.md`:
 - **Funciona en Android con Chrome** (dispositivo principal) **[FALTA: modelo del celular de prueba]**.
 - **iPhone:** también funciona; si el celular no tiene lector QR propio, la app usa uno integrado que sirve sin internet.
 - **Límites conocidos de v0:**
-  - Un solo dispositivo.
+  - Cada dispositivo guarda sus propios datos. Las tareas y solicitudes pasan de uno a otro por QR o por enlace, pero el inventario no se sincroniza solo: se comparte con un respaldo.
+  - Los roles no son cuentas: cualquiera puede elegir cualquier rol. Ordenan la pantalla, pero no protegen datos.
   - El respaldo es manual.
   - El tablero solo se actualiza en vivo con lo que pasa en el mismo equipo.
 
@@ -85,7 +109,10 @@ Resumen de `RESEARCH.md`:
 
 ## 10. Conclusiones y trabajo futuro
 
-**[FALTA tras la entrevista.]** Trabajo futuro ya previsto: sincronización entre varios dispositivos (v1), escala a varios planteles.
+**[FALTA tras la entrevista.]** Trabajo futuro ya previsto:
+- **v1, varios dispositivos:** sincronización del inventario (Neon, plan gratuito; SPEC §10).
+- **Cuentas por rol con inicio de sesión**, para que solo el laboratorista pueda aprobar. Requiere servidor y aviso de privacidad (LFPDPPP).
+- Escala a varios planteles.
 
 ## Referencias
 
