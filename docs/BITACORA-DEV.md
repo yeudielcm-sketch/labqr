@@ -549,3 +549,9 @@ El auditor, con contexto limpio, revisó solo F7. No encontró inyección de có
   - El script no encontraba el QR de la tarea: puppeteer tocaba por coordenadas y el botón quedaba bajo la barra inferior fija. Se cambió por un clic directo al elemento.
 - **Versión de la app:** 0.9.1 (las dos correcciones de estilo).
 - **Cómo se probó:** el PDF se generó sin imágenes rotas y con las fuentes Barlow cargadas, y se revisaron sus 26 páginas.
+- 7 oct 2026: 0.9.1 pasada a `main`; se comprobó en el sitio real (versión y la corrección de CSS).
+- 7 oct 2026: **guion de la demo actualizado** (`GUION-DEMO-LABORATORISTAS.md`):
+  - Ahora el laboratorista hace **él solo** un vale de 5 artículos. Da la medición "después" con un usuario real y muestra dónde duda (filtro Raichu).
+  - Se agregó la demo de roles, tarea y solicitud, con uno o dos celulares, y 5 preguntas para validar F7 (17–21).
+  - Se corrigió un error del guion: sin elegir rol no se llega a cargar la demo.
+  - `ENTREVISTAS.md` tiene las filas nuevas.

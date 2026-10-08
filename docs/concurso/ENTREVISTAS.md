@@ -26,7 +26,7 @@ Salen solas del CSV de vales (☰ → Respaldo → Vales, columna `duracion_segu
 | # | Fecha | Artículos | Segundos | Quién capturó |
 |---|---|---|---|---|
 | 1 | 30 sep 2026 | 5 | 40 | Autor (prueba en su Android) |
-| 2 | | | | |
+| 2 | | | | Laboratorista, **solo y sin ayuda** (guion, "Que lo usen ellos") |
 | 3 | | | | |
 
 **Promedio "después":** ____ s por entrega · ____ s por artículo
@@ -53,6 +53,14 @@ Salen solas del CSV de vales (☰ → Respaldo → Vales, columna `duracion_segu
 | 7 | ¿Hay internet en el laboratorio? | |
 | 8 | ¿Qué laboratorios, anaqueles y gavetas hay? ¿Cuántos artículos, más o menos? | |
 | 9 | ¿Qué es lo que más les quita tiempo? | |
+| 10–16 | Ideas del equipo (prácticas, microscopios, reglamento, avisos, sustitución, caducidades, fotos) | |
+| 17 | (Maestro) ¿Dejaría las prácticas como tareas? ¿Con cuánta anticipación? | |
+| 18 | ¿Los alumnos pueden usar celular en el laboratorio? ¿Todos tienen? | |
+| 19 | ¿Pedir desde el celular del alumno (QR) o en una tablet de ventanilla? | |
+| 20 | (Laboratorista) ¿Aprobar solicitudes ahorra o quita tiempo? ¿Qué revisa? | |
+| 21 | ¿Quién más debería usarla? ¿Alguien no debería ver algo? | |
+
+**Vale que hizo solo (sin ayuda):** ____ s · dónde dudó:
 
 **Lo que pidieron que la app tuviera:**
 -
