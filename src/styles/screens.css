@@ -426,18 +426,19 @@ textarea.field { padding: var(--space-3); min-height: 80px; resize: vertical; }
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-areas: 'day name' 'day meta' 'day counts';
-  column-gap: var(--space-4);
+  grid-template-columns: 6.6em 1fr; /* fixed, so practice names line up under each other */
+  column-gap: var(--space-3);
   color: var(--graphite);
   text-decoration: none;
   --stripe-color: var(--cobalt);
 }
 .task-row--past { --stripe-color: var(--rule); color: var(--ink-soft); }
-.task-row__day { grid-area: day; align-self: center; min-width: 4.5em; font-size: var(--fs-20); color: var(--cobalt); }
+.task-row__day { grid-area: day; align-self: center; font-size: var(--fs-16); color: var(--cobalt); }
 .task-row__day::first-letter, .task-head__day::first-letter { text-transform: uppercase; }
 .task-row--past .task-row__day { color: var(--ink-soft); }
 .task-row__name { grid-area: name; font-weight: 600; }
 .task-row > .meta { grid-area: meta; }
-.task-row__counts { grid-area: counts; }
+.task-row > .task-row__counts { grid-area: counts; }
 
 .task-head { display: grid; gap: var(--space-1); --stripe-color: var(--cobalt); }
 .task-head__day { font-size: var(--fs-20); color: var(--cobalt); }

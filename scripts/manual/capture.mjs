@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer-core';
 import { mkdirSync } from 'node:fs';
 
 const OUT = 'C:/Users/yeudi/OneDrive/Imágenes/Desktop/LabCbtis/docs/concurso/capturas/';
-const BASE = 'http://localhost:4174/labqr/';
+const BASE = process.env.CLAB_URL ?? 'http://localhost:4174/labqr/';
 mkdirSync(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({
@@ -40,8 +40,21 @@ const scrollTo = async (selector, offset = 0) => {
   await wait(300);
 };
 
+// Roles (F7): pick a role through the real "¿Quién eres?" screen.
+const chooseRole = async (role) => {
+  await go('/entrar', 700);
+  await page.click(`[data-role="${role}"]`);
+  await wait(1000);
+  await page.evaluate(() => window.scrollTo(0, 0));
+};
+
 await page.goto(BASE, { waitUntil: 'networkidle0' });
-await wait(800);
+await wait(1200);
+
+// 0. First open asks who is using the phone (F7)
+await shot('30-quien-eres');
+await page.click('[data-role="labTech"]');
+await wait(1000);
 
 // 1. Empty start
 await shot('01-inicio-vacio');
@@ -185,6 +198,55 @@ await go('/respaldo');
 await shot('21-respaldo');
 await scrollTo('.button-grid', -150);
 await shot('22-respaldo-csv');
+
+// 5b. Roles, tasks and requests by QR (F7)
+await chooseRole('teacher');
+await shot('31-inicio-quimico');
+const taskHref = await page.$eval('.task-row', (a) => a.getAttribute('href'));
+await go('/tareas/nueva');
+await page.evaluate(() => {
+  const f = document.querySelector('form');
+  f.practiceId.value = [...f.practiceId.options].find((o) => o.textContent.includes('Densidad')).value;
+  f.group.value = '4° B';
+});
+await shot('32-nueva-tarea');
+await go(taskHref.slice(1));
+// A DOM click: a coordinate click could land on the fixed tab bar covering the button.
+await page.evaluate(() => document.querySelector('[data-qr]').click());
+await wait(300);
+const taskShare = await page.$eval('[data-share-url]', (b) => b.dataset.shareUrl);
+await scrollTo('[data-qr]', -10);
+await shot('33-tarea-qr');
+
+await chooseRole('student');
+await page.evaluate(() => {
+  const f = document.querySelector('[data-group]');
+  f.group.value = '4° A';
+  f.requestSubmit();
+});
+await wait(900);
+await shot('34-inicio-alumno');
+// The student opens the task QR (here, its link) and asks for the material.
+await go(taskShare.slice(taskShare.indexOf('#') + 1));
+await page.evaluate(() => document.querySelector('[data-ask]').click());
+await wait(500);
+await page.evaluate(() => {
+  const f = document.querySelector('form');
+  f.sname.value = 'Diego Hernández';
+  f.sid.value = '26108000456';
+});
+await shot('35-alumno-pide');
+await page.evaluate(() => document.querySelector('form').requestSubmit());
+await wait(1200);
+const requestHash = await page.evaluate(() => location.hash);
+await page.evaluate(() => window.scrollTo(0, 0));
+await shot('36-solicitud-qr');
+
+// The lab tech scans it: the request enters as "por aprobar".
+await chooseRole('labTech');
+await go(requestHash.slice(1), 3600); // let the toast fade
+await page.evaluate(() => window.scrollTo(0, 0));
+await shot('37-solicitud-por-aprobar');
 
 // 6. Close-up of a printed label
 await page.setViewport({ width: 1000, height: 900, deviceScaleFactor: 3 });

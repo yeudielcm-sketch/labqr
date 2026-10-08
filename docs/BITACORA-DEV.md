@@ -533,3 +533,19 @@ El auditor, con contexto limpio, revisó solo F7. No encontró inyección de có
   - En 9 pantallas, nada se sale a lo ancho, y la consola no tiene errores.
 - **Pendiente:** verlo en el Android del autor.
 - 7 oct 2026: pasado a `main` y publicado. Se comprobó en el sitio real que sirve la 0.9.0 (con los textos nuevos del Menú y del chip de rol).
+
+---
+
+## Manual actualizado a C-Lab 0.9.1 · 7 de octubre de 2026
+
+- `MANUAL-USUARIO.pdf` regenerado: **26 páginas y 37 capturas** (antes 20 y 29).
+  - Pasos nuevos: **"Elegir tu rol"** (Paso 2) y **"Tareas y solicitudes"** (Paso 12, en dos páginas: el maestro deja la tarea y la pasa por QR; el alumno pide; el laboratorista aprueba).
+  - Se actualizaron "Conocer la pantalla" (pestañas por rol, rol arriba, Menú con explicación), Inicio ordenado por urgencia, dibujos de artículos y 3 casos nuevos en "Si algo no funciona".
+  - Todas las capturas se tomaron otra vez, así que ya muestran el diseño de F8. El índice se compactó para caber en una página.
+- **Script de capturas:** ahora elige el rol en "¿Quién eres?" y recorre los tres roles con la tarea y la solicitud por QR.
+- **Problemas encontrados al revisar el PDF página por página** (lección de Macharnudas: "una prueba verde no prueba que se vea"):
+  - **Falla real en la app:** en el Inicio del químico, el contador "1 por aprobar" se encimaba con el grupo. Una regla de CSS más específica lo mandaba al mismo renglón. Corregida.
+  - Los nombres de las tareas no quedaban alineados porque la columna de la fecha cambiaba de ancho. Ahora tiene ancho fijo.
+  - El script no encontraba el QR de la tarea: puppeteer tocaba por coordenadas y el botón quedaba bajo la barra inferior fija. Se cambió por un clic directo al elemento.
+- **Versión de la app:** 0.9.1 (las dos correcciones de estilo).
+- **Cómo se probó:** el PDF se generó sin imágenes rotas y con las fuentes Barlow cargadas, y se revisaron sus 26 páginas.

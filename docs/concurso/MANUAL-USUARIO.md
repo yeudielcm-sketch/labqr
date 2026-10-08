@@ -1,11 +1,28 @@
 # Manual de usuario — C-Lab
 
-> Se escribe a la par de cada fase. Versión 0.7.0 (incluye F6: prácticas, reactivos, notas, número de control y fotos).
-> **Versión con capturas para entregar: [MANUAL-USUARIO.pdf](MANUAL-USUARIO.pdf)** (20 páginas, carta, 29 capturas). Su fuente es `manual/MANUAL-USUARIO.html` y las capturas están en `capturas/`.
+> Se escribe a la par de cada fase. Versión 0.9.1 (incluye F7: roles, tareas, solicitudes y QR entre celulares; F8: ilustraciones y rediseño).
+> **Versión con capturas para entregar: [MANUAL-USUARIO.pdf](MANUAL-USUARIO.pdf)** (26 páginas, carta, 37 capturas). Su fuente es `manual/MANUAL-USUARIO.html` y las capturas están en `capturas/`.
+
+## Elegir tu rol
+
+La primera vez, C-Lab pregunta **¿Quién eres?**:
+- **Químico (maestro):** guarda prácticas y deja tareas a cada grupo.
+- **Laboratorista:** lleva el inventario, presta, recibe y aprueba solicitudes.
+- **Alumno:** ve las tareas de su grupo y pide el material.
+
+No hay contraseña. El rol aparece arriba a la derecha y se cambia tocándolo.
 
 ## Pantallas
 
-La barra inferior tiene cuatro pestañas: **Inicio**, **Escanear**, **Artículos** y **Vales**. El botón ☰ de arriba abre **Ajustes**, **Prácticas**, **Etiquetas**, **Respaldo** y el **Tablero de exposición**.
+La barra inferior tiene cuatro pestañas, que cambian según el rol. Para el laboratorista son **Inicio**, **Escanear**, **Artículos** y **Vales**; el químico tiene **Tareas** y el alumno **Solicitudes**. El botón ☰ abre lo demás, y cada opción dice para qué sirve. Cada artículo se ve con su foto o con un dibujo propio del material.
+
+## Tareas y solicitudes
+
+1. **Químico:** **+ Nueva tarea** → práctica, grupo y fecha. En la tarea, **Mostrar QR para el grupo** (o **Compartir enlace** por WhatsApp).
+2. **Alumno:** escanea el QR o abre la tarea desde su Inicio → **Pedir el material** → nombre y número de control → **Generar QR de solicitud**.
+3. **Laboratorista:** escanea ese QR → la solicitud entra **por aprobar** → **Atender y entregar** abre el vale lleno → **Confirmar préstamo**. Puede **Rechazar** con un motivo.
+
+Todo viaja dentro del QR: no hace falta internet.
 
 ## Primeros pasos
 

@@ -59,7 +59,9 @@
   .cover .mid .qrbox img { width: 1.9in; border: 6pt solid #fff; }
   .cover .foot { font-size: 10pt; color: var(--ink-soft); border-top: 2pt solid var(--graphite); padding-top: 8pt; }
 
-  .toc ol { columns: 2; column-gap: 24pt; font-size: 12pt; }
+  .toc ol { columns: 3; column-gap: 18pt; font-size: 11pt; }
+  .toc li { margin-bottom: 2pt; }
+  .compact th, .compact td { padding: 3pt 7pt; }
   .steps-big { counter-reset: s; list-style: none; padding: 0; }
   .steps-big > li { counter-increment: s; position: relative; padding-left: 26pt; margin-bottom: 7pt; }
   .steps-big > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 18pt; height: 18pt; border-radius: 50%; background: var(--cobalt); color: #fff; font-weight: 600; font-size: 10pt; display: grid; place-items: center; }
@@ -83,7 +85,7 @@
       <p><b>Escanea para abrir C-Lab</b><br />yeudielcm-sketch.github.io/labqr</p>
     </div>
   </div>
-  <div class="foot">CBTIS 108 · Prototipo de Desarrollo de Software · CNPyPE 2027 · Versión de la app 0.7.0 · Octubre de 2026</div>
+  <div class="foot">CBTIS 108 · Prototipo de Desarrollo de Software · CNPyPE 2027 · Versión de la app 0.9.1 · Octubre de 2026</div>
 </div>
 
 <!-- ============ ÍNDICE + QUÉ ES ============ -->
@@ -91,6 +93,7 @@
   <span class="section-tag">ANTES DE EMPEZAR</span>
   <h2>¿Qué es C-Lab?</h2>
   <p class="lead">Es una aplicación gratuita para saber <b>qué hay</b> en el laboratorio, <b>dónde está</b> y <b>quién lo tiene prestado</b>. Cada artículo lleva una etiqueta con un código QR; con el celular se escanea para prestar, recibir o consultar.</p>
+  <p>La usan tres personas, cada una con su vista: el <b>químico (maestro)</b> deja las prácticas y las tareas de cada grupo, el <b>alumno</b> pide el material desde la tarea y el <b>laboratorista</b> lo aprueba y lo entrega.</p>
 
   <table>
     <tr><th>Necesitas</th><th>No necesitas</th></tr>
@@ -98,7 +101,7 @@
   </table>
 
   <h3>Palabras que usa la app</h3>
-  <table>
+  <table class="compact">
     <tr><th>Palabra</th><th>Qué significa</th></tr>
     <tr><td><b>Artículo</b></td><td>Cualquier cosa del inventario.</td></tr>
     <tr><td><b>Equipo</b></td><td>Pieza única con número de serie: microscopio, balanza. <i>Franja azul.</i></td></tr>
@@ -106,6 +109,8 @@
     <tr><td><b>Reactivo</b></td><td>Se gasta en la práctica; tiene unidad (ml, g) y caducidad. <i>Franja ámbar.</i></td></tr>
     <tr><td><b>Vale</b></td><td>El papelito de préstamo, pero en el celular: quién se lleva qué y para qué práctica.</td></tr>
     <tr><td><b>Práctica</b></td><td>La lista de material de una práctica, guardada una vez por el maestro o el encargado para llenar los vales en un toque.</td></tr>
+    <tr><td><b>Tarea</b></td><td>Una práctica que el maestro le deja a un grupo para un día: "4° A · Titulación · jueves".</td></tr>
+    <tr><td><b>Solicitud</b></td><td>Lo que pide un alumno desde su tarea. Queda <b>por aprobar</b> hasta que el laboratorista la entrega.</td></tr>
     <tr><td><b>Recepción</b></td><td>Llegó material nuevo.</td></tr>
     <tr><td><b>Merma</b></td><td>Algo se rompió, se perdió o caducó.</td></tr>
     <tr><td><b>Existencia</b></td><td>Cuánto hay. La app lo dibuja como una <b>probeta</b>: el líquido es lo que hay en el laboratorio.</td></tr>
@@ -115,6 +120,7 @@
     <h3>Contenido</h3>
     <ol>
       <li>Instalar la app</li>
+      <li>Elegir tu rol</li>
       <li>Conocer la pantalla</li>
       <li>Probar con datos de ejemplo</li>
       <li>Buscar y consultar artículos</li>
@@ -124,6 +130,7 @@
       <li>Guardar prácticas</li>
       <li>Prestar material (vale)</li>
       <li>Recibir la devolución</li>
+      <li>Tareas y solicitudes</li>
       <li>Recepción, merma y ajuste</li>
       <li>Respaldo: no perder los datos</li>
       <li>Tablero para TV</li>
@@ -141,61 +148,87 @@
     <div>
       <ol class="steps-big">
         <li>Con la cámara del celular, escanea el QR de la portada (o escribe <b>yeudielcm-sketch.github.io/labqr</b> en Chrome).</li>
-        <li>Espera a que aparezca la pantalla de <b>Inicio</b> con una probeta vacía.</li>
+        <li>Espera a que aparezca la pantalla <b>¿Quién eres?</b> (Paso 2).</li>
         <li>Toca el menú de Chrome <b>⋮</b> (arriba a la derecha) → <b>Agregar a la pantalla principal</b> → <b>Instalar</b>.</li>
         <li>Desde ahora ábrela con el ícono azul de la probeta, como cualquier otra app.</li>
       </ol>
       <div class="tip"><b>¿iPhone?</b>Abre el enlace en Safari → botón <b>Compartir</b> → <b>Agregar a inicio</b>.</div>
       <div class="tip"><b>Sin internet</b>Después de abrirla una vez con internet, funciona sin señal: el laboratorio no necesita Wi-Fi.</div>
     </div>
-    <figure><img src="../capturas/01-inicio-vacio.png" alt="" /><figcaption>Así se ve la primera vez: todavía no hay artículos.</figcaption></figure>
+    <figure><img src="../capturas/01-inicio-vacio.png" alt="" /><figcaption>Inicio del laboratorista la primera vez: todavía no hay artículos.</figcaption></figure>
+  </div>
+</div>
+
+<!-- ============ 2. ROL ============ -->
+<div class="section">
+  <span class="section-tag">PASO 2</span>
+  <h2>Elegir tu rol</h2>
+  <p class="lead">La primera vez, C-Lab pregunta quién va a usar el celular. Cada rol ve solo lo que necesita.</p>
+  <div class="row">
+    <div>
+      <table>
+        <tr><th>Rol</th><th>Qué hace</th></tr>
+        <tr><td><b>Químico (maestro)</b></td><td>Guarda sus prácticas, le deja <b>tareas</b> a cada grupo y ve quién ya pidió el material.</td></tr>
+        <tr><td><b>Laboratorista</b></td><td>Lleva el inventario, presta y recibe material, y <b>aprueba las solicitudes</b> de los alumnos. Es el único que puede borrar datos o hacer respaldos.</td></tr>
+        <tr><td><b>Alumno</b></td><td>Ve las tareas de su grupo y <b>pide el material</b> de la práctica.</td></tr>
+      </table>
+      <ol class="steps-big">
+        <li>Toca la tarjeta de tu rol. No hay contraseña.</li>
+        <li>Tu rol queda arriba a la derecha, junto al menú ☰. <b>Tócalo para cambiarlo</b> cuando quieras (también en <span class="path">☰ → Cambiar de rol</span>).</li>
+      </ol>
+      <div class="tip"><b>El rol no es una contraseña</b>Sirve para que cada quien vea lo suyo y para que un alumno no borre nada por error. Cualquiera puede cambiarlo.</div>
+    </div>
+    <figure><img src="../capturas/30-quien-eres.png" alt="" /><figcaption>"¿Quién eres?": se elige con un toque.</figcaption></figure>
   </div>
 </div>
 
 <!-- ============ 2. PANTALLA ============ -->
 <div class="section">
-  <span class="section-tag">PASO 2</span>
+  <span class="section-tag">PASO 3</span>
   <h2>Conocer la pantalla</h2>
   <div class="row two">
     <div>
       <h3>La barra de abajo</h3>
-      <p>Siempre está visible y tiene las cuatro cosas que más se usan:</p>
+      <p>Siempre está visible y tiene las cuatro cosas que más usa cada rol. Para el <b>laboratorista</b>:</p>
       <ul>
-        <li><b>Inicio:</b> el resumen del día.</li>
-        <li><b>Escanear:</b> abre la cámara para leer una etiqueta.</li>
+        <li><b>Inicio:</b> el resumen del día, con <b>+ Nuevo vale</b> hasta arriba.</li>
+        <li><b>Escanear:</b> abre la cámara para leer una etiqueta o un QR de tarea o solicitud.</li>
         <li><b>Artículos:</b> todo el inventario.</li>
         <li><b>Vales:</b> los préstamos.</li>
       </ul>
-      <h3>El botón ☰ de arriba</h3>
-      <p>Abre lo que se usa menos: <b>Ajustes</b>, <b>Prácticas</b>, <b>Etiquetas</b>, <b>Respaldo</b> y el <b>Tablero</b> para TV.</p>
+      <p>El <b>químico</b> tiene <b>Tareas</b> en lugar de Escanear, y el <b>alumno</b> tiene <b>Solicitudes</b> en lugar de Vales.</p>
+      <h3>Arriba a la derecha</h3>
+      <p>Tu <b>rol</b> (tócalo para cambiarlo) y el botón <b>☰</b>, que abre lo que se usa menos. Cada opción del menú dice para qué sirve.</p>
       <h3>La flecha ‹</h3>
       <p>Regresa a la pantalla anterior.</p>
     </div>
-    <figure><img src="../capturas/04-inicio-con-datos.png" alt="" /><figcaption>Inicio: cada tarjeta lleva a su lista. Lo rojo con rombo ◇ pide atención.</figcaption></figure>
-    <figure><img src="../capturas/02-menu.png" alt="" /><figcaption>El menú ☰.</figcaption></figure>
+    <figure><img src="../capturas/04-inicio-con-datos.png" alt="" /><figcaption>Inicio del laboratorista: lo más urgente va primero. Lo rojo con rombo ◇ pide atención.</figcaption></figure>
+    <figure><img src="../capturas/02-menu.png" alt="" /><figcaption>El menú ☰: cada opción dice para qué sirve.</figcaption></figure>
   </div>
-  <h3>Cómo leer Inicio</h3>
+  <h3>Cómo leer Inicio (laboratorista)</h3>
   <table>
     <tr><th>Tarjeta</th><th>Qué quiere decir</th></tr>
-    <tr><td>◌ <b>vales abiertos</b></td><td>Material que está prestado ahora.</td></tr>
+    <tr><td>◌ <b>solicitudes por aprobar</b></td><td>Alumnos que pidieron material desde su tarea (Paso 12).</td></tr>
     <tr><td>◇ <b>vale vencido</b> (rojo)</td><td>Ya pasó la hora de devolver y algo no ha regresado.</td></tr>
+    <tr><td>◇ <b>caducado</b> (rojo)</td><td>Reactivos que ya pasaron su fecha de caducidad.</td></tr>
     <tr><td>◇ <b>bajo mínimo</b> (rojo)</td><td>Queda menos de lo necesario; hay que pedir más.</td></tr>
     <tr><td>● <b>por caducar</b> (ámbar)</td><td>Reactivos que caducan en los próximos 30 días.</td></tr>
-    <tr><td>Aviso de <b>respaldo</b></td><td>Pasaron más de 7 días sin respaldar (ver Paso 12).</td></tr>
+    <tr><td>◌ <b>vales abiertos</b></td><td>Material que está prestado ahora.</td></tr>
+    <tr><td>Aviso de <b>respaldo</b></td><td>Pasaron más de 7 días sin respaldar (ver Paso 14).</td></tr>
   </table>
 </div>
 
 <!-- ============ 3. DEMO ============ -->
 <div class="section">
-  <span class="section-tag">PASO 3</span>
+  <span class="section-tag">PASO 4</span>
   <h2>Probar con datos de ejemplo</h2>
   <p class="lead">Para conocer la app sin capturar nada, carga un laboratorio de ejemplo con 33 artículos reales de Química y Biología.</p>
   <div class="row">
     <div>
       <ol class="steps-big">
-        <li>Toca <span class="path">☰ → Ajustes</span>.</li>
+        <li>Con el rol <b>Laboratorista</b>, toca <span class="path">☰ → Ajustes</span>.</li>
         <li>Toca <span class="btn fill">Cargar datos de demostración</span>.</li>
-        <li>Listo: Inicio ya muestra artículos, préstamos y avisos.</li>
+        <li>Listo: Inicio ya muestra artículos, préstamos y avisos. La demo también trae prácticas, tres tareas y una solicitud por aprobar, para probar los otros roles.</li>
       </ol>
       <div class="warn"><b>Antes de usarla de verdad</b>Borra el ejemplo: en <span class="path">☰ → Ajustes</span>, al final, escribe <b>BORRAR</b> y toca <b>Borrar todos los datos</b>. Esto borra todo y no se puede deshacer.</div>
       <h3>Para usarla con tu laboratorio</h3>
@@ -207,12 +240,13 @@
 
 <!-- ============ 4. ARTÍCULOS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 4</span>
+  <span class="section-tag">PASO 5</span>
   <h2>Buscar y consultar artículos</h2>
   <div class="row two">
     <div>
       <p>En la pestaña <b>Artículos</b> está todo el inventario. Cada renglón muestra:</p>
       <ul>
+        <li>Su <b>foto</b> o, si no tiene, un <b>dibujo</b> del material (vaso, matraz, microscopio, frasco…).</li>
         <li>La <b>franja de color</b> según el tipo.</li>
         <li>El <b>código</b> (lo que va impreso en la etiqueta).</li>
         <li>Dónde está guardado.</li>
@@ -228,7 +262,7 @@
 </div>
 
 <div class="section">
-  <span class="section-tag">PASO 4 · CONTINUACIÓN</span>
+  <span class="section-tag">PASO 5 · CONTINUACIÓN</span>
   <h2>La ficha de un artículo</h2>
   <p class="lead">Toca cualquier artículo (o escanea su etiqueta) para ver su ficha.</p>
   <div class="row two">
@@ -254,7 +288,7 @@
       <h3>Especificaciones</h3>
       <p>Agrega los datos que pida cada maestro (marca, modelo, voltaje, concentración…) con <b>Agregar dato</b>. También sirven para buscar.</p>
       <h3>Foto</h3>
-      <p>En la ficha, <b>Tomar o elegir foto</b> abre la cámara o la galería. La foto se guarda en tamaño pequeño, aparece en la ficha y en la lista, y viaja en el respaldo.</p>
+      <p>En la ficha, <b>Tomar o elegir foto</b> abre la cámara o la galería. La foto se guarda en tamaño pequeño, sustituye al dibujo en la ficha, la lista y los vales, y viaja en el respaldo. Solo el laboratorista puede cambiarla.</p>
     </div>
     <figure><img src="../capturas/09-ficha-historial.png" alt="" /><figcaption>La probeta rota queda registrada con su responsable.</figcaption></figure>
   </div>
@@ -262,7 +296,7 @@
 
 <!-- ============ 5. AGREGAR ============ -->
 <div class="section">
-  <span class="section-tag">PASO 5</span>
+  <span class="section-tag">PASO 6</span>
   <h2>Agregar artículos</h2>
   <div class="row">
     <div>
@@ -284,7 +318,7 @@
 
 <!-- ============ 6. ETIQUETAS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 6</span>
+  <span class="section-tag">PASO 7</span>
   <h2>Imprimir etiquetas QR</h2>
   <div class="row two">
     <div>
@@ -306,7 +340,7 @@
 
 <!-- ============ 7. ESCANEAR ============ -->
 <div class="section">
-  <span class="section-tag">PASO 7</span>
+  <span class="section-tag">PASO 8</span>
   <h2>Escanear</h2>
   <div class="row">
     <div>
@@ -328,7 +362,7 @@
 
 <!-- ============ 8. PRÁCTICAS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 8</span>
+  <span class="section-tag">PASO 9</span>
   <h2>Guardar prácticas</h2>
   <p class="lead">El maestro o el encargado guarda una sola vez el material de cada práctica. Después, al hacer el vale, se elige la práctica y la lista se llena sola.</p>
   <div class="row two">
@@ -349,7 +383,7 @@
 
 <!-- ============ 9. PRESTAR ============ -->
 <div class="section">
-  <span class="section-tag">PASO 9</span>
+  <span class="section-tag">PASO 10</span>
   <h2>Prestar material (vale)</h2>
   <p class="lead">Es lo que más se usa: un equipo de alumnos llega por el material de su práctica.</p>
   <div class="row two">
@@ -357,7 +391,7 @@
       <ol class="steps-big">
         <li>Toca <span class="btn fill">+ Nuevo vale</span> (en Inicio o en Vales).</li>
         <li><b>Solicitante:</b> elige quién se lo lleva. Si no está en la lista, toca <b>+ Nuevo solicitante</b> y agrégalo ahí mismo (nombre, tipo, grupo). Si es <b>alumno</b>, el <b>número de control es obligatorio</b>.</li>
-        <li><b>Práctica:</b> en <b>Usar una práctica guardada</b>, elige la práctica y el material se agrega solo (Paso 8). Si no hay una guardada, escribe cuál es (opcional).</li>
+        <li><b>Práctica:</b> en <b>Usar una práctica guardada</b>, elige la práctica y el material se agrega solo (Paso 9). Si no hay una guardada, escribe cuál es (opcional).</li>
         <li>Toca <b>Escanear artículos</b> y escanea cada etiqueta una tras otra. Cada lectura suma 1 y suena un <b>bip</b>. Escanear dos veces el mismo vaso = 2 vasos.</li>
         <li>Ajusta cantidades con <b>−</b> y <b>+</b>. En reactivos escribe la cantidad (por ejemplo 25.5 ml).</li>
       </ol>
@@ -381,7 +415,7 @@
 
 <!-- ============ 9. DEVOLUCIÓN ============ -->
 <div class="section">
-  <span class="section-tag">PASO 10</span>
+  <span class="section-tag">PASO 11</span>
   <h2>Recibir la devolución</h2>
   <div class="row two">
     <div>
@@ -414,9 +448,74 @@
   </div>
 </div>
 
+<!-- ============ 12. TAREAS Y SOLICITUDES ============ -->
+<div class="section">
+  <span class="section-tag">PASO 12 · QUÍMICO (MAESTRO)</span>
+  <h2>Tareas y solicitudes</h2>
+  <p class="lead">El maestro le deja la práctica a un grupo; el alumno pide el material desde su celular y el laboratorista lo aprueba. Funciona entre celulares distintos con un QR, sin internet.</p>
+  <div class="row two">
+    <div>
+      <h3>Dejar una tarea</h3>
+      <ol class="steps-big">
+        <li>Como <b>Químico</b>, toca <span class="btn fill">+ Nueva tarea</span> en Inicio.</li>
+        <li>Elige la <b>práctica</b> (Paso 9), escribe el <b>grupo</b> (por ejemplo 4° A) y la <b>fecha</b>. Si quieres, agrega indicaciones ("Traer bata").</li>
+        <li>Toca <span class="btn fill">Guardar</span>.</li>
+      </ol>
+      <p>En Inicio ves tus tareas próximas y cuántas solicitudes van: por aprobar, entregadas o rechazadas.</p>
+      <div class="tip"><b>Atajo</b>Dentro de una práctica, <b>Dejar como tarea a un grupo</b> abre la tarea con esa práctica ya elegida.</div>
+    </div>
+    <figure><img src="../capturas/31-inicio-quimico.png" alt="" /><figcaption>Inicio del químico: sus tareas y cómo van.</figcaption></figure>
+    <figure><img src="../capturas/32-nueva-tarea.png" alt="" /><figcaption>Nueva tarea: práctica, grupo y fecha.</figcaption></figure>
+  </div>
+  <div class="row">
+    <div>
+      <h3>Pasarla a los alumnos</h3>
+      <ol class="steps-big">
+        <li>Abre la tarea y toca <b>Mostrar QR para el grupo</b>.</li>
+        <li>Los alumnos lo escanean con C-Lab o con la cámara normal del celular. Les llega la tarea con todo su material, <b>aunque su celular no tenga datos</b>.</li>
+        <li>Si no están en el salón, toca <b>Compartir enlace</b> y mándalo por WhatsApp al grupo.</li>
+      </ol>
+      <div class="tip"><b>No necesita internet</b>Todo lo de la tarea viaja dentro del QR.</div>
+    </div>
+    <figure><img src="../capturas/33-tarea-qr.png" alt="" /><figcaption>El QR de la tarea, listo para el grupo.</figcaption></figure>
+  </div>
+</div>
+
+<div class="section">
+  <span class="section-tag">PASO 12 · ALUMNO Y LABORATORISTA</span>
+  <h2>Pedir y aprobar el material</h2>
+  <div class="row two">
+    <div>
+      <h3>El alumno pide</h3>
+      <ol class="steps-big">
+        <li>Como <b>Alumno</b>, escribe tu grupo una sola vez. En Inicio aparecen las tareas de tu grupo.</li>
+        <li>Abre la tarea (de tu Inicio o escaneando el QR del maestro) y toca <span class="btn fill">Pedir el material</span>.</li>
+        <li>Escribe tu <b>nombre</b> y tu <b>número de control</b>. La lista del material ya viene llena; cambia una cantidad solo si el maestro lo indicó.</li>
+        <li>Toca <span class="btn fill">Generar QR de solicitud</span>.</li>
+      </ol>
+    </div>
+    <figure><img src="../capturas/34-inicio-alumno.png" alt="" /><figcaption>Inicio del alumno: las tareas de su grupo.</figcaption></figure>
+    <figure><img src="../capturas/35-alumno-pide.png" alt="" /><figcaption>Sus datos y el material de la práctica.</figcaption></figure>
+  </div>
+  <div class="row two">
+    <div>
+      <h3>El laboratorista aprueba</h3>
+      <ol class="steps-big" start="5" style="counter-reset: s 4;">
+        <li>El alumno le muestra su QR. Como <b>Laboratorista</b>, toca <b>Escanear</b> y léelo: la solicitud entra <b>por aprobar</b>.</li>
+        <li>Toca <span class="btn fill">Atender y entregar</span>: se abre el vale ya lleno con el alumno, la práctica y el material.</li>
+        <li>Revisa y toca <span class="btn fill">Confirmar préstamo</span>. La solicitud queda <b>entregada</b>.</li>
+      </ol>
+      <p>Si no se puede entregar, toca <b>Rechazar</b> y escribe el motivo ("Hoy no hay buretas; pasa mañana").</p>
+      <div class="tip"><b>Sin QR también funciona</b>Si el alumno pide desde el mismo celular o tablet del laboratorio, la solicitud aparece directo en el Inicio del laboratorista.</div>
+    </div>
+    <figure><img src="../capturas/36-solicitud-qr.png" alt="" /><figcaption>El QR que el alumno muestra en la ventanilla.</figcaption></figure>
+    <figure><img src="../capturas/37-solicitud-por-aprobar.png" alt="" /><figcaption>Ya en el celular del laboratorista, lista para entregar.</figcaption></figure>
+  </div>
+</div>
+
 <!-- ============ 10. MOVIMIENTOS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 11</span>
+  <span class="section-tag">PASO 13</span>
   <h2>Recepción, merma y ajuste</h2>
   <p class="lead">Para lo que pasa fuera de un préstamo. Se hace desde la ficha del artículo, en <b>Registrar movimiento</b>.</p>
   <div class="row">
@@ -435,7 +534,7 @@
 
 <!-- ============ 11. RESPALDO ============ -->
 <div class="section">
-  <span class="section-tag">PASO 12</span>
+  <span class="section-tag">PASO 14</span>
   <h2>Respaldo: no perder los datos</h2>
   <div class="warn"><b>Importante</b>Los datos viven <b>solo en este celular</b>. Si se pierde, se rompe o se borra el navegador, solo un respaldo los recupera. Haz uno <b>cada semana</b>; Inicio te avisa cuando toca.</div>
   <div class="row two">
@@ -464,7 +563,7 @@
 
 <!-- ============ 12. TABLERO ============ -->
 <div class="section">
-  <span class="section-tag">PASO 13</span>
+  <span class="section-tag">PASO 15</span>
   <h2>Tablero para TV</h2>
   <p class="lead">Para exposiciones o para dejarlo a la vista en el laboratorio: muestra todo el inventario de un vistazo, legible a 3 metros.</p>
   <figure class="wide"><img src="../capturas/24-tablero.png" alt="" /><figcaption>Una fila de probetas por anaquel; a la derecha los vales abiertos y los últimos movimientos.</figcaption></figure>
@@ -473,23 +572,26 @@
     <li>Arriba eliges el laboratorio.</li>
     <li>Abre C-Lab en <b>otra ventana de la misma laptop</b> y haz préstamos ahí: el tablero cambia solo al momento.</li>
   </ol>
-  <div class="tip"><b>¿Por qué en la misma laptop?</b>En esta versión cada dispositivo guarda sus propios datos. Si quieres ver en la laptop lo del celular, pásale un respaldo (Paso 12).</div>
+  <div class="tip"><b>¿Por qué en la misma laptop?</b>En esta versión cada dispositivo guarda sus propios datos. Si quieres ver en la laptop lo del celular, pásale un respaldo (Paso 14).</div>
 </div>
 
 <!-- ============ 13. PROBLEMAS ============ -->
 <div class="section">
-  <span class="section-tag">PASO 14</span>
+  <span class="section-tag">PASO 16</span>
   <h2>Si algo no funciona</h2>
   <table>
     <tr><th>Qué pasa</th><th>Qué hacer</th></tr>
     <tr><td>No aparece una pantalla o función nueva.</td><td>Revisa la <b>versión</b> al pie de Inicio. Con internet, toca <span class="path">☰ → Ajustes → Buscar actualización</span>, o cierra y abre la app dos veces.</td></tr>
-    <tr><td>La cámara no abre.</td><td>Da permiso de cámara (Paso 7) y toca <b>Reintentar</b>. Mientras, escribe el código a mano.</td></tr>
+    <tr><td>La cámara no abre.</td><td>Da permiso de cámara (Paso 8) y toca <b>Reintentar</b>. Mientras, escribe el código a mano.</td></tr>
     <tr><td>La cámara no lee la etiqueta.</td><td>Más luz, etiqueta sin arrugas, a unos 15 cm. O escribe el código.</td></tr>
     <tr><td>"No existe un artículo con el código…"</td><td>Esa etiqueta es de otro celular o se borraron los datos. Restaura tu respaldo.</td></tr>
     <tr><td>No me deja confirmar el vale.</td><td>Falta elegir solicitante, o pides más de lo que hay (renglón en rojo).</td></tr>
     <tr><td>No me deja cambiar la unidad o el código.</td><td>Es a propósito: el código va impreso y la unidad se fija cuando ya hay historial.</td></tr>
     <tr><td>Me equivoqué al registrar algo.</td><td>El historial no se borra. Corrige con otro movimiento (por ejemplo, Ajuste por conteo con una nota).</td></tr>
     <tr><td>Cambié de celular.</td><td>En el viejo: Compartir respaldo. En el nuevo: instala la app y Restaurar desde archivo.</td></tr>
+    <tr><td>"Esta pantalla no es para el rol…"</td><td>Esa pantalla es de otro rol. Toca tu rol arriba a la derecha y cámbialo.</td></tr>
+    <tr><td>Al escanear la solicitud dice que un artículo "no está en este dispositivo".</td><td>El celular del laboratorista no tiene ese código. Restaura el respaldo del laboratorio para que los dos tengan el mismo catálogo.</td></tr>
+    <tr><td>El alumno no ve su tarea.</td><td>Revisa que su grupo esté escrito como el del maestro, o que escanee el QR de la tarea.</td></tr>
   </table>
   <div class="tip"><b>Para pedir ayuda</b>Manda la versión (pie de Inicio) y una captura de pantalla de lo que ves.</div>
 </div>
